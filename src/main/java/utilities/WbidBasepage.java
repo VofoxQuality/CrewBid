@@ -216,7 +216,7 @@ public class WbidBasepage {
 		extent.setSystemInfo("User Name", " LIYA ANN THOMAS, NIMISHILA BHAI N");
 		sparkall.config().setDocumentTitle("Automation Extend Spark Report");
 		// Name of the report
-		sparkall.config().setReportName("MTSS");
+		sparkall.config().setReportName("WBidAPI");
 		// Dark Theme
 		sparkall.config().setTheme(Theme.DARK);
 	}
