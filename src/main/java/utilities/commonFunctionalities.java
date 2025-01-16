@@ -57,7 +57,7 @@ public class commonFunctionalities {
 		return items;
 	}
 
-	public <T extends Comparable<? super T>> List<T> sortData(List<T> items, boolean ascending) {
+/*	public <T extends Comparable<? super T>> List<T> sortData(List<T> items, boolean ascending) {
 		try {
 			if (ascending) {
 				items = items.stream()
@@ -103,7 +103,7 @@ public class commonFunctionalities {
 		}
 	}
 
-	public Boolean statusSort(List<WebElement> elementsPath, boolean ascending) {
+	/*public Boolean statusSort(List<WebElement> elementsPath, boolean ascending) {
 		try {
 			WbidBasepage.logger.info("Performing status [Ascending:" + ascending + "] sorting operation:");
 
@@ -164,5 +164,5 @@ public class commonFunctionalities {
 			return false;
 		}
 	}
-
+*/
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2025-01-16T12:30:10 IST" name="Default suite" finished-at="2025-01-16T12:30:29 IST" duration-ms="18176">
+    <groups>
+    </groups>
+    <test started-at="2025-01-16T12:30:10 IST" name="Default test" finished-at="2025-01-16T12:30:29 IST" duration-ms="18176">
+      <class name="API.BidAPI">
+        <test-method is-config="true" signature="beforeSuite()[pri:0, instance:API.BidAPI@71e35c4]" started-at="2025-01-16T12:30:10 IST" name="beforeSuite" finished-at="2025-01-16T12:30:10 IST" duration-ms="604" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeSuite -->
+        <test-method signature="fetchApiData()[pri:1, instance:API.BidAPI@71e35c4]" started-at="2025-01-16T12:30:10 IST" name="fetchApiData" finished-at="2025-01-16T12:30:27 IST" duration-ms="16637" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- fetchApiData -->
+        <test-method is-config="true" signature="afterMethod(org.testng.ITestResult)[pri:0, instance:API.BidAPI@71e35c4]" started-at="2025-01-16T12:30:27 IST" name="afterMethod" finished-at="2025-01-16T12:30:28 IST" duration-ms="955" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[[TestResult name=fetchApiData status=SUCCESS method=BidAPI.fetchApiData()[pri:1, instance:API.BidAPI@71e35c4] output={null}]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterMethod -->
+        <test-method is-config="true" signature="closebrowser()[pri:0, instance:API.BidAPI@71e35c4]" started-at="2025-01-16T12:30:28 IST" name="closebrowser" finished-at="2025-01-16T12:30:29 IST" duration-ms="483" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- closebrowser -->
+        <test-method is-config="true" signature="afterSuite()[pri:0, instance:API.BidAPI@71e35c4]" started-at="2025-01-16T12:30:29 IST" name="afterSuite" finished-at="2025-01-16T12:30:29 IST" duration-ms="619" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterSuite -->
+      </class> <!-- API.BidAPI -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
