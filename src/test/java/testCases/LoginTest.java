@@ -97,13 +97,13 @@ public class LoginTest extends WbidBasepage{
   public void CBW002001000011() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000011)").assignAuthor("VS/483") ;
 	 logger.info("Check visibility of Place holder text Employee Number in the username field");
-	 
+	 Assert.assertEquals(objpage.empNoPlaceholder(), "Employee Number","Place holder text Employee Number not visible");
   }
   @Test(priority = 12, enabled = true)
   public void CBW002001000012() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000012)").assignAuthor("VS/483") ;
 	 logger.info("Check visibility of Place holder text CWA password in the username field");
-	 
+	 Assert.assertEquals(objpage.pswdPlaceholder(), "CWA Password","Place holder text CWA password not visible");
   }
   @Test(priority = 13, enabled = true)
   public void CBW002001000013() {
@@ -151,6 +151,60 @@ public class LoginTest extends WbidBasepage{
   public void CBW002001000020() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000020)").assignAuthor("VS/483") ;
 	 logger.info("Verify whether validation message is shown when username exceed 8 digits");
+	 
+  }
+  @Test(priority = 21, enabled = true)
+  public void CBW002001000021() {
+	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000021)").assignAuthor("VS/483") ;
+	 logger.info("");
+	 
+  }
+  @Test(priority = 22, enabled = true)
+  public void CBW002001000022() {
+	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000022)").assignAuthor("VS/483") ;
+	 logger.info("");
+	 
+  }
+  @Test(priority = 23, enabled = true)
+  public void CBW002001000023() {
+	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000023)").assignAuthor("VS/483") ;
+	 logger.info("");
+	 
+  }
+  @Test(priority = 24, enabled = true)
+  public void CBW002001000024() {
+	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000024)").assignAuthor("VS/483") ;
+	 logger.info("");
+	 
+  }
+  @Test(priority = 25, enabled = true)
+  public void CBW002001000025() {
+	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000025)").assignAuthor("VS/483") ;
+	 logger.info("");
+	 
+  }
+  @Test(priority = 26, enabled = true)
+  public void CBW002001000026() {
+	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000026)").assignAuthor("VS/483") ;
+	 logger.info("");
+	 
+  }
+  @Test(priority = 27, enabled = true)
+  public void CBW002001000027() {
+	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000027)").assignAuthor("VS/483") ;
+	 logger.info("");
+	 
+  }
+  @Test(priority = 28, enabled = true)
+  public void CBW002001000028() {
+	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000028)").assignAuthor("VS/483") ;
+	 logger.info("");
+	 
+  }
+  @Test(priority = 29, enabled = true)
+  public void CBW002001000029() {
+	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000029)").assignAuthor("VS/483") ;
+	 logger.info("");
 	 
   }
   @Test(priority = 30, enabled = true)

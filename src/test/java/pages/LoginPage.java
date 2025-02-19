@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -148,14 +149,14 @@ public class LoginPage {
 		WbidBasepage.logger.log(Status.INFO, "Employee No txt Box Visible: " + empNo.isDisplayed());
 		return empNo.isDisplayed();
 	}
-	@FindBy(xpath = "(//div[contains(@class,'mat-form-field-wrapper')])[2]")
+	@FindBy(xpath = "//input[@data-placeholder='CWA Password']")
 	public WebElement passTxtBx;
 //TC 9
 	public boolean visibilityofPassbox() {
-		passTxtBx.click();
-		boolean visibile=objaction.fordisplay(passTxtBx);
-		WbidBasepage.logger.log(Status.INFO, "Password txt Box Visible: " + visibile);
-		return visibile;
+	    JavascriptExecutor js = (JavascriptExecutor) driver;
+	    boolean visible = (Boolean) js.executeScript("return arguments[0].offsetParent !== null && window.getComputedStyle(arguments[0]).display !== 'none';", passTxtBx);
+	    WbidBasepage.logger.log(Status.INFO, "Password txt Box Visible: " + visible);
+	    return visible;
 	}
 //TC 10
 	public boolean visibilityLoginBtn() {
@@ -163,4 +164,20 @@ public class LoginPage {
 		WbidBasepage.logger.log(Status.INFO, "Employee No txt Box Visible: " + login.isDisplayed());
 		return login.isDisplayed();
 	}
+//TC 11
+	public String empNoPlaceholder() {
+		String txt = objaction.getAttribute(empNo, "data-placeholder");
+		WbidBasepage.logger.pass("placeholder: " + txt);
+		return txt;
+	}
+//TC 12
+	public String pswdPlaceholder() {
+	    JavascriptExecutor js = (JavascriptExecutor) driver;
+	    js.executeScript("arguments[0].click();", password); // Click using JS
+	    String txt = (String) js.executeScript("return arguments[0].getAttribute('data-placeholder');", passTxtBx);
+	    WbidBasepage.logger.pass("placeholder: " + txt);
+	    return txt;
+	}
+
+//TC 13
 }
