@@ -109,61 +109,71 @@ public class LoginTest extends WbidBasepage{
   public void CBW002001000013() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000013)").assignAuthor("VS/483") ;
 	 logger.info("Check whether the eye button is visible inside password field.");
-	 
+	 Assert.assertTrue(objpage.visibilityeyeBtn(),"Eye Button is not Visible inside password field");
   }
   @Test(priority = 14, enabled = true)
   public void CBW002001000014() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000014)").assignAuthor("VS/483") ;
 	 logger.info("Verify the hyperlink for downloading crewbid ipad from appstore is navigating to appstore");
-	 
-  }
+	 objpage.clickLink();
+	 objwait.waitS(2000);
+	 Assert.assertTrue(objpage.linkNavi(),"Application does not navigates to the appstore-CrewBid");
+	 }
   @Test(priority = 15, enabled = true)
   public void CBW002001000015() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000015)").assignAuthor("VS/483") ;
-	 logger.info("Verify the hyperlink for downloading crewbid Valet from appstore is navigating to appstore");
-	 
-  }
+	 logger.info("Verify the hyperlink for downloading crewbid2 from appstore is navigating to appstore");
+	 objpage.clickiPadLink();
+	 objwait.waitS(2000);
+	 Assert.assertTrue(objpage.hyperLinkNavi(),"Application does not navigates to the appstore-CrewBid2");
+	 }
   @Test(priority = 16, enabled = true)
   public void CBW002001000016() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000016)").assignAuthor("VS/483") ;
-	 logger.info("Verify whether the password entered in CWA password space is in masked format");
-	 
+	 logger.info("Verify the hyperlink for downloading crewbid Valet from appstore is navigating to appstore");
+	 objpage.clickvaletLink();
+	 objwait.waitS(2000);
+	 Assert.assertTrue(objpage.valetLinkLinkNavi(),"Application does not navigates to the appstore-crewbid Valet"); 
   }
   @Test(priority = 17, enabled = true)
   public void CBW002001000017() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000017)").assignAuthor("VS/483") ;
-	 logger.info("Verify that the User name field is mandatory");
-	 
+	 logger.info("Verify whether the password entered in CWA password space is in masked format");
+	 Assert.assertTrue(objpage.pswdMasked(),"the password entered in CWA password space is not in masked format"); 	 
   }
   @Test(priority = 18, enabled = true)
   public void CBW002001000018() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000018)").assignAuthor("VS/483") ;
-	 logger.info("Verify that the password field is mandatory");
-	 
+	 logger.info("Verify that the User name field is mandatory");
+	 Assert.assertTrue(objpage.empNoAlertMssg(),"User name field is mandatory not visible");
   }
   @Test(priority = 19, enabled = true)
   public void CBW002001000019() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000019)").assignAuthor("VS/483") ;
-	 logger.info("Verify the message when both username and password are not provided.");
-	 
+	 logger.info("Verify that the password field is mandatory");
+	 Assert.assertTrue(objpage.pswdAlertMssg(),"Password field is mandatory not visible");
   }
   @Test(priority = 20, enabled = true)
   public void CBW002001000020() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000020)").assignAuthor("VS/483") ;
-	 logger.info("Verify whether validation message is shown when username exceed 8 digits");
+	 logger.info("Verify the message when both username and password are not provided.");
+	 Assert.assertTrue(objpage.mandatoryMssgs(),"username and password  field is mandatory not visible");
 	 
   }
   @Test(priority = 21, enabled = true)
   public void CBW002001000021() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000021)").assignAuthor("VS/483") ;
-	 logger.info("");
-	 
+	 logger.info("Verify whether validation message is shown when username exceed 8 digits");
+	 objpage.enterEmpNo("22121121212");
+	 Assert.assertTrue(objpage.empNoValidationPrsnt(), "validation message is not shown when username exceed 8 digits");
   }
   @Test(priority = 22, enabled = true)
   public void CBW002001000022() {
 	 logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000022)").assignAuthor("VS/483") ;
-	 logger.info("");
-	 
+	 logger.info("Verify whether username field permits characters other than 'x' and 'e' as first character");
+	 objpage.clearuser();
+	 objpage.enterEmpNo("a");
+	 Assert.assertTrue(objpage.empNoalphPrsnt(), "username field permits characters");
   }
   @Test(priority = 23, enabled = true)
   public void CBW002001000023() {
