@@ -1,8 +1,12 @@
 package pages;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -88,10 +92,10 @@ public class BidDownloadPage {
 		String att = objaction.getAttribute(empplaceholder, "placeholder");
 		WbidBasepage.logger.info(att);
 		if (att.contains("Employee No:")) {
-			WbidBasepage.logger.pass("Placeholder is same");
+			WbidBasepage.logger.pass("✅Placeholder is same");
 			return true;
 		} else {
-			WbidBasepage.logger.fail("Placeholder mismatch");
+			WbidBasepage.logger.fail("❌Placeholder mismatch");
 			return false;
 		}
 	}
@@ -122,15 +126,15 @@ public class BidDownloadPage {
 		Actuallabels = new ArrayList<>();
 		for (WebElement option : labels) {
 			String label = objaction.gettext(option);
-			WbidBasepage.logger.info("Labels:" + label);
+			WbidBasepage.logger.info("🎯Labels:" + label);
 			Actuallabels.add(label);
 		}
 		List<String> Expectedlabels = Arrays.asList("Base:", "Position:", "Round:", "Month:");
 		if (Actuallabels.containsAll(Expectedlabels) && Expectedlabels.containsAll(Actuallabels)) {
-			WbidBasepage.logger.pass("Labels are same");
+			WbidBasepage.logger.pass("✅Labels are same");
 			return true;
 		} else {
-			WbidBasepage.logger.fail("Labels are mismatch");
+			WbidBasepage.logger.fail("❌Labels are mismatch");
 			return false;
 		}
 	}
@@ -149,11 +153,11 @@ public class BidDownloadPage {
 
 	public boolean checkcities_isenable() {
 		boolean allEnabled = true;
-		WbidBasepage.logger.info("Verifying all base cities:");
+		WbidBasepage.logger.info("✨Verifying all base cities:");
 
 		for (WebElement option : basecities) {
 			String cityName = option.getText();
-			WbidBasepage.logger.info("City: " + cityName);
+			WbidBasepage.logger.info("✨City: " + cityName);
 
 			objwait.waitForElemntTobeClickable(driver, option, 5);
 			objaction.click(option);
@@ -161,9 +165,9 @@ public class BidDownloadPage {
 			String att = objaction.getAttribute(option, "class");
 
 			if (att.contains("active-re")) {
-				WbidBasepage.logger.pass("City '" + cityName + "' is enabled.");
+				WbidBasepage.logger.pass("🎯City '" + cityName + "'✅ is enabled.");
 			} else {
-				WbidBasepage.logger.fail("City '" + cityName + "' is disabled.");
+				WbidBasepage.logger.fail("🎯City '" + cityName + "'❌ is disabled.");
 				allEnabled = false;
 			}
 		}
@@ -175,12 +179,14 @@ public class BidDownloadPage {
 		}
 		return allEnabled;
 	}
+
 //TC17
-	@FindBy(xpath="//*[@id=\"newBidModal\"]/div/div/div[2]/div[2]/div[2]/button")
+	@FindBy(xpath = "//*[@id=\"newBidModal\"]/div/div/div[2]/div[2]/div[2]/button")
 	public List<WebElement> positionlist;
+
 	public boolean checkposition_isenable() {
 		boolean allEnabled = true;
-		WbidBasepage.logger.info("Verifying all Positions:");
+		WbidBasepage.logger.info("✨Verifying all Positions:");
 
 		for (WebElement option : positionlist) {
 			String position = option.getText();
@@ -192,9 +198,9 @@ public class BidDownloadPage {
 			String att = objaction.getAttribute(option, "class");
 
 			if (att.contains("active-re")) {
-				WbidBasepage.logger.pass("Position'" + position + "' is enabled.");
+				WbidBasepage.logger.pass("✨Position'" + position + "' is enabled.");
 			} else {
-				WbidBasepage.logger.fail("Position '" + position + "' is disabled.");
+				WbidBasepage.logger.fail("✨Position '" + position + "' is disabled.");
 				allEnabled = false;
 			}
 		}
@@ -206,4 +212,234 @@ public class BidDownloadPage {
 		}
 		return allEnabled;
 	}
+
+	/******************
+	 * 🔥🎯💡✨🚀✅🔒❌Month Validation Checking❌🔒✅🔥🎯💡✨🚀
+	 *********************/
+	// TC18
+	@FindBy(xpath = "//*[@id=\"newBidModal\"]/div/div/div[2]/div[4]/div[2]/button")
+	public List<WebElement> monthlist;
+
+	public boolean isNextMonthSelectedByDefault() {
+		// Get next month in SHORT format (e.g., "Mar")
+		String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+
+		WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
+
+		// Check which month is selected in the dropdown
+		for (WebElement option : monthlist) {
+			String monthName = option.getText().trim();
+			String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
+
+			WbidBasepage.logger.info("Month: " + monthName + " | Selected: " + isSelected);
+
+			if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
+				WbidBasepage.logger.info("Currently selected month: " + monthName);
+				if (monthName.equalsIgnoreCase(nextMonth)) {
+					WbidBasepage.logger.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
+					return true;
+				} else {
+					WbidBasepage.logger.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
+					return false;
+				}
+			}
+		}
+
+		WbidBasepage.logger.fail("❌ No month is selected by default.");
+		return false;
+	}
+
+	// TC19
+	public boolean checkdisablemonths() {
+		int currentMonthValue = LocalDate.now().getMonthValue(); // 1 = January, 12 = December
+		List<String> disabledMonthsList = new ArrayList<>();
+		boolean isValidationSuccessful = true;
+
+		WbidBasepage.logger.info("🔒 Checking and displaying only disabled months...");
+
+		for (int monthIndex = 1; monthIndex <= 12; monthIndex++) {
+			String expectedMonth = Month.of(monthIndex).getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+			boolean isMonthFound = false;
+
+			for (WebElement option : monthlist) {
+				String actualMonth = option.getText().trim();
+				String classAttribute = option.getAttribute("class");
+				String isDisabled = option.getAttribute("disabled");
+
+				if (actualMonth.equalsIgnoreCase(expectedMonth)) {
+					isMonthFound = true;
+					boolean shouldBeDisabled = (monthIndex <= currentMonthValue);
+					boolean isActuallyDisabled = (isDisabled != null && isDisabled.equalsIgnoreCase("true"))
+							|| (classAttribute != null && classAttribute.toLowerCase().contains("disabled"));
+
+					if (isActuallyDisabled) {
+						disabledMonthsList.add(expectedMonth);
+						WbidBasepage.logger.info("✅ Disabled Month: " + expectedMonth);
+					}
+
+					if (shouldBeDisabled != isActuallyDisabled) {
+						WbidBasepage.logger.fail("❌ State mismatch for '" + expectedMonth + "'. Expected DISABLED: "
+								+ shouldBeDisabled + " but found: " + isActuallyDisabled);
+						isValidationSuccessful = false;
+					}
+					break;
+				}
+			}
+
+			if (!isMonthFound) {
+				WbidBasepage.logger.fail("⚠️ Month '" + expectedMonth + "' not found in the dropdown.");
+				isValidationSuccessful = false;
+			}
+		}
+
+		WbidBasepage.logger.info("📋 Disabled Months: " + String.join(", ", disabledMonthsList));
+
+		if (isValidationSuccessful) {
+			WbidBasepage.logger.pass("✅ Validation successful: All expected months are disabled.");
+		} else {
+			WbidBasepage.logger.fail("❌ Validation failed: One or more months are not in the expected state.");
+		}
+
+		return isValidationSuccessful;
+	}
+//TC20
+
+	public boolean verifyNextAndUpcomingMonthsEnabled() {
+		int currentMonthValue = LocalDate.now().getMonthValue(); // 1 = January, 12 = December
+		List<String> enabledMonthsList = new ArrayList<>();
+		boolean isValidationSuccessful = true;
+
+		WbidBasepage.logger.info("🔎 Checking and displaying only enabled months (excluding 'active' months)...");
+
+		for (int monthIndex = 1; monthIndex <= 12; monthIndex++) {
+			String expectedMonth = Month.of(monthIndex).getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+			boolean isMonthFound = false;
+
+			for (WebElement option : monthlist) {
+				String actualMonth = option.getText().trim();
+				String classAttribute = option.getAttribute("class");
+				String isDisabled = option.getAttribute("disabled");
+
+				if (actualMonth.equalsIgnoreCase(expectedMonth)) {
+					isMonthFound = true;
+					boolean shouldBeEnabled = (monthIndex > currentMonthValue);
+					boolean isActuallyEnabled = (isDisabled == null || !isDisabled.equalsIgnoreCase("true"))
+							&& (classAttribute == null || !classAttribute.toLowerCase().contains("disabled"));
+
+					// 🚫 Exclude months with 'active' class
+					if (classAttribute != null && classAttribute.contains("active")) {
+						WbidBasepage.logger.info("⚠️ Skipping '" + expectedMonth + "' as it has 'active' class.");
+						break;
+					}
+
+					// ✅ Only display enabled months in output
+					if (isActuallyEnabled) {
+						enabledMonthsList.add(expectedMonth);
+						WbidBasepage.logger.info("✅ Enabled Month: " + expectedMonth);
+					}
+
+					// ❌ Validation: If a month expected to be enabled isn't, log failure
+					if (shouldBeEnabled && !isActuallyEnabled) {
+						WbidBasepage.logger
+								.fail("❌ Month '" + expectedMonth + "' should be ENABLED but found DISABLED.");
+						isValidationSuccessful = false;
+					}
+					break;
+				}
+			}
+
+			if (!isMonthFound) {
+				WbidBasepage.logger.fail("⚠️ Month '" + expectedMonth + "' not found in the dropdown.");
+				isValidationSuccessful = false;
+			}
+		}
+
+		WbidBasepage.logger
+				.info("📋 Enabled Months Only (excluding 'active' months): " + String.join(", ", enabledMonthsList));
+
+		if (isValidationSuccessful) {
+			WbidBasepage.logger.pass("🎯 Validation successful: All upcoming months are enabled as expected.");
+		} else {
+			WbidBasepage.logger.fail("❌ Validation failed: One or more upcoming months are not enabled as expected.");
+		}
+
+		return isValidationSuccessful;
+	}
+
+//TC20
+//	@FindBy(xpath="(//button[text()=\" ATL \"])[1]")
+//	public WebElement atl;
+//	@FindBy(xpath="(//button[text()=\" CP \"])[1]")
+//	public WebElement cp;
+	@FindBy(xpath = "(//button[text()=\" 1st Round \"])[1]")
+	public WebElement firstround;
+//	@FindBy(xpath="(//button[text()=\" Mar \"])[1]")
+//	public WebElement mar;
+//	public boolean checkbiddownloadsteps() {
+//		objaction.click(atl);
+//		objaction.click(cp);
+//		objaction.click(firstround);
+//		
+//	}
+	// TC 21
+	@FindBy(xpath = "//div[@class=\"swal2-html-container\"]")
+	public WebElement warningpopup;
+
+	/*********** Bid Download Cases *************/
+	public void checkCondition1DownloadBid() {
+		WbidBasepage.logger
+				.info("🎯 Verifying user can select round 1 and pilot (CP & FO) with all applicable domiciles:");
+
+		for (WebElement city : basecities) {
+			String cityName = city.getText().trim();
+
+			// ❌ Skip AUS and FLL for Pilot
+			if (cityName.equalsIgnoreCase("AUS") || cityName.equalsIgnoreCase("FLL")) {
+				WbidBasepage.logger.info("⚠️ Skipping domicile: " + cityName + " for Pilot as per scenario.");
+				continue;
+			}
+
+			WbidBasepage.logger.info("✨ Domicile Selected: " + cityName);
+			objwait.waitForElemntTobeClickable(driver, city, 5);
+			objaction.click(city);
+
+			for (WebElement position : positionlist) {
+				String pos = position.getText().trim();
+
+				// ✅ Select only Pilot positions (CP and FO)
+				if (pos.equalsIgnoreCase("CP") || pos.equalsIgnoreCase("FO")) {
+					WbidBasepage.logger.info("✨ Pilot Position Selected: " + pos);
+					objwait.waitForElemntTobeClickable(driver, position, 5);
+					objaction.click(position);
+
+					// ✅ Select Round 1
+					objwait.waitForElemntTobeClickable(driver, firstround, 5);
+					objaction.click(firstround);
+					WbidBasepage.logger.info("✅ Round 1 selected for " + pos + " at domicile " + cityName);
+					// Get next month in SHORT format (e.g., "Mar")
+					String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT,
+							Locale.ENGLISH);
+
+					WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
+
+					// Check which month is selected in the dropdown
+					for (WebElement option : monthlist) {
+						String monthName = option.getText().trim();
+						String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
+						if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
+							WbidBasepage.logger.info("Currently selected month: " + monthName);
+							if (monthName.equalsIgnoreCase(nextMonth)) {
+								WbidBasepage.logger
+										.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
+							} else {
+								WbidBasepage.logger
+										.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 }
