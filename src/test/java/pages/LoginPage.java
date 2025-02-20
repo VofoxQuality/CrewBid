@@ -1,11 +1,8 @@
 package pages;
 
-import java.time.Duration;
 import java.util.List;
-import java.util.NoSuchElementException;
-
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -27,6 +24,7 @@ public class LoginPage {
 	}
 //TC 1
 	public String pageHeading() {
+		objwait.implicitWait(driver);
 		String actualHeading = driver.getTitle();
 		return actualHeading;
 	}
@@ -180,4 +178,243 @@ public class LoginPage {
 	}
 
 //TC 13
-}
+	@FindBy(xpath = "//i[@class='fa fa-eye-slash']")
+	public WebElement eyeBtn;
+	
+	public boolean visibilityeyeBtn() {
+		objwait.waitForElementTobeVisible(driver, eyeBtn, 30);
+		WbidBasepage.logger.log(Status.INFO, "Eye Button Visible: " + eyeBtn.isDisplayed());
+		return login.isDisplayed();
+	}
+//TC 14
+	@FindBy(xpath = "//p[text()='Crewbid-iPad']/following::a[1]")
+	public WebElement link;
+	
+	public void clickLink() {
+		objaction.scrolldown(driver);
+		objwait.waitForElementTobeVisible(driver, link, 30);
+		WbidBasepage.logger.log(Status.INFO, " Click on the hyperlink available in the login page of the application (crewbid ipad )");
+		objaction.JavaScriptclick(link);
+	}
+	public boolean linkNavi() {
+	    objaction.switchToWindowByIndex(1);
+	    objwait.waitS(2000);
+	    // Replace non-breaking spaces with regular spaces and trim whitespace
+	    String actualTitle = pageHeading().replace("\u00A0", " ").trim();                                          
+	    String expectedTitle = "CrewBid on the App Store".trim();
+	    WbidBasepage.logger.info("Captured title of the page: " + actualTitle);
+	    WbidBasepage.logger.info("Expected title: " + expectedTitle);
+	    boolean isNavigated = actualTitle.equals(expectedTitle);
+	    if (isNavigated) {
+	        WbidBasepage.logger.info("Navigation to the App Store was successful.");
+	    } else {
+	        WbidBasepage.logger.fail("Navigation failed: Expected [" + expectedTitle + "] but found [" + actualTitle + "]");
+	    }
+	    // Switch back to the main window regardless of the result and close extra tabs
+	    objaction.switchToWindowByIndex(0);
+	    objaction.CheckExtraTabs();
+	    return isNavigated;
+	}
+//TC 15
+	@FindBy(xpath = "//p[text()='Crewbid2']/following::a[1]")
+	public WebElement iPadLink;
+	
+	public void clickiPadLink() {
+		objaction.scrolldown(driver);
+		objwait.waitForElementTobeVisible(driver, iPadLink, 30);
+		WbidBasepage.logger.log(Status.INFO, " Click on the hyperlink available in the login page of the application (crewbid ipad )");
+		objaction.click(iPadLink);;
+	}
+	public boolean hyperLinkNavi() {
+	    objaction.switchToWindowByIndex(1);
+	    objwait.waitS(2000);
+	    // Replace non-breaking spaces with regular spaces and trim whitespace
+	    String actualTitle = pageHeading().replace("\u00A0", " ").trim();                                          
+	    String expectedTitle = "CrewBid2 on the App Store".trim();
+	    WbidBasepage.logger.info("Captured title of the page: " + actualTitle);
+	    WbidBasepage.logger.info("Expected title: " + expectedTitle);
+	    boolean isNavigated = actualTitle.equals(expectedTitle);
+	    if (isNavigated) {
+	        WbidBasepage.logger.info("Navigation to the App Store was successful.");
+	    } else {
+	        WbidBasepage.logger.fail("Navigation failed: Expected [" + expectedTitle + "] but found [" + actualTitle + "]");
+	    }
+	    // Switch back to the main window regardless of the result and close extra tabs
+	    objaction.switchToWindowByIndex(0);
+	    objaction.CheckExtraTabs();
+	    return isNavigated;
+	}
+//TC 16
+		@FindBy(xpath = "//p[text()='CrewbidValet']/following::a[1]")
+		public WebElement valetLink;
+		
+		public void clickvaletLink() {
+			objaction.scrolldown(driver);
+			objwait.waitForElementTobeVisible(driver, valetLink, 30);
+			WbidBasepage.logger.log(Status.INFO, " Click on the hyperlink available in the login page of the application (crewbid ipad )");
+			objaction.click(valetLink);
+		}
+		public boolean valetLinkLinkNavi() {
+		    objaction.switchToWindowByIndex(1);
+		    objwait.waitS(2000);
+		    // Replace non-breaking spaces with regular spaces and trim whitespace
+		    String actualTitle = pageHeading().replace("\u00A0", " ").trim();                                          
+		    String expectedTitle = "CrewBid Valet on the App Store".trim();
+		    WbidBasepage.logger.info("Captured title of the page: " + actualTitle);
+		    WbidBasepage.logger.info("Expected title: " + expectedTitle);
+		    boolean isNavigated = actualTitle.equals(expectedTitle);
+		    if (isNavigated) {
+		        WbidBasepage.logger.info("Navigation to the App Store was successful.");
+		    } else {
+		        WbidBasepage.logger.fail("Navigation failed: Expected [" + expectedTitle + "] but found [" + actualTitle + "]");
+		    }
+		    // Switch back to the main window regardless of the result and close extra tabs
+		    objaction.switchToWindowByIndex(0);
+		    objaction.CheckExtraTabs();
+		    return isNavigated;
+		}
+//TC 17
+		@FindBy(xpath = "//p[contains(@class,'fake-input-text')]")
+		public WebElement maskedPswd;
+		
+		public boolean pswdMasked() {
+		    password.click();
+		    password.clear();
+		    password.sendKeys(WbidBasepage.password);
+		 // Retrieve the displayed text from the fake input element
+		    String displayedText = maskedPswd.getText().trim();
+		    WbidBasepage.logger.log(Status.PASS, "Displayed Password Text: " + displayedText);
+		    // Check if the displayed text is in a masked format 
+		    if (displayedText.matches("[•*]+")) {
+		        System.out.println("The password is displayed in a masked format.");
+		        return true;
+		    } else {
+		        System.out.println("The password is not displayed in a masked format.");
+		        return false;
+		    }
+		}
+//TC 18
+		@FindBy(xpath = "//*[text()=' This field is required ']")
+		public WebElement mandatoryEmpMssg;
+		
+		public boolean empNoAlertMssg() {
+			empNo.click();
+			password.click();
+			String txt = objaction.gettext(mandatoryEmpMssg);
+			WbidBasepage.logger.pass("EmpNo Alert Mssg: " + txt);
+			boolean val=objaction.fordisplay(mandatoryEmpMssg);
+			return val;
+		}
+//TC 19
+		public boolean pswdAlertMssg() {
+		    password.click();
+		    String currentText = WbidBasepage.password;
+		    int textLength = currentText.length();
+		    // Clear the text using BACK_SPACE
+		    for (int i = 0; i < textLength; i++) {
+		        password.sendKeys(Keys.BACK_SPACE);
+		    }
+		    objaction.sendkey(empNo, String.valueOf((int) Double.parseDouble(WbidBasepage.username)));
+		    WbidBasepage.logger.log(Status.PASS, "Enter Employee Number Details Passed");
+		    empNo.click();
+		    String txt = objaction.gettext(mandatoryEmpMssg);
+		    WbidBasepage.logger.pass("Password Alert Mssg: " + txt);
+		    boolean val = objaction.fordisplay(mandatoryEmpMssg);
+		    return val;
+		}
+//TC 20
+		@FindBy(xpath = "//*[text()=' This field is required ']")
+		public List<WebElement> alertMssgs;
+		
+		public boolean mandatoryMssgs() {
+			empNo.click();
+		    String currentText = WbidBasepage.username;
+		    int textLength = currentText.length();
+		    // Clear the text using BACK_SPACE
+		    for (int i = 0; i < textLength; i++) {
+		    	empNo.sendKeys(Keys.BACK_SPACE);
+		    }
+		    password.click();
+		 // Check if both alert messages are displayed
+		    boolean alertsVisible = alertMssgs.size() >= 2;
+		    // Logging alert messages for debugging
+		    if (alertsVisible) {
+		        for (WebElement alert : alertMssgs) {
+		            String alertText = alert.getText().trim();
+		            WbidBasepage.logger.pass("Alert Message: " + alertText);
+		        }
+		    } else {
+		        WbidBasepage.logger.fail("Not all mandatory field alerts are visible.");
+		    }
+
+		    return alertsVisible;
+		}
+//TC 21
+		@FindBy(xpath = "//*[text()=' Employee Number cannot exceed 8 digits. ']")
+		public WebElement empLimitMssgs;
+		
+		public void enterEmpNo(String user) {
+			try {
+				WbidBasepage.logger.info("Entering Emp No");
+				objaction.sendkey(empNo, user);
+				WbidBasepage.logger.pass("Emp No entered successfully");
+			} catch (Exception e) {
+				WbidBasepage.logger.fail("An error occurred while entering Emp No: " + e.getMessage());
+				throw e;
+			}
+		}
+		public boolean empNoValidationPrsnt() {
+			boolean isPresent = false;
+			try {
+				WbidBasepage.logger.info("Checking if Emp No validation message is present when limit exceed 8 digit");
+				isPresent = objaction.fordisplay(empLimitMssgs);
+				WbidBasepage.logger.pass("Emp No validation message presence check completed successfully");
+			} catch (Exception e) {
+				WbidBasepage.logger
+						.fail("An error occurred while checking Emp No validation message presence: " + e.getMessage());
+				throw e;
+			}
+			return isPresent;
+		}
+//TC 22
+		public void clearuser() {
+			empNo.click();
+		    String currentText = objaction.getValue(empNo);
+		    int textLength = currentText.length();
+		    // Clear the text using BACK_SPACE
+		    for (int i = 0; i < textLength; i++) {
+		    	empNo.sendKeys(Keys.BACK_SPACE);
+		    }
+		}
+		public boolean empNoalphPrsnt() {
+			boolean isPresent = false;
+			try {
+				WbidBasepage.logger.info("Provide username with first letter as any letter other than 'x' or 'e'");
+				String txt = objaction.getValue(empNo);
+				isPresent=txt.isEmpty();
+				WbidBasepage.logger.pass("validation  successfully");
+			} catch (Exception e) {
+				WbidBasepage.logger
+						.fail("An error occurred : " + e.getMessage());
+				throw e;
+			}
+			return isPresent;
+		}
+		public void enterPassword(String pswrd) {
+			try {
+				WbidBasepage.logger.info("Entering password");
+				objaction.sendkey(password, pswrd);
+				WbidBasepage.logger.pass("Entered password successfully");
+			} catch (Exception e) {
+				WbidBasepage.logger.fail("An error occurred while entering password: " + e.getMessage());
+				throw e;
+			}
+		}
+
+	        
+		}
+
+	    
+	
+
+
