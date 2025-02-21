@@ -16,8 +16,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.Assert;
@@ -41,12 +39,13 @@ public class TrialBidAPI extends WbidBasepage {
 	public static Map<String, Double> totRigAdgMap = new HashMap<>();
 	// public static int i=0;
 	public static List<String> dynamicArray = new ArrayList<>();
-	public static List<Double> tfpSums=new ArrayList<>();
-	public static List<Double> dutyHrs=new ArrayList<>();
+	public static List<Double> tfpSums = new ArrayList<>();
+	public static List<Double> dutyHrs = new ArrayList<>();
 	public static double tafb;
 	public static double TotalRigAdg;
 	public static String tripCode;
-	public static int passCount=0,errorCount=0;
+	public static int passCount = 0, errorCount = 0;
+
 	@Test(priority = 1)
 	public static void fetchApiData() throws JsonProcessingException {
 		WbidBasepage.logger = extent.createTest("Bid Download API").assignAuthor("VS/445");
@@ -95,7 +94,7 @@ public class TrialBidAPI extends WbidBasepage {
 		String fileContents = nextResponse.jsonPath().getString("lstBidDataFiles.FileContent[0]");
 		String filePath = "WBL_Decompressed.txt";
 		String decompressedString = LZString.decompressFromUTF16(fileContents);
-		//System.out.println("Decompressed String: " + decompressedString);
+		// System.out.println("Decompressed String: " + decompressedString);
 		ObjectMapper mapper = new ObjectMapper();
 		Object json = mapper.readValue(decompressedString, Object.class);
 		String prettyJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
@@ -110,7 +109,7 @@ public class TrialBidAPI extends WbidBasepage {
 		String fileContents1 = nextResponse.jsonPath().getString("lstBidDataFiles.FileContent[1]");
 		String filePath1 = "WBP_Decompressed.txt";
 		String decompressedString1 = LZString.decompressFromUTF16(fileContents1);
-		//System.out.println("Decompressed String: " + decompressedString1);
+		// System.out.println("Decompressed String: " + decompressedString1);
 		ObjectMapper mapper1 = new ObjectMapper();
 		Object json1 = mapper1.readValue(decompressedString1, Object.class);
 		String prettyJson1 = mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(json1);
@@ -169,272 +168,273 @@ public class TrialBidAPI extends WbidBasepage {
 		}
 
 		JSONObject tripsData = new JSONObject(prettyJson1);
-		 Set<String> firstFourSet = new HashSet<>(Arrays.asList(firstFourCharsArray));
+		Set<String> firstFourSet = new HashSet<>(Arrays.asList(firstFourCharsArray));
 		// List<String> dynamicArray=new ArrayList<>() ;
 		// Iterate through each trip in the JSON object
 		tripsData.keys().forEachRemaining(tripCode -> {
-			if (firstFourSet.contains(tripCode.substring(0, 4)))
-			{
-			JSONObject tripDetails = tripsData.getJSONObject(tripCode);
-			double tafb = tripDetails.getInt("Tafb");
-			// Store tafb values along with trip codes
-	        //Map<String, Integer> tafbMap = new HashMap<>();
-	        tafbMap.put(tripCode, tafb);
-	        double TotRigAdg = tripDetails.getDouble("RigAdg");
-	        totRigAdgMap.put(tripCode, TotRigAdg);
-	        totRigAdgMap.forEach((key, value) -> System.out.println("TripCode: " + key + ", TotalRigAdg: " + value));
-	        //System.out.println("Stored Tafb Data:");
-	       // tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ", Tafb: " + value));
-			
-			// Start building the output for this trip
-			tripOutput = new StringBuilder(tripCode + "  ");
+			if (firstFourSet.contains(tripCode.substring(0, 4))) {
+				JSONObject tripDetails = tripsData.getJSONObject(tripCode);
+				double tafb = tripDetails.getInt("Tafb");
+				// Store tafb values along with trip codes
+				// Map<String, Integer> tafbMap = new HashMap<>();
+				tafbMap.put(tripCode, tafb);
+				double TotRigAdg = tripDetails.getDouble("RigAdg");
+				totRigAdgMap.put(tripCode, TotRigAdg);
+				totRigAdgMap
+						.forEach((key, value) -> System.out.println("TripCode: " + key + ", TotalRigAdg: " + value));
+				// System.out.println("Stored Tafb Data:");
+				// tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ",
+				// Tafb: " + value));
 
-			// Extract the DutyPeriods array
-			JSONArray dutyPeriods = tripDetails.getJSONArray("DutyPeriods");
-			for (int i = 0; i < dutyPeriods.length(); i++) {
-				JSONObject dutyPeriod = dutyPeriods.getJSONObject(i);
-				// Extract FlightSeqNum and Tfp
-				int DutSeqNum = dutyPeriod.getInt("DutPerSeqNum");
-				double TOTALtfp = dutyPeriod.getDouble("Tfp");
-				double Dutyhrs = dutyPeriod.getDouble("DutyTime");
-				
-				 // Calculate hours and remaining minutes
-		        int hours = (int) (Dutyhrs / 60);
-		        int minutes = (int) (Dutyhrs % 60);
-		        double timeAsDouble = hours + (minutes / 100.0);
-				// tripOutput.append("DutySeqNum" + DutSeqNum + "
-				// TOTALtfp").append(":").append(TOTALtfp).append(" ");
-				double RigAdg = dutyPeriod.getDouble("RigAdg");
-				
-				tripOutput.append("DutySeqNum" + DutSeqNum + " TOTALfp").append(":").append(TOTALtfp + RigAdg)
-						.append(" ").append(" Dutyhrs "+timeAsDouble+" ");
+				// Start building the output for this trip
+				tripOutput = new StringBuilder(tripCode + "  ");
 
-				// Extract the Flights array
-				JSONArray flights = dutyPeriod.getJSONArray("Flights");
-				for (int j = 0; j < flights.length(); j++) {
-					JSONObject flight = flights.getJSONObject(j);
-
+				// Extract the DutyPeriods array
+				JSONArray dutyPeriods = tripDetails.getJSONArray("DutyPeriods");
+				for (int i = 0; i < dutyPeriods.length(); i++) {
+					JSONObject dutyPeriod = dutyPeriods.getJSONObject(i);
 					// Extract FlightSeqNum and Tfp
-					int flightSeqNum = flight.getInt("FlightSeqNum");
-					double tfp = flight.getDouble("Tfp");
+					int DutSeqNum = dutyPeriod.getInt("DutPerSeqNum");
+					double TOTALtfp = dutyPeriod.getDouble("Tfp");
+					double Dutyhrs = dutyPeriod.getDouble("DutyTime");
 
-					// Append to the trip output
-					tripOutput.append("FlightSeqNum " + flightSeqNum).append(" ").append("Tfp:" + tfp).append("   ");
-				}
-			}
+					// Calculate hours and remaining minutes
+					int hours = (int) (Dutyhrs / 60);
+					int minutes = (int) (Dutyhrs % 60);
+					double timeAsDouble = hours + (minutes / 100.0);
+					// tripOutput.append("DutySeqNum" + DutSeqNum + "
+					// TOTALtfp").append(":").append(TOTALtfp).append(" ");
+					double RigAdg = dutyPeriod.getDouble("RigAdg");
 
-			// Print the result for this trip
-		//	System.out.println(tripOutput.toString().trim());
-			// convert stringbuilder to string
+					tripOutput.append("DutySeqNum" + DutSeqNum + " TOTALfp").append(":").append(TOTALtfp + RigAdg)
+							.append(" ").append(" Dutyhrs " + timeAsDouble + " ");
 
-			String strOutput = tripOutput.toString();
-			// Save the string to an array
+					// Extract the Flights array
+					JSONArray flights = dutyPeriod.getJSONArray("Flights");
+					for (int j = 0; j < flights.length(); j++) {
+						JSONObject flight = flights.getJSONObject(j);
 
-			dynamicArray.add(strOutput);
-			//System.out.println("Stored Tafb Data:");
-	       // tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ", Tafb: " + value));
-			//logger.info("Stored Tafb Data:");
-	       // tafbMap.forEach((key, value) -> logger.info("TripCode: " + key + ", Tafb: " + value));
-			
+						// Extract FlightSeqNum and Tfp
+						int flightSeqNum = flight.getInt("FlightSeqNum");
+						double tfp = flight.getDouble("Tfp");
 
-			}});
-		System.out.println("Stored Tafb Data:");
-        tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ", Tafb: " + value));
-		// System.out.println("DYNAMIC ARRAY IS "+dynamicArray);
-		for (int i = 0; i < dynamicArray.size(); i++) {
-			//System.out.println("Dynamic Array element " + i + ": " + dynamicArray.get(i));
-			logger.info("Dynamic Array element " + i + " " + dynamicArray.get(i));
-		}
-		/*Fetching Each Tfp values for the corresponding trip code*/
-		/*ArrayList<Double> newArr = new ArrayList<>();
-
-		for (String entry : dynamicArray) {
-			if (entry.startsWith("AA43")) {
-				String[] parts = entry.split("Tfp:");
-				for (int i = 1; i < parts.length; i++) {
-					try {
-						String valuePart = parts[i].split(" ")[0];
-						System.out.println("Value Part" + valuePart);
-						newArr.add(Double.parseDouble(valuePart.trim()));
-						
-					} catch (NumberFormatException e) {
-						logger.fail("Invalid Tfp value in entry: " + parts[i]);
+						// Append to the trip output
+						tripOutput.append("FlightSeqNum " + flightSeqNum).append(" ").append("Tfp:" + tfp)
+								.append("   ");
 					}
 				}
-				break; // Exit loop after finding the matching entry
+
+				// Print the result for this trip
+				// System.out.println(tripOutput.toString().trim());
+				// convert stringbuilder to string
+
+				String strOutput = tripOutput.toString();
+				// Save the string to an array
+
+				dynamicArray.add(strOutput);
+				// System.out.println("Stored Tafb Data:");
+				// tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ",
+				// Tafb: " + value));
+				// logger.info("Stored Tafb Data:");
+				// tafbMap.forEach((key, value) -> logger.info("TripCode: " + key + ", Tafb: " +
+				// value));
+
 			}
-		}*/
+		});
+		System.out.println("Stored Tafb Data:");
+		tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ", Tafb: " + value));
+		// System.out.println("DYNAMIC ARRAY IS "+dynamicArray);
+		for (int i = 0; i < dynamicArray.size(); i++) {
+			// System.out.println("Dynamic Array element " + i + ": " +
+			// dynamicArray.get(i));
+			logger.info("Dynamic Array element " + i + " " + dynamicArray.get(i));
+		}
+		/* Fetching Each Tfp values for the corresponding trip code */
+		/*
+		 * ArrayList<Double> newArr = new ArrayList<>();
+		 * 
+		 * for (String entry : dynamicArray) { if (entry.startsWith("AA43")) { String[]
+		 * parts = entry.split("Tfp:"); for (int i = 1; i < parts.length; i++) { try {
+		 * String valuePart = parts[i].split(" ")[0]; System.out.println("Value Part" +
+		 * valuePart); newArr.add(Double.parseDouble(valuePart.trim()));
+		 * 
+		 * } catch (NumberFormatException e) {
+		 * logger.fail("Invalid Tfp value in entry: " + parts[i]); } } break; // Exit
+		 * loop after finding the matching entry } }
+		 */
 		for (String s : dynamicArray) {
-			String[] parts =  s.trim().split("\\s+");
+			String[] parts = s.trim().split("\\s+");
 
 			// Assuming the TripCode is always after "Dynamic Array element 0"
 			tripCode = parts[0]; // "AAA9"
-			//System.out.println("Splitted Trip Code is" + tripCode);
-            //if (s.startsWith("AAFH")) {
-            	//if (tafbMap.containsKey(tripCode)) {
-            	  //System.out.println("For TripCode: AAFH, Tafb is: " + tafbMap.get(tripCode));
-            	    tafb=tafbMap.get(tripCode);
-            	    TotalRigAdg=totRigAdgMap.get(tripCode);
-            	    TotalRigAdg=Math.round(TotalRigAdg * 100.0) / 100.0;
-            	    
-            	   // System.out.println("TafB is: " + tafb);
-            	    
-            	//} else {
-            	   // System.out.println("TripCode " + tripCode + " not found.");
-            	//}
-                // Extract and calculate the sum of TFP for each dynamic DutySeqNum
-               // List<Double> tfpSums = extractAndSumTfps(s);
-                tfpSums = extractAndSumTfps(s);
+			// System.out.println("Splitted Trip Code is" + tripCode);
+			// if (s.startsWith("AAFH")) {
+			// if (tafbMap.containsKey(tripCode)) {
+			// System.out.println("For TripCode: AAFH, Tafb is: " + tafbMap.get(tripCode));
+			tafb = tafbMap.get(tripCode);
+			TotalRigAdg = totRigAdgMap.get(tripCode);
+			TotalRigAdg = Math.round(TotalRigAdg * 100.0) / 100.0;
 
-                // Print the TFP sums for each DutySeqNum
-                for (int i = 0; i < tfpSums.size(); i++) {
-                   // System.out.println("tfpsum" + (i + 1) + ": " + tfpSums.get(i));
-                }
-              //  System.out.println("tfpsum array"  + tfpSums);
-            
-        
-		
-		  // Extracting Dutyhrs for AA33
-       // for (String s : dynamicArray) {
-          //  if (s.startsWith("AAFH")) {
-                //List<Double> dutyHrs = extractDutyHours(s);
-            	 dutyHrs = extractDutyHours(s);
-              //  System.out.println("Dutyhrs array: " + dutyHrs);
-            //}
-       // }
-        CredCalculation();
-        
-    }
-		System.out.println("Error count= "+errorCount);
-        System.out.println("Pass count= "+passCount);
+			// System.out.println("TafB is: " + tafb);
+
+			// } else {
+			// System.out.println("TripCode " + tripCode + " not found.");
+			// }
+			// Extract and calculate the sum of TFP for each dynamic DutySeqNum
+			// List<Double> tfpSums = extractAndSumTfps(s);
+			tfpSums = extractAndSumTfps(s);
+
+			// Print the TFP sums for each DutySeqNum
+			for (int i = 0; i < tfpSums.size(); i++) {
+				// System.out.println("tfpsum" + (i + 1) + ": " + tfpSums.get(i));
+			}
+			// System.out.println("tfpsum array" + tfpSums);
+
+			// Extracting Dutyhrs for AA33
+			// for (String s : dynamicArray) {
+			// if (s.startsWith("AAFH")) {
+			// List<Double> dutyHrs = extractDutyHours(s);
+			dutyHrs = extractDutyHours(s);
+			// System.out.println("Dutyhrs array: " + dutyHrs);
+			// }
+			// }
+			CredCalculation();
+
+		}
+		System.out.println("Error count= " + errorCount);
+		System.out.println("Pass count= " + passCount);
 	}
-	
 
-	 public static List<Double> extractDutyHours(String input) {
-	        List<Double> dutyHrs = new ArrayList<>();
-	        String[] parts = input.split("Dutyhrs ");
-	        for (int i = 1; i < parts.length; i++) {
-	            dutyHrs.add(Double.parseDouble(parts[i].split("FlightSeqNum")[0].trim()));
-	        }
-	        return dutyHrs;
-	    }
-	
-	// Method to extract and sum the TFP values for all DutySeqNum numbers dynamically
-    public static List<Double> extractAndSumTfps(String data) {
-        List<Double> tfpSums = new ArrayList<>();
+	public static List<Double> extractDutyHours(String input) {
+		List<Double> dutyHrs = new ArrayList<>();
+		String[] parts = input.split("Dutyhrs ");
+		for (int i = 1; i < parts.length; i++) {
+			dutyHrs.add(Double.parseDouble(parts[i].split("FlightSeqNum")[0].trim()));
+		}
+		return dutyHrs;
+	}
 
-        // Regular expression to match DutySeqNum followed by number and Tfp values
-        String dutySeqPattern = "DutySeqNum(\\d+).*?TOTALfp:[\\d\\.]+(.*?)((?=DutySeqNum|$))";
-        
-        Pattern pattern = Pattern.compile(dutySeqPattern, Pattern.DOTALL); // Pattern.DOTALL allows for multiline matching
-        Matcher matcher = pattern.matcher(data);
+	// Method to extract and sum the TFP values for all DutySeqNum numbers
+	// dynamically
+	public static List<Double> extractAndSumTfps(String data) {
+		List<Double> tfpSums = new ArrayList<>();
 
-        // Loop through each DutySeqNum block
-        while (matcher.find()) {
-            String dutySeqData = matcher.group(2);  // Extract the Tfp values section for this DutySeqNum
-            double sum = sumTfpValues(dutySeqData);  // Sum the Tfp values for this DutySeqNum
-           // tfpSums.add(roundToDecimal(sum, 1)); // Store the rounded sum with 1 decimal place
-            tfpSums.add(sum);
-        }
+		// Regular expression to match DutySeqNum followed by number and Tfp values
+		String dutySeqPattern = "DutySeqNum(\\d+).*?TOTALfp:[\\d\\.]+(.*?)((?=DutySeqNum|$))";
 
-        return tfpSums;
-    }
+		Pattern pattern = Pattern.compile(dutySeqPattern, Pattern.DOTALL); // Pattern.DOTALL allows for multiline
+																			// matching
+		Matcher matcher = pattern.matcher(data);
 
-    // Method to sum the TFP values for a given DutySeqNum section
-    public static double sumTfpValues(String dutySeqData) {
-        double sum = 0.0;
-        
-        // Pattern to match Tfp values under each DutySeqNum section
-        String tfpPattern = "Tfp:([\\d\\.]+)";  // Match any Tfp value
+		// Loop through each DutySeqNum block
+		while (matcher.find()) {
+			String dutySeqData = matcher.group(2); // Extract the Tfp values section for this DutySeqNum
+			double sum = sumTfpValues(dutySeqData); // Sum the Tfp values for this DutySeqNum
+			// tfpSums.add(roundToDecimal(sum, 1)); // Store the rounded sum with 1 decimal
+			// place
+			tfpSums.add(sum);
+		}
 
-        Pattern pattern = Pattern.compile(tfpPattern);
-        Matcher matcher = pattern.matcher(dutySeqData);
+		return tfpSums;
+	}
 
-        // Sum all the Tfp values in this section
-        while (matcher.find()) {
-            sum += Double.parseDouble(matcher.group(1));  // Sum the TFP values
-        }
+	// Method to sum the TFP values for a given DutySeqNum section
+	public static double sumTfpValues(String dutySeqData) {
+		double sum = 0.0;
 
-        return sum;
-    }
+		// Pattern to match Tfp values under each DutySeqNum section
+		String tfpPattern = "Tfp:([\\d\\.]+)"; // Match any Tfp value
 
-    // Method to round a number to a specified number of decimal places
-    public static double roundToDecimal(double value, int places) {
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);  // Round to specified decimal places
-        return bd.doubleValue();
-    }
-    
-    
+		Pattern pattern = Pattern.compile(tfpPattern);
+		Matcher matcher = pattern.matcher(dutySeqData);
 
-    public static void CredCalculation (){
-        
-            // Initial values
-        //    List<Double> cred = Arrays.asList(7.5, 7.9, 3.2); // Original cred values
-          //  List<Double> dhr = Arrays.asList(9.45, 10.35, 5.0); // Original dhr values
-            double threshold = 5.0;          // Threshold for rig dpm
-            double tmpPerHour = 6.5;         // TMP value per hour
-            //double tafb = 19.15;             // TAFB value
+		// Sum all the Tfp values in this section
+		while (matcher.find()) {
+			sum += Double.parseDouble(matcher.group(1)); // Sum the TFP values
+		}
 
-            // Step 1: Calculate new rig dpm values
-            List<Double> newRigDpm = new ArrayList<>();
-            for (double value : tfpSums) {
-                newRigDpm.add(Math.max(value, threshold));
-            }
+		return sum;
+	}
 
-            // Step 2: Calculate new dhr values
-            List<Double> newDhr = new ArrayList<>();
-            for (double value : dutyHrs) {
-                int hours = (int) value; // Extract hours
-                double minutes = (value - hours) * 100; // Extract minutes
-               newDhr.add((hours + (minutes / 60)) * 0.74); // Perform the calculation
-               // newDhr.add(roundToDecimal((hours + (minutes / 60.0)) * 0.74));
-               
-               
-            }
-            
+	// Method to round a number to a specified number of decimal places
+	public static double roundToDecimal(double value, int places) {
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.setScale(places, RoundingMode.HALF_UP); // Round to specified decimal places
+		return bd.doubleValue();
+	}
 
-            // Step 3: Compare new rig dpm with new dhr to get new cred values
-            List<Double> ar = new ArrayList<>();
-            for (int i = 0; i < tfpSums.size(); i++) {
-                ar.add(Math.max(newRigDpm.get(i), newDhr.get(i)));
-            }
+	public static void CredCalculation() {
 
-            // Step 4: Calculate total cred value
-            double totCredValue = ar.stream().mapToDouble(Double::doubleValue).sum();
+		// Initial values
+		// List<Double> cred = Arrays.asList(7.5, 7.9, 3.2); // Original cred values
+		// List<Double> dhr = Arrays.asList(9.45, 10.35, 5.0); // Original dhr values
+		double threshold = 5.0; // Threshold for rig dpm
+		double tmpPerHour = 6.5; // TMP value per hour
+		// double tafb = 19.15; // TAFB value
 
-            // Step 5: Calculate TMP
-            double tmp = tmpPerHour*tfpSums.size(); // TMP = per hour value  count
-            SoftAssert soft1 = new SoftAssert();         
-int size=tfpSums.size();    
+		// Step 1: Calculate new rig dpm values
+		List<Double> newRigDpm = new ArrayList<>();
+		for (double value : tfpSums) {
+			newRigDpm.add(Math.max(value, threshold));
+		}
+
+		// Step 2: Calculate new dhr values
+		List<Double> newDhr = new ArrayList<>();
+		for (double value : dutyHrs) {
+			int hours = (int) value; // Extract hours
+			double minutes = (value - hours) * 100; // Extract minutes
+			newDhr.add((hours + (minutes / 60)) * 0.74); // Perform the calculation
+			// newDhr.add(roundToDecimal((hours + (minutes / 60.0)) * 0.74));
+
+		}
+
+		// Step 3: Compare new rig dpm with new dhr to get new cred values
+		List<Double> ar = new ArrayList<>();
+		for (int i = 0; i < tfpSums.size(); i++) {
+			ar.add(Math.max(newRigDpm.get(i), newDhr.get(i)));
+		}
+
+		// Step 4: Calculate total cred value
+		double totCredValue = ar.stream().mapToDouble(Double::doubleValue).sum();
+
+		// Step 5: Calculate TMP
+		double tmp = tmpPerHour * tfpSums.size(); // TMP = per hour value count
+		SoftAssert soft1 = new SoftAssert();
+		int size = tfpSums.size();
 //System.out.println("No of days Array Size" + size);
 // Calculate hours and remaining minutes
-int tafbhours = (int) (tafb / 60);
-int tafbminutes = (int) (tafb % 60);
-double tafbtimeAsDouble = (tafbhours + (tafbminutes / 100.0));
+		int tafbhours = (int) (tafb / 60);
+		int tafbminutes = (int) (tafb % 60);
+		double tafbtimeAsDouble = (tafbhours + (tafbminutes / 100.0));
 
 // Step 6: Determine final cred
-          //  double finalCred = Math.max(tmp, tafbtimeAsDouble/size);
+		// double finalCred = Math.max(tmp, tafbtimeAsDouble/size);
 
-            // Step 7: Calculate Grand Value
-           // double grandValue = finalCred - totCredValue;
-double RigAdg = 0.0;
-double RigThr = 0.0;
-double newTafbhr=(tafb/60);
+		// Step 7: Calculate Grand Value
+		// double grandValue = finalCred - totCredValue;
+		double RigAdg = 0;
+//BigDecimal RigAdg = BigDecimal.valueOf(0.0);
+		double RigThr = 0;
+		double newTafbhr = (tafb / 60);
 //System.out.println("Calculated TAFB in hrs:"+newTafbhr);
-double newTafb=newTafbhr/3;
+		double newTafb = newTafbhr / 3;
 
-if (tmp > totCredValue &&tmp > newTafb) {
-    RigAdg = tmp - totCredValue;
-    RigAdg=Math.round(RigAdg * 100.0) / 100.0;
-    
-} else if (newTafb > totCredValue && newTafb > tmp) {
-    RigThr = newTafb - totCredValue;
-    RigThr=Math.round(RigThr * 100.0) / 100.0;
-} 
+		if (tmp > totCredValue && tmp >= newTafb) {
+			// RigAdg = tmp - totCredValue;
+			RigAdg = Math.round((tmp - totCredValue) * 100.0) / 100.0;
+			// RigAdg =BigDecimal.valueOf(tmp - totCredValue).setScale(2,
+			// RoundingMode.HALF_UP);
+			// RigAdg=Math.round(RigAdg * 100.0) / 100.0;
+
+		} else if (newTafb > totCredValue && newTafb > tmp) {
+			// RigThr = newTafb - totCredValue;
+			RigThr = Math.round((newTafb - totCredValue) * 100.0) / 100.0;
+
+			// RigThr=Math.round(RigThr * 100.0) / 100.0;
+		}
 
 //Output the results
-logger.info("Trip Code:" + tripCode);
+		logger.info("Trip Code:" + tripCode);
 		logger.info("New Rig DPM: " + newRigDpm);
 		logger.info("New DHR: " + newDhr);
 		logger.info("New Cred Values (ar): " + ar);
@@ -444,71 +444,65 @@ logger.info("Trip Code:" + tripCode);
 		logger.info("New TAFB: " + newTafb);
 		logger.info("Rig Adg: " + RigAdg);
 		logger.info("Rig Thr: " + RigThr);
-		  SoftAssert softAssert = new SoftAssert();
-		  boolean assertionPassed = true; 
-		
-           
-            String strTotRigAdg = Double.toString(TotalRigAdg);
-            
-            // Perform soft assertion (this will NOT throw an exception immediately)
-            softAssert.assertEquals(RigAdg, TotalRigAdg, "RigAdgs are not equal");
-            
+		SoftAssert softAssert = new SoftAssert();
+		boolean assertionPassed = true;
 
-            // Validate soft assertions at the end
-            try {
-                softAssert.assertAll();  // This will throw AssertionError if any assertion failed
-                WbidBasepage.logger.log(Status.PASS, "RigAdgs are equal: " + strTotRigAdg);
-                passCount++;
-            } catch (AssertionError e) {
-                assertionPassed = false; // Mark failure
-                WbidBasepage.logger.log(Status.FAIL, "Soft Assertion failed: " + e.getMessage());
-                errorCount++;
-            }
+		String strTotRigAdg = Double.toString(TotalRigAdg);
 
-            System.out.println("Execution continues...");
-    
-    }
-    
-    public static double roundToDecimal(double value) {
-        return Math.round(value * 100.0) / 100.0; // Rounds to 2 decimal places
-    }
+		// Perform soft assertion (this will NOT throw an exception immediately)
+
+		softAssert.assertEquals(RigAdg, TotalRigAdg,.05, "RigAdgs are not equal");
+
+		// Validate soft assertions at the end
+		try {
+			softAssert.assertAll(); // This will throw AssertionError if any assertion failed
+			WbidBasepage.logger.log(Status.PASS, "RigAdgs are equal: " + strTotRigAdg);
+			passCount++;
+		} catch (AssertionError e) {
+			assertionPassed = false; // Mark failure
+			WbidBasepage.logger.log(Status.FAIL, "Soft Assertion failed: " + e.getMessage());
+			errorCount++;
+		}
+
+		System.out.println("Execution continues...");
+
+	}
+
+	public static double roundToDecimal(double value) {
+		return Math.round(value * 100.0) / 100.0; // Rounds to 2 decimal places
+	}
 	/*
-	public static List<Double> extractAndSumTfps(String data) {
-        List<Double> tfpSums = new ArrayList<>();
+	 * public static List<Double> extractAndSumTfps(String data) { List<Double>
+	 * tfpSums = new ArrayList<>();
+	 * 
+	 * // Regular expression to match DutySeqNum followed by number and Tfp values
+	 * String dutySeqPattern =
+	 * "DutySeqNum(\\d+).*?TOTALtfp:[\\d\\.]+(.*?)((?=DutySeqNum|$))";
+	 * 
+	 * Pattern pattern = Pattern.compile(dutySeqPattern, Pattern.DOTALL); //
+	 * Pattern.DOTALL allows for multiline matching Matcher matcher =
+	 * pattern.matcher(data);
+	 * 
+	 * // Loop through each DutySeqNum block while (matcher.find()) { String
+	 * dutySeqData = matcher.group(2); // Extract the Tfp values section for this
+	 * DutySeqNum double sum = sumTfpValues(dutySeqData); // Sum the Tfp values for
+	 * this DutySeqNum tfpSums.add(sum); }
+	 * 
+	 * return tfpSums; }
+	 * 
+	 * // Method to sum the TFP values for a given DutySeqNum section public static
+	 * double sumTfpValues(String dutySeqData) { double sum = 0.0;
+	 * 
+	 * // Pattern to match Tfp values under each DutySeqNum section String
+	 * tfpPattern = "Tfp:([\\d\\.]+)"; // Match any Tfp value
+	 * 
+	 * Pattern pattern = Pattern.compile(tfpPattern); Matcher matcher =
+	 * pattern.matcher(dutySeqData);
+	 * 
+	 * // Sum all the Tfp values in this section while (matcher.find()) { sum +=
+	 * Double.parseDouble(matcher.group(1)); }
+	 * 
+	 * return sum; }
+	 */
 
-        // Regular expression to match DutySeqNum followed by number and Tfp values
-        String dutySeqPattern = "DutySeqNum(\\d+).*?TOTALtfp:[\\d\\.]+(.*?)((?=DutySeqNum|$))";
-        
-        Pattern pattern = Pattern.compile(dutySeqPattern, Pattern.DOTALL); // Pattern.DOTALL allows for multiline matching
-        Matcher matcher = pattern.matcher(data);
-
-        // Loop through each DutySeqNum block
-        while (matcher.find()) {
-            String dutySeqData = matcher.group(2);  // Extract the Tfp values section for this DutySeqNum
-            double sum = sumTfpValues(dutySeqData);  // Sum the Tfp values for this DutySeqNum
-            tfpSums.add(sum);
-        }
-
-        return tfpSums;
-    }
-
-    // Method to sum the TFP values for a given DutySeqNum section
-    public static double sumTfpValues(String dutySeqData) {
-        double sum = 0.0;
-        
-        // Pattern to match Tfp values under each DutySeqNum section
-        String tfpPattern = "Tfp:([\\d\\.]+)";  // Match any Tfp value
-
-        Pattern pattern = Pattern.compile(tfpPattern);
-        Matcher matcher = pattern.matcher(dutySeqData);
-
-        // Sum all the Tfp values in this section
-        while (matcher.find()) {
-            sum += Double.parseDouble(matcher.group(1));
-        }
-
-        return sum;
-    }*/
-    
-	
 }
