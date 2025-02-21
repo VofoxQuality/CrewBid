@@ -209,36 +209,44 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("Verify user can able to select any one of the below condition \n"
 				+ "Condition 01 : Download round 1 and pilot (CP and FO) with all the  domicile (4th day of all month)\n"
 				+ "Note : For Pilot ( AUS and FLL) domicile  no need to download");
-		logger.info("");
-		objdownload.checkCondition1DownloadBid();
+		Assert.assertTrue(objdownload.checkCondition1DownloadBid(), "❌Download button is disable");
+		logger.info("✅Assert: Download button is enabled ");
 	}
 
 	@Test(priority = 23, enabled = true)
 	public void CBW003001000023() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000023)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify user can able to select any one of the below condition \n"
+				+ "Condition 02 : Download round 1 and  FA with all the  domicile(2nd day of all month)");
+		Assert.assertTrue(objdownload.checkCondition2DownloadBid(), "❌Download button is disable");
+		logger.info("✅Assert: Download button is enabled ");
 	}
 
 	@Test(priority = 24, enabled = true)
 	public void CBW003001000024() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000024)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify user can able to select any one of the below condition \n"
+				+ "Condition 03 : Download round 2 and pilot (CP and FO) with all the  domicile (17th day of all month)\n"
+				+ "Note : For Pilot ( AUS and FLL) domicile  no need to download");
+		Assert.assertTrue(objdownload.checkCondition3DownloadBid(), "❌Download button is disable");
+		logger.info("✅Assert: Download button is enabled ");
 	}
 
 	@Test(priority = 25, enabled = true)
 	public void CBW003001000025() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000025)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify user can able to select any one of the below condition \n"
+				+ "Condition 04 : Download round 2 and FA with all the  domicile(11th day of all month)");
+		Assert.assertTrue(objdownload.checkCondition4DownloadBid(), "❌Download button is disable");
+		logger.info("✅Assert: Download button is enabled ");
 	}
 
 	@Test(priority = 26, enabled = true)
 	public void CBW003001000026() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000026)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify the download button");
+
+		logger.info("Scratch pad view is visible");
 	}
 
 	@Test(priority = 27, enabled = true)

@@ -384,62 +384,296 @@ public class BidDownloadPage {
 	// TC 21
 	@FindBy(xpath = "//div[@class=\"swal2-html-container\"]")
 	public WebElement warningpopup;
+	@FindBy(xpath = "(//button[text()=\" Download \"])[1]")
+	public WebElement download_btn;
 
-	/*********** Bid Download Cases *************/
-	public void checkCondition1DownloadBid() {
+	/***********
+	 * Bid Download Cases
+	 *************/
+	int currentDay = LocalDate.now().getDayOfMonth();
+	int lastDayOfMonth = LocalDate.now().lengthOfMonth();
+
+	/////////// Condition 1//////////
+	public boolean checkCondition1DownloadBid() {
 		WbidBasepage.logger
 				.info("🎯 Verifying user can select round 1 and pilot (CP & FO) with all applicable domiciles:");
+		boolean isDownloadEnabled = false;
+		// 4th of the month
+		if (currentDay >= 4 && currentDay <= lastDayOfMonth) {
+			WbidBasepage.logger.info(
+					"✅ Success: Report is available for viewing and download from the 4th day until the end of the month.");
+			for (WebElement city : basecities) {
+				String cityName = city.getText().trim();
 
-		for (WebElement city : basecities) {
-			String cityName = city.getText().trim();
+				// Skip AUS and FLL for Pilot
+				if (cityName.equalsIgnoreCase("AUS") || cityName.equalsIgnoreCase("FLL")) {
+					WbidBasepage.logger.info("⚠️ Skipping domicile: " + cityName + " for Pilot as per scenario.");
+					continue;
+				}
+				WbidBasepage.logger.info("✨ Domicile Selected: " + cityName);
+				objwait.waitForElemntTobeClickable(driver, city, 5);
+				objaction.click(city);
+				for (WebElement position : positionlist) {
+					String pos = position.getText().trim();
 
-			// ❌ Skip AUS and FLL for Pilot
-			if (cityName.equalsIgnoreCase("AUS") || cityName.equalsIgnoreCase("FLL")) {
-				WbidBasepage.logger.info("⚠️ Skipping domicile: " + cityName + " for Pilot as per scenario.");
-				continue;
-			}
+					// Select only Pilot positions (CP and FO)
+					if (pos.equalsIgnoreCase("CP") || pos.equalsIgnoreCase("FO")) {
+						WbidBasepage.logger.info("✨ Pilot Position Selected: " + pos);
+						objwait.waitForElemntTobeClickable(driver, position, 5);
+						objaction.click(position);
 
-			WbidBasepage.logger.info("✨ Domicile Selected: " + cityName);
-			objwait.waitForElemntTobeClickable(driver, city, 5);
-			objaction.click(city);
+						// Select Round 1
+						objwait.waitForElemntTobeClickable(driver, firstround, 5);
+						objaction.click(firstround);
+						WbidBasepage.logger.info("✅ Round 1 selected for " + pos + " at domicile " + cityName);
+						// Get next month in SHORT format (e.g., "Mar")
+						String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT,
+								Locale.ENGLISH);
 
-			for (WebElement position : positionlist) {
-				String pos = position.getText().trim();
+						WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
 
-				// ✅ Select only Pilot positions (CP and FO)
-				if (pos.equalsIgnoreCase("CP") || pos.equalsIgnoreCase("FO")) {
-					WbidBasepage.logger.info("✨ Pilot Position Selected: " + pos);
-					objwait.waitForElemntTobeClickable(driver, position, 5);
-					objaction.click(position);
-
-					// ✅ Select Round 1
-					objwait.waitForElemntTobeClickable(driver, firstround, 5);
-					objaction.click(firstround);
-					WbidBasepage.logger.info("✅ Round 1 selected for " + pos + " at domicile " + cityName);
-					// Get next month in SHORT format (e.g., "Mar")
-					String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT,
-							Locale.ENGLISH);
-
-					WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
-
-					// Check which month is selected in the dropdown
-					for (WebElement option : monthlist) {
-						String monthName = option.getText().trim();
-						String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
-						if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
-							WbidBasepage.logger.info("Currently selected month: " + monthName);
-							if (monthName.equalsIgnoreCase(nextMonth)) {
-								WbidBasepage.logger
-										.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
-							} else {
-								WbidBasepage.logger
-										.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
+						// Check which month is selected in the dropdown
+						for (WebElement option : monthlist) {
+							String monthName = option.getText().trim();
+							String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
+							if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
+								WbidBasepage.logger.info("Currently selected month: " + monthName);
+								if (monthName.equalsIgnoreCase(nextMonth)) {
+									WbidBasepage.logger
+											.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
+								} else {
+									WbidBasepage.logger
+											.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
+								}
 							}
+						}
+						// ✅ Check if download button is enabled after first loop execution and return
+						// result
+						if (download_btn.isEnabled()) {
+							WbidBasepage.logger.pass(
+									"⬇️ Download button is enabled after selection for " + cityName + " - " + pos);
+							isDownloadEnabled = true;
+						} else {
+							WbidBasepage.logger.fail(
+									"🚫 Download button is NOT enabled after selection for " + cityName + " - " + pos);
 						}
 					}
 				}
 			}
+		} else {
+			WbidBasepage.logger.info("❌ Not able to download bid data");
 		}
+		return isDownloadEnabled;
 	}
 
+//TC23
+	/////////// Condition 2////////////
+	public boolean checkCondition2DownloadBid() {
+		WbidBasepage.logger
+				.info("🎯 Verifying user can select round 1 and pilot (CP & FO) with all applicable domiciles:");
+		boolean isDownloadEnabled = false;
+		////// 2nd of month
+		if (currentDay >= 2 && currentDay <= lastDayOfMonth) {
+			WbidBasepage.logger.info(
+					"✅ Success: Report is available for viewing and download from the 2nd day until the end of the month.");
+			for (WebElement city : basecities) {
+				String cityName = city.getText().trim();
+				WbidBasepage.logger.info("✨ Domicile Selected: " + cityName);
+				objwait.waitForElemntTobeClickable(driver, city, 5);
+				objaction.click(city);
+				for (WebElement position : positionlist) {
+					String pos = position.getText().trim();
+
+					if (pos.equalsIgnoreCase("FA")) {
+						WbidBasepage.logger.info("✨ FA Position Selected: " + pos);
+						objwait.waitForElemntTobeClickable(driver, position, 5);
+						objaction.click(position);
+
+						// Select Round 1
+						objwait.waitForElemntTobeClickable(driver, firstround, 5);
+						objaction.click(firstround);
+						WbidBasepage.logger.info("✅ Round 1 selected for " + pos + " at domicile " + cityName);
+						// Get next month in SHORT format (e.g., "Mar")
+						String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT,
+								Locale.ENGLISH);
+
+						WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
+
+						// Check which month is selected in the dropdown
+						for (WebElement option : monthlist) {
+							String monthName = option.getText().trim();
+							String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
+							if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
+								WbidBasepage.logger.info("Currently selected month: " + monthName);
+								if (monthName.equalsIgnoreCase(nextMonth)) {
+									WbidBasepage.logger
+											.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
+								} else {
+									WbidBasepage.logger
+											.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
+								}
+							}
+						}
+						// ✅ Check if download button is enabled after first loop execution and return
+						// result
+						if (download_btn.isEnabled()) {
+							WbidBasepage.logger.pass(
+									"⬇️ Download button is enabled after selection for " + cityName + " - " + pos);
+							isDownloadEnabled = true;
+						} else {
+							WbidBasepage.logger.fail(
+									"🚫 Download button is NOT enabled after selection for " + cityName + " - " + pos);
+						}
+					}
+				}
+			}
+		} else {
+			WbidBasepage.logger.info("❌ Not able to download bid data");
+		}
+		return isDownloadEnabled;
+	}
+
+	// TC 24
+	@FindBy(xpath = "(//button[text()=\" 2nd Round \"])[1]")
+	public WebElement secondround;
+
+	///////// Condition 3/////////
+	public boolean checkCondition3DownloadBid() {
+		WbidBasepage.logger
+				.info("🎯 Verifying user can select round 1 and pilot (CP & FO) with all applicable domiciles:");
+		boolean isDownloadEnabled = false;
+		// 4th of the month
+		if (currentDay >= 17 && currentDay <= lastDayOfMonth) {
+			WbidBasepage.logger.info(
+					"✅ Success: Report is available for viewing and download from the 17th day until the end of the month.");
+			for (WebElement city : basecities) {
+				String cityName = city.getText().trim();
+
+				// Skip AUS and FLL for Pilot
+				if (cityName.equalsIgnoreCase("AUS") || cityName.equalsIgnoreCase("FLL")) {
+					WbidBasepage.logger.info("⚠️ Skipping domicile: " + cityName + " for Pilot as per scenario.");
+					continue;
+				}
+				WbidBasepage.logger.info("✨ Domicile Selected: " + cityName);
+				objwait.waitForElemntTobeClickable(driver, city, 5);
+				objaction.click(city);
+				for (WebElement position : positionlist) {
+					String pos = position.getText().trim();
+
+					// Select only Pilot positions (CP and FO)
+					if (pos.equalsIgnoreCase("CP") || pos.equalsIgnoreCase("FO")) {
+						WbidBasepage.logger.info("✨ Pilot Position Selected: " + pos);
+						objwait.waitForElemntTobeClickable(driver, position, 5);
+						objaction.click(position);
+
+						// Select Round 2
+						objwait.waitForElemntTobeClickable(driver, secondround, 5);
+						objaction.click(secondround);
+						WbidBasepage.logger.info("✅ Round 2 selected for " + pos + " at domicile " + cityName);
+						// Get next month in SHORT format (e.g., "Mar")
+						String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT,
+								Locale.ENGLISH);
+
+						WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
+
+						// Check which month is selected in the dropdown
+						for (WebElement option : monthlist) {
+							String monthName = option.getText().trim();
+							String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
+							if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
+								WbidBasepage.logger.info("Currently selected month: " + monthName);
+								if (monthName.equalsIgnoreCase(nextMonth)) {
+									WbidBasepage.logger
+											.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
+								} else {
+									WbidBasepage.logger
+											.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
+								}
+							}
+						}
+						// ✅ Check if download button is enabled after first loop execution and return
+						// result
+						if (download_btn.isEnabled()) {
+							WbidBasepage.logger.pass(
+									"⬇️ Download button is enabled after selection for " + cityName + " - " + pos);
+							isDownloadEnabled = true;
+						} else {
+							WbidBasepage.logger.fail(
+									"🚫 Download button is NOT enabled after selection for " + cityName + " - " + pos);
+						}
+					}
+				}
+			}
+		} else {
+			WbidBasepage.logger.info("❌ Not able to download bid data");
+		}
+		return isDownloadEnabled;
+	}
+
+	// TC 25
+	////////////// Condition 4////////////////
+	public boolean checkCondition4DownloadBid() {
+		WbidBasepage.logger
+				.info("🎯 Verifying user can select round 1 and pilot (CP & FO) with all applicable domiciles:");
+		boolean isDownloadEnabled = false;
+		////// 11th of month
+		if (currentDay >= 11 && currentDay <= lastDayOfMonth) {
+			WbidBasepage.logger.info(
+					"✅ Success: Report is available for viewing and download from the 11th day until the end of the month.");
+			for (WebElement city : basecities) {
+				String cityName = city.getText().trim();
+				WbidBasepage.logger.info("✨ Domicile Selected: " + cityName);
+				objwait.waitForElemntTobeClickable(driver, city, 5);
+				objaction.click(city);
+				for (WebElement position : positionlist) {
+					String pos = position.getText().trim();
+
+					if (pos.equalsIgnoreCase("FA")) {
+						WbidBasepage.logger.info("✨ FA Position Selected: " + pos);
+						objwait.waitForElemntTobeClickable(driver, position, 5);
+						objaction.click(position);
+
+						// Select Round 2
+						objwait.waitForElemntTobeClickable(driver, secondround, 5);
+						objaction.click(secondround);
+						WbidBasepage.logger.info("✅ Round 2 selected for " + pos + " at domicile " + cityName);
+						// Get next month in SHORT format (e.g., "Mar")
+						String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT,
+								Locale.ENGLISH);
+
+						WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
+
+						// Check which month is selected in the dropdown
+						for (WebElement option : monthlist) {
+							String monthName = option.getText().trim();
+							String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
+							if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
+								WbidBasepage.logger.info("Currently selected month: " + monthName);
+								if (monthName.equalsIgnoreCase(nextMonth)) {
+									WbidBasepage.logger
+											.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
+								} else {
+									WbidBasepage.logger
+											.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
+								}
+							}
+						}
+						// ✅ Check if download button is enabled after first loop execution and return
+						// result
+						if (download_btn.isEnabled()) {
+							WbidBasepage.logger.pass(
+									"⬇️ Download button is enabled after selection for " + cityName + " - " + pos);
+							isDownloadEnabled = true;
+						} else {
+							WbidBasepage.logger.fail(
+									"🚫 Download button is NOT enabled after selection for " + cityName + " - " + pos);
+						}
+					}
+				}
+			}
+		} else {
+			WbidBasepage.logger.info("❌ Not able to download bid data");
+		}
+		return isDownloadEnabled;
+	}
 }
