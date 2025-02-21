@@ -68,7 +68,7 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>7.8.0</version>
+			<version>7.9.0</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -130,7 +130,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
             <!-- Surefire Plugin for TestNG -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -142,10 +141,16 @@
                     </suiteXmlFiles>
                 </configuration>
             </plugin>
-              
+              <plugin>
+				<!--
+				https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-war-plugin -->
+
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.4.0</version>
+
+			</plugin>
         </plugins>
     </build>
 
-	
-	
 </project>
