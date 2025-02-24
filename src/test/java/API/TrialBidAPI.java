@@ -30,7 +30,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import utilities.WbidBasepage;
 
-public class TrialBidAPI extends WbidBasepage {
+public class TrialBidAPI  {
 	public static StringBuilder tripOutput = null;
 	LZString lzstring = new LZString();
 	public static String[] array;
@@ -48,9 +48,9 @@ public class TrialBidAPI extends WbidBasepage {
 
 	@Test(priority = 1)
 	public static void fetchApiData() throws JsonProcessingException {
-		WbidBasepage.logger = extent.createTest("Bid Download API").assignAuthor("VS/445");
+		WbidBasepage.logger = WbidBasepage.extent.createTest("Bid Download API").assignAuthor("VS/445");
 
-		logger.info("Cred Values in an array");
+		WbidBasepage.logger.info("Cred Values in an array");
 		RestAssured.baseURI = "https://www.auth.wbidmax.com/WBidCoreService/api";
 		String endpoint = "/user/GetSWAAndWBidAuthenticationDetails/";
 		String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
@@ -68,7 +68,7 @@ public class TrialBidAPI extends WbidBasepage {
 		} catch (AssertionError e) {
 
 			// Log the error and screenshot in the report
-			logger.fail("Assertion failed: " + e.getMessage());
+			WbidBasepage.logger.fail("Assertion failed: " + e.getMessage());
 
 		}
 
@@ -247,7 +247,7 @@ public class TrialBidAPI extends WbidBasepage {
 		for (int i = 0; i < dynamicArray.size(); i++) {
 			// System.out.println("Dynamic Array element " + i + ": " +
 			// dynamicArray.get(i));
-			logger.info("Dynamic Array element " + i + " " + dynamicArray.get(i));
+			WbidBasepage.logger.info("Dynamic Array element " + i + " " + dynamicArray.get(i));
 		}
 		/* Fetching Each Tfp values for the corresponding trip code */
 		/*
@@ -434,16 +434,16 @@ public class TrialBidAPI extends WbidBasepage {
 		}
 
 //Output the results
-		logger.info("Trip Code:" + tripCode);
-		logger.info("New Rig DPM: " + newRigDpm);
-		logger.info("New DHR: " + newDhr);
-		logger.info("New Cred Values (ar): " + ar);
-		logger.info("Total Cred Value: " + totCredValue);
-		logger.info("TMP: " + tmp);
-		logger.info("Calculated TAFB in hrs: " + newTafbhr);
-		logger.info("New TAFB: " + newTafb);
-		logger.info("Rig Adg: " + RigAdg);
-		logger.info("Rig Thr: " + RigThr);
+		WbidBasepage.logger.info("Trip Code:" + tripCode);
+		WbidBasepage.logger.info("New Rig DPM: " + newRigDpm);
+		WbidBasepage.logger.info("New DHR: " + newDhr);
+		WbidBasepage.logger.info("New Cred Values (ar): " + ar);
+		WbidBasepage.logger.info("Total Cred Value: " + totCredValue);
+		WbidBasepage.logger.info("TMP: " + tmp);
+		WbidBasepage.logger.info("Calculated TAFB in hrs: " + newTafbhr);
+		WbidBasepage.logger.info("New TAFB: " + newTafb);
+		WbidBasepage.logger.info("Rig Adg: " + RigAdg);
+		WbidBasepage.logger.info("Rig Thr: " + RigThr);
 		SoftAssert softAssert = new SoftAssert();
 		boolean assertionPassed = true;
 
