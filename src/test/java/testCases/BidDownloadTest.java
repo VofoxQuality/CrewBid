@@ -197,10 +197,10 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("✅ Assert: Displayed only the enabled upcoming months successfully.");
 	}
 
-	@Test(priority = 21, enabled = false)
+	@Test(priority = 21, enabled = true)
 	public void CBW003001000021() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000021)").assignAuthor("VS/482");
-		logger.info("This Tc Is for future");
+
 	}
 
 	@Test(priority = 22, enabled = true)
@@ -244,47 +244,57 @@ public class BidDownloadTest extends WbidBasepage {
 	@Test(priority = 26, enabled = true)
 	public void CBW003001000026() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000026)").assignAuthor("VS/482");
-		logger.info("Verify the download button");
-
-		logger.info("Scratch pad view is visible");
+		logger.info("Verify user can able to view the \"Seniority list\" popup");
+		objdownload.checkbiddownloadsteps();
+		logger.info("Verify the loader is appers while download the bid");
+		Assert.assertTrue(objdownload.fordisplayloadingicon(), "❌ Load Icon not display");
+		objwait.waitS(5000);
+		Assert.assertEquals(objdownload.fordisplay_seniority(), "Seniority List", "❌ Mismatch header");
+		logger.info("✅Assert : Seniority list popup appers");
 	}
 
 	@Test(priority = 27, enabled = true)
 	public void CBW003001000027() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000027)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify the Seniority list Title");
+		Assert.assertEquals(objdownload.fordisplay_seniority(), "Seniority List", "❌ Mismatch header");
+		logger.info("✅Assert : Seniority list Title");
 	}
 
 	@Test(priority = 28, enabled = true)
 	public void CBW003001000028() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000028)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify the buttons are appears");
+		Assert.assertTrue(objdownload.fordisplaySEnbtninpopup(), "❌ Button not visible");
+		logger.info("✅ Assert : View Seniority list and Cancel button appears");
 	}
 
 	@Test(priority = 29, enabled = true)
 	public void CBW003001000029() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000029)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify to expand the seniority list and check whether the seniority list is current month or not");
+		objdownload.click_senioritylist();
+		Assert.assertTrue(objdownload.checkMonthInSeniorityList(), "❌ Month in seniority list is different");
+		logger.info("✅ Assert : check the seniority list is current month or not");
 	}
 
 	@Test(priority = 30, enabled = true)
 	public void CBW003001000030() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000030)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify the close button and share button in the Seniority list");
+		Assert.assertTrue(objdownload.fordisplay_close_share_btn(), "❌Buttons not displayed");
+		logger.info("✅Assert : close button, and share button \n");
 	}
 
 	@Test(priority = 31, enabled = true)
 	public void CBW003001000031() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000031)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify the print seniority list");
+		Assert.assertTrue(objdownload.fordisplay_close_share_btn(), "❌Buttons not displayed");
+		logger.info("✅ Assert : Email seniority list and Print Seniority list\n");
 	}
 
-	@Test(priority = 32, enabled = true)
+	@Test(priority = 32, enabled = false)
 	public void CBW003001000032() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000032)").assignAuthor("VS/482");
 		logger.info("");
@@ -294,29 +304,38 @@ public class BidDownloadTest extends WbidBasepage {
 	@Test(priority = 33, enabled = true)
 	public void CBW003001000033() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000033)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify the new tab to close");
+		objdownload.click_close_sen_btn();
+		objwait.waitS(3000);
+		Assert.assertEquals(objdownload.checklatestnew_header(), "Latest News", "❌ Headers mismatch");
+		logger.info("✅ Assert : close button");
 	}
 
 	@Test(priority = 34, enabled = true)
 	public void CBW003001000034() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000034)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify the latest news popup appers");
+		Assert.assertEquals(objdownload.checklatestnew_header(), "Latest News", "❌ Headers mismatch");
+		logger.info("✅Assert : Latest news ");
 	}
 
 	@Test(priority = 35, enabled = true)
 	public void CBW003001000035() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000035)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Assert : latest news close button\n");
+		objwait.waitS(3000);
+		objdownload.click_news_closebtn();
+		objwait.waitS(3000);
+		Assert.assertEquals(objdownload.checkcoverletter_head(), "Cover Letter", "❌ Headers mismatch");
+		logger.info("Pop up should be closed and Cover letter should come");
 	}
 
 	@Test(priority = 36, enabled = true)
 	public void CBW003001000036() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000036)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify the cover letter Title");
+		Assert.assertEquals(objdownload.checkcoverletter_head(), "Cover Letter", "❌ Headers mismatch");
+		logger.info("Assert : cover letter");
 	}
 
 	@Test(priority = 37, enabled = true)

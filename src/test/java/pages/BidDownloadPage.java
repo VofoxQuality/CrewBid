@@ -13,6 +13,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import groovy.transform.Final;
 import utilities.ActionUtilities;
 import utilities.WaitCondition;
 import utilities.WbidBasepage;
@@ -219,16 +220,43 @@ public class BidDownloadPage {
 	// TC18
 	@FindBy(xpath = "//*[@id=\"newBidModal\"]/div/div/div[2]/div[4]/div[2]/button")
 	public List<WebElement> monthlist;
+	String monthName;
 
-	public boolean isNextMonthSelectedByDefault() {
+	public void formonthselection() {
 		// Get next month in SHORT format (e.g., "Mar")
-		String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+		nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
 
 		WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
 
 		// Check which month is selected in the dropdown
 		for (WebElement option : monthlist) {
-			String monthName = option.getText().trim();
+			monthName = option.getText().trim();
+			String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
+
+			WbidBasepage.logger.info("Month: " + monthName + " | Selected: " + isSelected);
+
+			if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
+				WbidBasepage.logger.info("Currently selected month: " + monthName);
+				if (monthName.equalsIgnoreCase(nextMonth)) {
+					WbidBasepage.logger.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
+
+				} else {
+					WbidBasepage.logger.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
+
+				}
+			}
+		}
+	}
+
+	public boolean isNextMonthSelectedByDefault() {
+		// Get next month in SHORT format (e.g., "Mar")
+		nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+
+		WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
+
+		// Check which month is selected in the dropdown
+		for (WebElement option : monthlist) {
+			monthName = option.getText().trim();
 			String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
 
 			WbidBasepage.logger.info("Month: " + monthName + " | Selected: " + isSelected);
@@ -367,20 +395,15 @@ public class BidDownloadPage {
 	}
 
 //TC20
-//	@FindBy(xpath="(//button[text()=\" ATL \"])[1]")
-//	public WebElement atl;
-//	@FindBy(xpath="(//button[text()=\" CP \"])[1]")
-//	public WebElement cp;
+	@FindBy(xpath = "(//button[text()=\" ATL \"])[1]")
+	public WebElement atl;
+	@FindBy(xpath = "(//button[text()=\" CP \"])[1]")
+	public WebElement cp;
 	@FindBy(xpath = "(//button[text()=\" 1st Round \"])[1]")
 	public WebElement firstround;
-//	@FindBy(xpath="(//button[text()=\" Mar \"])[1]")
-//	public WebElement mar;
-//	public boolean checkbiddownloadsteps() {
-//		objaction.click(atl);
-//		objaction.click(cp);
-//		objaction.click(firstround);
-//		
-//	}
+	@FindBy(xpath = "(//button[text()=\" Mar \"])[1]")
+	public WebElement mar;
+
 	// TC 21
 	@FindBy(xpath = "//div[@class=\"swal2-html-container\"]")
 	public WebElement warningpopup;
@@ -392,6 +415,7 @@ public class BidDownloadPage {
 	 *************/
 	int currentDay = LocalDate.now().getDayOfMonth();
 	int lastDayOfMonth = LocalDate.now().lengthOfMonth();
+	String nextMonth;
 
 	/////////// Condition 1//////////
 	public boolean checkCondition1DownloadBid() {
@@ -427,26 +451,7 @@ public class BidDownloadPage {
 						objaction.click(firstround);
 						WbidBasepage.logger.info("✅ Round 1 selected for " + pos + " at domicile " + cityName);
 						// Get next month in SHORT format (e.g., "Mar")
-						String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT,
-								Locale.ENGLISH);
-
-						WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
-
-						// Check which month is selected in the dropdown
-						for (WebElement option : monthlist) {
-							String monthName = option.getText().trim();
-							String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
-							if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
-								WbidBasepage.logger.info("Currently selected month: " + monthName);
-								if (monthName.equalsIgnoreCase(nextMonth)) {
-									WbidBasepage.logger
-											.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
-								} else {
-									WbidBasepage.logger
-											.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
-								}
-							}
-						}
+						formonthselection();
 						// ✅ Check if download button is enabled after first loop execution and return
 						// result
 						if (download_btn.isEnabled()) {
@@ -494,26 +499,7 @@ public class BidDownloadPage {
 						objaction.click(firstround);
 						WbidBasepage.logger.info("✅ Round 1 selected for " + pos + " at domicile " + cityName);
 						// Get next month in SHORT format (e.g., "Mar")
-						String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT,
-								Locale.ENGLISH);
-
-						WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
-
-						// Check which month is selected in the dropdown
-						for (WebElement option : monthlist) {
-							String monthName = option.getText().trim();
-							String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
-							if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
-								WbidBasepage.logger.info("Currently selected month: " + monthName);
-								if (monthName.equalsIgnoreCase(nextMonth)) {
-									WbidBasepage.logger
-											.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
-								} else {
-									WbidBasepage.logger
-											.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
-								}
-							}
-						}
+						formonthselection();
 						// ✅ Check if download button is enabled after first loop execution and return
 						// result
 						if (download_btn.isEnabled()) {
@@ -571,26 +557,7 @@ public class BidDownloadPage {
 						objaction.click(secondround);
 						WbidBasepage.logger.info("✅ Round 2 selected for " + pos + " at domicile " + cityName);
 						// Get next month in SHORT format (e.g., "Mar")
-						String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT,
-								Locale.ENGLISH);
-
-						WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
-
-						// Check which month is selected in the dropdown
-						for (WebElement option : monthlist) {
-							String monthName = option.getText().trim();
-							String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
-							if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
-								WbidBasepage.logger.info("Currently selected month: " + monthName);
-								if (monthName.equalsIgnoreCase(nextMonth)) {
-									WbidBasepage.logger
-											.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
-								} else {
-									WbidBasepage.logger
-											.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
-								}
-							}
-						}
+						formonthselection();
 						// ✅ Check if download button is enabled after first loop execution and return
 						// result
 						if (download_btn.isEnabled()) {
@@ -638,26 +605,7 @@ public class BidDownloadPage {
 						objaction.click(secondround);
 						WbidBasepage.logger.info("✅ Round 2 selected for " + pos + " at domicile " + cityName);
 						// Get next month in SHORT format (e.g., "Mar")
-						String nextMonth = LocalDate.now().plusMonths(1).getMonth().getDisplayName(TextStyle.SHORT,
-								Locale.ENGLISH);
-
-						WbidBasepage.logger.info("Expected default selected month: " + nextMonth);
-
-						// Check which month is selected in the dropdown
-						for (WebElement option : monthlist) {
-							String monthName = option.getText().trim();
-							String isSelected = option.getAttribute("selected"); // Or use appropriate attribute/class
-							if ("true".equals(isSelected) || option.getAttribute("class").contains("active")) {
-								WbidBasepage.logger.info("Currently selected month: " + monthName);
-								if (monthName.equalsIgnoreCase(nextMonth)) {
-									WbidBasepage.logger
-											.pass("✅ Next month '" + nextMonth + "' is correctly selected by default.");
-								} else {
-									WbidBasepage.logger
-											.fail("❌ Expected '" + nextMonth + "', but found '" + monthName + "'.");
-								}
-							}
-						}
+						formonthselection();
 						// ✅ Check if download button is enabled after first loop execution and return
 						// result
 						if (download_btn.isEnabled()) {
@@ -675,5 +623,119 @@ public class BidDownloadPage {
 			WbidBasepage.logger.info("❌ Not able to download bid data");
 		}
 		return isDownloadEnabled;
+	}
+
+	// TC 26
+	@FindBy(xpath = "//h2[text()=\"Seniority List\"]")
+	public WebElement sen_header;
+
+	public void click_download() {
+		objaction.click(download_btn);
+	}
+
+	public String fordisplay_seniority() {
+		return objaction.gettext(sen_header);
+	}
+
+	public void checkbiddownloadsteps() {
+		objaction.click(atl);
+		objaction.click(cp);
+		objaction.click(firstround);
+		formonthselection();
+		objaction.click(download_btn);
+	}
+
+	// TC28
+	@FindBy(xpath = "(//div[@class=\"pop-but-main\"]/button[2])[1]")
+	public WebElement sen_cancel_btn;
+	@FindBy(xpath = "(//div[@class=\"pop-but-main\"]/button[1])[1]")
+	public WebElement viewsenlist_btn;
+
+	public boolean fordisplaySEnbtninpopup() {
+		return objaction.fordisplay(sen_cancel_btn) && objaction.fordisplay(viewsenlist_btn);
+	}
+
+	@FindBy(xpath = "//div[text()=\"Downloading Bid..\"]")
+	public WebElement loading;
+
+	public boolean fordisplayloadingicon() {
+		return objaction.fordisplay(loading);
+	}
+
+	public void click_senioritylist() {
+		objaction.click(viewsenlist_btn);
+	}
+
+	// TC29
+	@FindBy(id = "fileContent-Section")
+	public WebElement sen_list_content;
+
+	public boolean checkMonthInSeniorityList() {
+		String report = objaction.gettext(sen_list_content);
+		String schedulePeriod = extractValue(report, "SCHEDULE PERIOD:");
+		String currentmonth = nextMonth.toUpperCase() + String.valueOf(java.time.Year.now().getValue()).substring(2); // Format: Mar25
+		WbidBasepage.logger.pass("Month : " + currentmonth);
+		WbidBasepage.logger.pass("SCHEDULE PERIOD: " + schedulePeriod);
+		if (currentmonth.trim().contains(schedulePeriod.trim())) {
+			WbidBasepage.logger.pass("The seniority list is for the current month.");
+			System.out.println("The seniority list is for the current month.");
+			return true;
+		} else {
+			WbidBasepage.logger.fail("The seniority list is NOT for the current month.");
+			System.out.println("The seniority list is NOT for the current month.");
+			return false;
+		}
+	}
+
+	public static String extractValue(String text, String key) {
+		String[] lines = text.split("\\n");
+		for (String line : lines) {
+			if (line.contains(key)) {
+				return line.split(key)[1].trim().split(" ")[0];
+			}
+		}
+		return null;
+	}
+//Tc 30
+	@FindBy(xpath = "(//div[@class=\"modal-header text-center justify-content-center\"]/button)[1]")
+	public WebElement sen_close_btn;
+	@FindBy(xpath="//a[@class=\"dropdown-toggle\"]/img")
+	public WebElement sen_share_btn;
+	public boolean fordisplay_close_share_btn() {
+		return objaction.fordisplay(sen_close_btn)&& objaction.fordisplay(sen_share_btn);
+	}
+//Tc 31
+	@FindBy(xpath="//ul[@class=\"dropdown-menu show\"]/li[1]")
+	public WebElement email_senlist;
+	@FindBy(xpath="//ul[@class=\"dropdown-menu show\"]/li[2]")
+	public WebElement print_senlist;
+	public boolean fordisplay_email_print_btn() {
+		objaction.click(sen_share_btn);
+		return objaction.fordisplay(email_senlist)&& objaction.fordisplay(print_senlist);
+	}
+//Tc33
+	@FindBy(xpath="(//h2[@class=\"news-view-main\"])[1]")
+	public WebElement latestnews_head;
+	public void click_close_sen_btn() {
+		objaction.click(sen_close_btn);
+	}
+	public String checklatestnew_header() {
+		objwait.waitForElementTobeVisible(driver, latestnews_head, 10);
+		String news=objaction.gettext(latestnews_head);
+		return news;
+	}
+	//Tc35
+	@FindBy(xpath="(//*[@id=\"fullHeightModalRight\"]/div/div/div/div[1]/button)[1]")
+	public WebElement news_closebtn;
+	public void click_news_closebtn() {
+		objaction.click(news_closebtn);
+	}
+	//TC36
+	@FindBy(xpath="//h2[text()=\"Cover Letter\"]")
+	public WebElement coverletter_head;
+	public String checkcoverletter_head() {
+		objwait.waitForElementTobeVisible(driver, coverletter_head, 10);
+		String news=objaction.gettext(coverletter_head);
+		return news;
 	}
 }
