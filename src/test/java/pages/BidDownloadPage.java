@@ -637,8 +637,11 @@ public class BidDownloadPage {
 		return objaction.gettext(sen_header);
 	}
 
+	String Atl;
+
 	public void checkbiddownloadsteps() {
 		objaction.click(atl);
+		Atl = objaction.gettext(atl);
 		objaction.click(cp);
 		objaction.click(firstround);
 		formonthselection();
@@ -673,7 +676,8 @@ public class BidDownloadPage {
 	public boolean checkMonthInSeniorityList() {
 		String report = objaction.gettext(sen_list_content);
 		String schedulePeriod = extractValue(report, "SCHEDULE PERIOD:");
-		String currentmonth = nextMonth.toUpperCase() + String.valueOf(java.time.Year.now().getValue()).substring(2); // Format: Mar25
+		String currentmonth = nextMonth.toUpperCase() + String.valueOf(java.time.Year.now().getValue()).substring(2); // Format:
+																														// Mar25
 		WbidBasepage.logger.pass("Month : " + currentmonth);
 		WbidBasepage.logger.pass("SCHEDULE PERIOD: " + schedulePeriod);
 		if (currentmonth.trim().contains(schedulePeriod.trim())) {
@@ -696,46 +700,160 @@ public class BidDownloadPage {
 		}
 		return null;
 	}
+
 //Tc 30
 	@FindBy(xpath = "(//div[@class=\"modal-header text-center justify-content-center\"]/button)[1]")
 	public WebElement sen_close_btn;
-	@FindBy(xpath="//a[@class=\"dropdown-toggle\"]/img")
+	@FindBy(xpath = "//a[@class=\"dropdown-toggle\"]/img")
 	public WebElement sen_share_btn;
+
 	public boolean fordisplay_close_share_btn() {
-		return objaction.fordisplay(sen_close_btn)&& objaction.fordisplay(sen_share_btn);
+		return objaction.fordisplay(sen_close_btn) && objaction.fordisplay(sen_share_btn);
 	}
+
 //Tc 31
-	@FindBy(xpath="//ul[@class=\"dropdown-menu show\"]/li[1]")
+	@FindBy(xpath = "//ul[@class=\"dropdown-menu show\"]/li[1]")
 	public WebElement email_senlist;
-	@FindBy(xpath="//ul[@class=\"dropdown-menu show\"]/li[2]")
+	@FindBy(xpath = "//ul[@class=\"dropdown-menu show\"]/li[2]")
 	public WebElement print_senlist;
+
 	public boolean fordisplay_email_print_btn() {
 		objaction.click(sen_share_btn);
-		return objaction.fordisplay(email_senlist)&& objaction.fordisplay(print_senlist);
+		return objaction.fordisplay(email_senlist) && objaction.fordisplay(print_senlist);
 	}
+
 //Tc33
-	@FindBy(xpath="(//h2[@class=\"news-view-main\"])[1]")
+	@FindBy(xpath = "(//h2[@class=\"news-view-main\"])[1]")
 	public WebElement latestnews_head;
+
 	public void click_close_sen_btn() {
 		objaction.click(sen_close_btn);
 	}
+
 	public String checklatestnew_header() {
 		objwait.waitForElementTobeVisible(driver, latestnews_head, 10);
-		String news=objaction.gettext(latestnews_head);
+		String news = objaction.gettext(latestnews_head);
 		return news;
 	}
-	//Tc35
-	@FindBy(xpath="(//*[@id=\"fullHeightModalRight\"]/div/div/div/div[1]/button)[1]")
+
+	// Tc35
+	@FindBy(xpath = "(//*[@id=\"fullHeightModalRight\"]/div/div/div/div[1]/button)[1]")
 	public WebElement news_closebtn;
+
 	public void click_news_closebtn() {
 		objaction.click(news_closebtn);
 	}
-	//TC36
-	@FindBy(xpath="//h2[text()=\"Cover Letter\"]")
+
+	// TC36
+	@FindBy(xpath = "//h2[text()=\"Cover Letter\"]")
 	public WebElement coverletter_head;
+
 	public String checkcoverletter_head() {
 		objwait.waitForElementTobeVisible(driver, coverletter_head, 10);
-		String news=objaction.gettext(coverletter_head);
+		String news = objaction.gettext(coverletter_head);
 		return news;
+	}
+
+	// TC37
+	@FindBy(xpath = "(//*[@id=\"fullHeightModalRight\"]/div/div/div[1]/button)[1]")
+	public WebElement coverltr_closebtn;
+
+	public void click_close_coverletter() {
+		objaction.click(coverltr_closebtn);
+	}
+
+	@FindBy(xpath = "//ul[@class=\"m-auto header-title-section\"]/li")
+	public WebElement scrachpad_head;
+
+	public boolean isvisible_scrachpad_head() {
+		return objaction.fordisplay(scrachpad_head);
+	}
+
+	// TC39
+	public boolean checkoffline() {
+		String mode = objaction.gettext(scrachpad_head);
+		if (mode.contains("Online")) {
+			WbidBasepage.logger.pass("Network in Online ");
+			return true;
+		} else {
+			WbidBasepage.logger.fail("Network in offline");
+			return false;
+		}
+	}
+
+	// TC40
+	@FindBy(xpath = "//i[@class=\"fas fa-flag\"]")
+	public WebElement flagicon;
+
+	public boolean isvisibleflagicon() {
+		return objaction.fordisplay(flagicon);
+	}
+
+	// TC41
+	@FindBy(xpath = "(//mat-radio-group[@role=\"radiogroup\"])[1]")
+	public WebElement herb_local_icon;
+
+	public boolean isvisibleherb_local_icon() {
+		return objaction.fordisplay(herb_local_icon);
+	}
+
+	// TC42
+	@FindBy(xpath = "//i[@class=\"fas fa-cog\"]")
+	public WebElement settingicon;
+
+	public boolean isvisibleherbsettingicon() {
+		return objaction.fordisplay(settingicon);
+	}
+
+	// TC43
+	@FindBy(xpath = "//i[@class=\"fas fa-arrows-alt-v\"]")
+	public WebElement scrolldown_icon;
+
+	public boolean isvisiblescrolldown_icon() {
+		return objaction.fordisplay(scrolldown_icon);
+	}
+
+	// TC44
+	@FindBy(xpath = "//i[@class=\"fas fa-forward\"]")
+	public WebElement move_icon;
+
+	public boolean isvisiblemove_icon() {
+		return objaction.fordisplay(move_icon);
+	}
+
+	// Tc 45
+	@FindBy(xpath = "//i[@class=\"fas fa-home\"]")
+	public WebElement home_icon;
+
+	public boolean isvisiblehome_icon() {
+		return objaction.fordisplay(home_icon);
+	}
+
+	// TC46
+	@FindBy(xpath = "//i[@class=\"fas fa-question\"]")
+	public WebElement help_icon;
+
+	public boolean isvisiblehelp_icon() {
+		return objaction.fordisplay(help_icon);
+	}
+	//TC47
+	@FindBy(xpath="//i[@class=\"fas fa-upload\"]")
+	public WebElement bidaction_icon;
+
+	public boolean isvisiblebidaction_icon() {
+		return objaction.fordisplay(bidaction_icon);
+	}
+	//Tc48
+	@FindBy(xpath="//*[@id=\"navbarTogglerDemo03\"]/ul[1]/li[3]")
+	public WebElement save_icon;
+	public boolean checksaveisdisable() {
+		String att=objaction.getAttribute(save_icon, "class");
+		if(att.contains("disabled")) {
+			WbidBasepage.logger.pass("Save icon is disable");
+			return true;
+		}else {
+			WbidBasepage.logger.fail("Save icon is enable");
+			return false;
+		}
 	}
 }

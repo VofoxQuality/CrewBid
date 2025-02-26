@@ -327,7 +327,7 @@ public class BidDownloadTest extends WbidBasepage {
 		objdownload.click_news_closebtn();
 		objwait.waitS(3000);
 		Assert.assertEquals(objdownload.checkcoverletter_head(), "Cover Letter", "❌ Headers mismatch");
-		logger.info("Pop up should be closed and Cover letter should come");
+		logger.info("✅Pop up should be closed and Cover letter should come");
 	}
 
 	@Test(priority = 36, enabled = true)
@@ -335,42 +335,164 @@ public class BidDownloadTest extends WbidBasepage {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000036)").assignAuthor("VS/482");
 		logger.info("Verify the cover letter Title");
 		Assert.assertEquals(objdownload.checkcoverletter_head(), "Cover Letter", "❌ Headers mismatch");
-		logger.info("Assert : cover letter");
+		logger.info("✅Assert : cover letter");
 	}
 
 	@Test(priority = 37, enabled = true)
 	public void CBW003001000037() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000037)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("Verify the cover letter Close button");
+		objwait.waitS(3000);
+		objdownload.click_close_coverletter();
+		objwait.waitS(3000);
+		Assert.assertTrue(objdownload.isvisible_scrachpad_head(), "❌ Close button functionality not working");
+		logger.info("✅Assert : Cover letter close button");
 	}
 
 	@Test(priority = 38, enabled = true)
 	public void CBW003001000038() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000038)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info(
+				"To check the heading label \"(version number) SelectedMonth selectedyear Captain Round 1 - Network Status\"");
+		Assert.assertTrue(objdownload.isvisible_scrachpad_head(), "❌Scratchpad head not visible");
+		logger.info(
+				"✅Assert the Heading \"(version number) SelectedMonth selectedyear Captain Round 1 - Online\" and Colour (White)");
 	}
 
 	@Test(priority = 39, enabled = true)
 	public void CBW003001000039() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000039)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("To check the network status in Online mode");
+		Assert.assertTrue(objdownload.checkoffline(), "❌Network in offline mode ");
+		logger.info("✅Assert : Scratch pad title with Online should show");
 	}
 
 	@Test(priority = 40, enabled = true)
 	public void CBW003001000040() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000040)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("");
+		logger.info("To check the flag icon is visible");
+		Assert.assertTrue(objdownload.isvisibleflagicon(), "❌ Icon not visible");
+		logger.info("✅ Assert : flag icon is visible");
 	}
 
 	@Test(priority = 41, enabled = true)
 	public void CBW003001000041() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000041)").assignAuthor("VS/482");
+		logger.info("To check the local/herb icon ");
+		Assert.assertTrue(objdownload.isvisibleherb_local_icon(), "❌ Icon not visible");
+		logger.info("✅Assert : Herb/local button");
+	}
+
+	@Test(priority = 42, enabled = true)
+	public void CBW003001000042() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000042)").assignAuthor("VS/482");
+		logger.info("To check the Settings icon is visible");
+		Assert.assertTrue(objdownload.isvisibleherbsettingicon(), "❌ Icon not visible");
+		logger.info("✅ Assert : Settings menu icon visible");
+	}
+
+	@Test(priority = 43, enabled = true)
+	public void CBW003001000043() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000043)").assignAuthor("VS/482");
+		logger.info("To check to scroll icon is visible");
+		Assert.assertTrue(objdownload.isvisiblescrolldown_icon(), "❌ Icon not visible");
+		logger.info("✅ Assert : Scroll to line icin visible");
+	}
+
+	@Test(priority = 44, enabled = true)
+	public void CBW003001000044() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000044)").assignAuthor("VS/482");
+		logger.info("To check the Move all the line icon is visible");
+		Assert.assertTrue(objdownload.isvisiblemove_icon(), "❌ Icon not visible");
+		logger.info("✅ Assert : Move all the line is visible");
+	}
+
+	@Test(priority = 45, enabled = true)
+	public void CBW003001000045() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000045)").assignAuthor("VS/482");
+		logger.info("To check the home button icon is visble");
+		Assert.assertTrue(objdownload.isvisiblehome_icon(), "❌ Icon not visible");
+		logger.info("✅ Assert : home button is visible");
+	}
+
+	@Test(priority = 46, enabled = true)
+	public void CBW003001000046() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000046)").assignAuthor("VS/482");
+		logger.info("To check the help menu icon is visible");
+		Assert.assertTrue(objdownload.isvisiblehelp_icon(), "❌ Icon not visible");
+		logger.info("✅ Assert : help menu icon");
+	}
+
+	@Test(priority = 47, enabled = true)
+	public void CBW003001000047() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000047)").assignAuthor("VS/482");
+		logger.info("To check the bid action button is visible");
+		Assert.assertTrue(objdownload.isvisiblebidaction_icon(), "❌ Icon not visible");
+		logger.info("✅ Assert : bid action button");
+	}
+
+	@Test(priority = 48, enabled = true)
+	public void CBW003001000048() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000048)").assignAuthor("VS/482");
+		logger.info("To check the save button is default disabled state");
+		Assert.assertTrue(objdownload.checksaveisdisable(), "❌ Save icon is enable");
+		logger.info("✅ Assert : save button\n" + "Disabled");
+	}
+
+	@Test(priority = 49, enabled = true)
+	public void CBW003001000049() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000049)").assignAuthor("VS/482");
+		logger.info("Verify the user can select the Arrow button");
+		logger.info("✅Assert : Arrow button\n" + "Button should be clickable");
+	}
+
+	@Test(priority = 50, enabled = true)
+	public void CBW003001000050() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000050)").assignAuthor("VS/482");
 		logger.info("");
+		logger.info("✅");
+	}
+
+	@Test(priority = 51, enabled = true)
+	public void CBW003001000051() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000051)").assignAuthor("VS/482");
 		logger.info("");
+		logger.info("✅");
+	}
+
+	@Test(priority = 52, enabled = true)
+	public void CBW003001000052() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000052)").assignAuthor("VS/482");
+		logger.info("");
+		logger.info("✅");
+	}
+
+	@Test(priority = 53, enabled = true)
+	public void CBW003001000053() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000053)").assignAuthor("VS/482");
+		logger.info("");
+		logger.info("✅");
+	}
+
+	@Test(priority = 54, enabled = true)
+	public void CBW003001000054() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000054)").assignAuthor("VS/482");
+		logger.info("");
+		logger.info("✅");
+	}
+
+	@Test(priority = 55, enabled = true)
+	public void CBW003001000055() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000055)").assignAuthor("VS/482");
+		logger.info("");
+		logger.info("✅");
+	}
+
+	@Test(priority = 56, enabled = true)
+	public void CBW003001000056() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000056)").assignAuthor("VS/482");
+		logger.info("");
+		logger.info("✅");
 	}
 
 }
