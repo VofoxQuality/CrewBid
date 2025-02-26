@@ -2,11 +2,22 @@ package pages;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import API.TrialBidAPI;
 import utilities.ActionUtilities;
 import utilities.WaitCondition;
 import utilities.WbidBasepage;
@@ -323,5 +334,131 @@ public class CommonPage {
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
 	        return nextMonth.format(formatter);
 	    }
+//Get trip details-Trip Code
+		@FindBy(xpath = "//td[contains(@class,'left-side-radius trip-text-color ng-star-inserted')]")
+		public List<WebElement> tripList;
 		
+		@FindBy(xpath = "//*[@id='fullHeightModalRight']/div/div/div/div/div[1]/div/pre")
+		public WebElement tripSequence;
+//Get trip Code for one Trip		
+		public String getTripCode() {
+		    // Click on the first element in the trip list
+		    if (!tripList.isEmpty()) {
+		        tripList.get(0).click();
+		    } 
+		    // Wait for the trip sequence element to be visible
+		    objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+		    
+		    // Get the text from the trip sequence element
+		    String tripSequenceText = objaction.gettext(tripSequence).trim();
+		    WbidBasepage.logger.info("Trip Sequence Text: " + tripSequenceText);
+		    
+		    // Normalize whitespace and extract the trip code using regex
+		    tripSequenceText = tripSequenceText.replaceAll("\\s+", " "); // Replace multiple spaces with a single space
+		    Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+		    Matcher matcher = pattern.matcher(tripSequenceText);
+		    
+		    if (matcher.find()) {
+		        String tripCode = matcher.group(1).trim();
+		        WbidBasepage.logger.info("Extracted Trip Code: " + tripCode);
+		        return tripCode;
+		    }
+		    
+		    WbidBasepage.logger.fail("Trip code not found in the trip sequence text.");
+		    return null;
+		}
+//Get trip Code for all the Trips
+		public List<String> getAllTripCodes() {
+		    List<String> tripCodes = new ArrayList<>();
+		    
+		    for (WebElement tripElement : tripList) {
+		        try {
+		            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+		            
+		            // Scroll into view with an offset to avoid being covered by headers
+		            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+		            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+		            
+		            // Use JavaScript click to avoid "element click intercepted" issues
+		            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+		            
+		            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+		            
+		            String tripSequenceText = objaction.gettext(tripSequence).trim();
+		            WbidBasepage.logger.info("Trip Sequence Text: " + tripSequenceText);
+		            
+		            tripSequenceText = tripSequenceText.replaceAll("\\s+", " ");
+		            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+		            Matcher matcher = pattern.matcher(tripSequenceText);
+		            
+		            if (matcher.find()) {
+		                String tripCode = matcher.group(1).trim();
+		                WbidBasepage.logger.info("Extracted Trip Code: " + tripCode);
+		                tripCodes.add(tripCode);
+		                
+		                Actions actions = new Actions(driver);
+		                actions.sendKeys(Keys.ESCAPE).perform();
+		                
+		            } else {
+		                WbidBasepage.logger.fail("Trip code not found in the trip sequence text.");
+		            }
+		            
+		        } catch (Exception e) {
+		            WbidBasepage.logger.fail("Failed to interact with trip element: " + e.getMessage());
+		        }
+		    }
+		    return tripCodes;
+		}
+//Get compare trip Code from UI to tripCode fromAPI response
+		public void UITripCodesAndFetchDataFromAPI(List<String> tripCodesFromUI) {
+		    // Get all trip codes from the UI
+		    //List<String> tripCodesFromUI = getAllTripCodes();
+		    WbidBasepage.logger.info("Trip Codes from UI: " + tripCodesFromUI);
+
+		    // Loop through each trip code
+		    for (String tripCode : tripCodesFromUI) {
+		        boolean found = false;
+
+		        // Compare each trip code with the dynamic array
+		        for (String dynamicData : TrialBidAPI.dynamicArray) {
+		            if (dynamicData.startsWith(tripCode)) {
+		                found = true;
+		                WbidBasepage.logger.info("Matching Trip Code found: " + tripCode);
+		                WbidBasepage.logger.info("Corresponding Data: " + dynamicData);
+		                break;
+		            }
+		        }
+
+		        if (!found) {
+		            WbidBasepage.logger.fail("Trip Code not found in dynamic array: " + tripCode);
+		        }
+		    }
+		}
+		public boolean compareTripCodesAndFetchData(List<String> tripCodesFromUI) {
+		    WbidBasepage.logger.info("Trip Codes from UI: " + tripCodesFromUI);
+		    boolean allMatched = true; // Assume all matches are found initially
+
+		    for (String tripCode : tripCodesFromUI) {
+		        boolean found = false;
+
+		        for (String dynamicData : TrialBidAPI.dynamicArray) {
+		            if (dynamicData.startsWith(tripCode)) {
+		                found = true;
+		                WbidBasepage.logger.info("Matching Trip Code found: " + tripCode);
+		                WbidBasepage.logger.info("Corresponding Data: " + dynamicData);
+		                
+		                break;
+		            }
+		        }
+
+		        if (!found) {
+		            WbidBasepage.logger.fail("Trip Code not found in dynamic array: " + tripCode);
+		            allMatched = false; // Set to false if any trip code is not found
+		        }
+		    }
+		    
+		    return allMatched;
+		}
+
+
 }

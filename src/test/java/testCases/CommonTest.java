@@ -1,5 +1,8 @@
 package testCases;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -126,10 +129,24 @@ public class CommonTest extends WbidBasepage{
 	  logger.info("Fetchinh API data");
 	  TrialBidAPI.fetchApiData(); 
 	  }
+  public static List<String> TripCodes = new ArrayList<>();
   @Test(priority = 15, enabled = true)
   public void test15() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test15").assignAuthor("VS/483");
-	  logger.info("");
-	 
+	  logger.info("Get  trip Details");
+	  String txt=objCommon.getTripCode();
+	  logger.info("Get  trip Details"+ txt);
+	   }
+  @Test(priority = 16, enabled = true)
+  public void test16() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test16").assignAuthor("VS/483");		  
+	  logger.info("Get  All the trip Codes from UI ");
+	  TripCodes=objCommon.getAllTripCodes();
+	  logger.info("Fetching UI data"+TripCodes);
+	  
+	  logger.info("Compare All the trip Codes from UI with trip code fetched from API and get trip details ");
+	  //objCommon.compareTripCodesAndFetchData(TripCodes);
+	  Assert.assertTrue(objCommon.compareTripCodesAndFetchData(TripCodes));
+	  
 	  }
 }
