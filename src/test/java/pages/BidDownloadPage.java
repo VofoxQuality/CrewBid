@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -33,6 +35,10 @@ public class BidDownloadPage {
 	public WebElement logo;
 	@FindBy(id = "navbardrop")
 	public WebElement retrivedropdown;
+	@FindBy(xpath = "//button[text()=\"Update Now\"]")
+	public WebElement updatebtn;
+	@FindBy(xpath = "//button[text()=\"Exit\"]")
+	public WebElement exitbtn;
 
 	public boolean fordisplaylogo() {
 		return objaction.fordisplay(logo);
@@ -638,11 +644,13 @@ public class BidDownloadPage {
 	}
 
 	String Atl;
+	String Cp;
 
 	public void checkbiddownloadsteps() {
 		objaction.click(atl);
 		Atl = objaction.gettext(atl);
 		objaction.click(cp);
+		Cp = objaction.gettext(cp);
 		objaction.click(firstround);
 		formonthselection();
 		objaction.click(download_btn);
@@ -747,10 +755,15 @@ public class BidDownloadPage {
 	// TC36
 	@FindBy(xpath = "//h2[text()=\"Cover Letter\"]")
 	public WebElement coverletter_head;
+	public String content;
+	@FindBy(id = "fileContent-Section")
+	public WebElement filecontent;
 
 	public String checkcoverletter_head() {
+		content = objaction.gettext(filecontent);
 		objwait.waitForElementTobeVisible(driver, coverletter_head, 10);
 		String news = objaction.gettext(coverletter_head);
+
 		return news;
 	}
 
@@ -836,24 +849,80 @@ public class BidDownloadPage {
 	public boolean isvisiblehelp_icon() {
 		return objaction.fordisplay(help_icon);
 	}
-	//TC47
-	@FindBy(xpath="//i[@class=\"fas fa-upload\"]")
+
+	// TC47
+	@FindBy(xpath = "//i[@class=\"fas fa-upload\"]")
 	public WebElement bidaction_icon;
 
 	public boolean isvisiblebidaction_icon() {
 		return objaction.fordisplay(bidaction_icon);
 	}
-	//Tc48
-	@FindBy(xpath="//*[@id=\"navbarTogglerDemo03\"]/ul[1]/li[3]")
+
+	// Tc48
+	@FindBy(xpath = "//*[@id=\"navbarTogglerDemo03\"]/ul[1]/li[3]")
 	public WebElement save_icon;
+
 	public boolean checksaveisdisable() {
-		String att=objaction.getAttribute(save_icon, "class");
-		if(att.contains("disabled")) {
+		String att = objaction.getAttribute(save_icon, "class");
+		if (att.contains("disabled")) {
 			WbidBasepage.logger.pass("Save icon is disable");
 			return true;
-		}else {
+		} else {
 			WbidBasepage.logger.fail("Save icon is enable");
 			return false;
+		}
+	}
+
+	// Tc 49
+	public boolean verifymovearrowclickable() {
+		if (move_icon.isDisplayed() && move_icon.isEnabled()) {
+			move_icon.click(); // Simulate user click
+			System.out.println("Arrow button was clicked successfully.");
+			return true;
+		} else {
+			System.out.println("Arrow button is not enabled or visible.");
+			return false;
+		}
+	}
+
+	// For line number from cover letter
+
+	public void checklinenumber() {
+
+		String selectedBase = Atl.trim().toUpperCase(); // Convert to uppercase
+		String selectedPosition = Cp.trim().toUpperCase();
+
+		if (selectedBase.isEmpty() || selectedPosition.isEmpty()) {
+			System.out.println("Base or Position is empty. Please check inputs.");
+			WbidBasepage.logger.fail("Base or Position is empty.");
+			return;
+		}
+
+		// Normalize spaces in content
+		content = content.replaceAll("\\s+", " ").toUpperCase();
+
+		// Debug: Print actual content
+		System.out.println("DEBUG: Content = " + content);
+
+		// Regex pattern to find the number based on the base and position
+		String regex = selectedBase + " (" + selectedPosition + ")";
+		WbidBasepage.logger.pass("Regex: " + regex);
+		Pattern pattern = Pattern.compile(regex);
+		WbidBasepage.logger.info("Pattern: " + pattern);
+		Matcher matcher = pattern.matcher(content);
+		WbidBasepage.logger.info("Matcher: " + matcher);
+
+		// Check and print the extracted number
+		if (matcher.find()) {
+			String extractedNumber = matcher.group(1);
+			WbidBasepage.logger.info("Extracted Number: " + extractedNumber);
+			System.out.println(
+					"Extracted number for " + selectedBase + " (" + selectedPosition + "): " + extractedNumber);
+			WbidBasepage.logger
+					.pass("Extracted number for " + selectedBase + " (" + selectedPosition + "): " + extractedNumber);
+		} else {
+			System.out.println("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
+			WbidBasepage.logger.fail("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
 		}
 	}
 }
