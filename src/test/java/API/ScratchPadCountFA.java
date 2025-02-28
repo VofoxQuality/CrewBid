@@ -45,6 +45,11 @@ public class ScratchPadCountFA extends WbidBasepage {
 	public static double TotalRigAdg;
 	public static String tripCode;
 	public static int passCount = 0, errorCount = 0;
+	public static int linecount;
+	public static int ABCcount;
+	public static int BCcount;
+	public static int ABCDcount;
+	public static int Dcount;
 
 	@Test(priority = 1)
 	public static void fetchApiData(String domicile,String expectedRound, String expectedPosition, String expectedMonth) throws JsonProcessingException {
@@ -141,11 +146,11 @@ public class ScratchPadCountFA extends WbidBasepage {
 
 // Get the "Lines" object
 		JSONObject linesObject = responseObject.getJSONObject("Lines");
-		int linecount = 0;
-		int ABCcount = 0;
-		int BCcount = 0;
-		int ABCDcount = 0;
-		int Dcount = 0;
+		linecount = 0;
+		ABCcount = 0;
+		BCcount = 0;
+		ABCDcount = 0;
+		Dcount = 0;
 // Iterate through the keys of "Lines"
 		for (String lineKey : linesObject.keySet()) {
 
