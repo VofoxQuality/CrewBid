@@ -133,11 +133,11 @@ public class CommonTest extends WbidBasepage{
   @Test(priority = 15, enabled = true)
   public void test15() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test15").assignAuthor("VS/483");
-	  logger.info("Get  trip Details");
+	  logger.info("Get trip Code for one Trip Get  trip Details");
 	  String txt=objCommon.getTripCode();
 	  logger.info("Get  trip Details"+ txt);
 	   }
-  @Test(priority = 16, enabled = true)
+  @Test(priority = 16, enabled = false)
   public void test16() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test16").assignAuthor("VS/483");		  
 	  logger.info("Get  All the trip Codes from UI ");
@@ -147,6 +147,18 @@ public class CommonTest extends WbidBasepage{
 	  logger.info("Compare All the trip Codes from UI with trip code fetched from API and get trip details ");
 	  //objCommon.compareTripCodesAndFetchData(TripCodes);
 	  Assert.assertTrue(objCommon.compareTripCodesAndFetchData(TripCodes));
+	  
+	  }
+  @Test(priority = 17, enabled = false)
+  public void test17() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test17").assignAuthor("VS/483");		  
+	  logger.info("Get  All the trip Codes from UI ");
+	  driver.navigate().refresh();
+	  objwait.waitS(5000);
+	  objCommon.getAllTripLinesValues();
+	  	  
+	  logger.info("Compare All the trip Codes from UI with trip code fetched from API and get cred values ");
+	//  Assert.assertTrue();
 	  
 	  }
 }

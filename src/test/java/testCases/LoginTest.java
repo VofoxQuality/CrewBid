@@ -31,7 +31,7 @@ public class LoginTest extends WbidBasepage {
 		Assert.assertEquals(actualtitle, expectedtitle, "Title assertion failed!");
 	}
 
-	@Test(priority = 2, enabled = false)
+	@Test(priority = 2, enabled = true)
 	public void CBW002001000002() {
 		logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000002)").assignAuthor("VS/483");
 		logger.info("Verify invalid version case");
@@ -45,7 +45,7 @@ public class LoginTest extends WbidBasepage {
 		}
 	}
 
-	@Test(priority = 3, enabled = false, dependsOnMethods = { "CBW002001000002" })
+	@Test(priority = 3, enabled = true, dependsOnMethods = { "CBW002001000002" })
 	public void CBW002001000003() {
 		logger = WbidBasepage.extent.createTest(" LOGIN PAGE (MTS001001000003)").assignAuthor("VS/483");
 		logger.info("Verify the update popup");

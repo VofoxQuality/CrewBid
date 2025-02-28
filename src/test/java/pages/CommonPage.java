@@ -3,7 +3,10 @@ package pages;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -14,8 +17,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import API.TrialBidAPI;
 import utilities.ActionUtilities;
@@ -459,6 +460,41 @@ public class CommonPage {
 		    
 		    return allMatched;
 		}
+//Get cred value
+		@FindBy(xpath = "//*[@id='fullHeightModalRight']/div/div/div/div/div/div/pre")
+		public List<WebElement> tripdataLines;
+		
+		public List<String> getAllTripLinesValues() {
+		   // List<String> tripCodes = new ArrayList<>();
+		    List<String> tripLines = new ArrayList<>();
+		    
+		    for (WebElement tripElement : tripList) {
+		            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+		            // Scroll into view with an offset to avoid being covered by headers
+		            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+		            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+		            // Use JavaScript click to avoid "element click intercepted" issues
+		            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+		            		            
+		            for(WebElement tripLine:tripdataLines ) {
+		            	objwait.waitForElementTobeVisible(driver, tripLine, 90);  
+			            String tripLineText = objaction.gettext(tripLine).trim();
+			            WbidBasepage.logger.info("Trip Line Text: " + tripLineText);
+			            tripLines.add(tripLineText);
+		            }
+		            Actions actions = new Actions(driver);
+		            actions.sendKeys(Keys.ESCAPE).perform();      
+		        }
+		    return tripLines;
+		}
 
+		@FindBy(xpath = "(//*[@class='date-tab'])[1]/tr/td[contains(@class,'left-side-radius trip-text-color ng-star-inserted')]")
+		public List<WebElement> tripdataLine1;
+		
+		@FindBy(xpath = "//*[@id[contains(.,'line_')]]//div[@class='cala-centre']//td[contains(@class,'left-side-radius') and contains(@class,'trip-text-color') and contains(@class,'ng-star-inserted')]")
+		public List<WebElement> allTripDataForAllLines;
+
+		@FindBy(xpath = "//*[contains(@class, 'middle-wrapper') and contains(@id, 'line_')]//following-sibling::div[@class='cala-centre']//td[contains(@class, 'trip-text-color ng-star-inserted')]")
+		public List<WebElement> allTripData;
 
 }

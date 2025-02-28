@@ -556,10 +556,11 @@ public class LoginPage {
 	}
 
 	public boolean pswdVisible() {
+		objwait.waitForElementTobeVisible(driver, eyeBtn, 30);
 		String displayedText = maskedPswd.getText().trim();
 		WbidBasepage.logger.log(Status.PASS, "Displayed Password Text: " + displayedText);
 		// Check if the displayed text is in a masked format
-		if (displayedText.matches(WbidBasepage.password)) {
+		if (displayedText.equals(WbidBasepage.password)) {
 			System.out.println("The password is displayed in a visible format.");
 			return true;
 		} else {
