@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import API.ScratchPadCountFA;
 import API.TrialBidAPI;
 import pages.BidDownloadPage;
 import pages.CommonPage;
@@ -36,6 +37,7 @@ public class CommonTest extends WbidBasepage{
 	public String ScratchpadPosition="Captain";
 	public String ScratchpadRound="Round 1";
 	public String year=objCommon.getNextMonthAndCurrentYear();
+	public static List<String> TripCodes = new ArrayList<>();
 	
   @Test(priority = 1, enabled = true)
   public void test1() {
@@ -129,19 +131,32 @@ public class CommonTest extends WbidBasepage{
   public void test14() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test14").assignAuthor("VS/483");
 	  logger.info("Fetchinh API data");
-	  TrialBidAPI.fetchApiData(); 
+	 // TrialBidAPI.fetchApiData(); 
+	  ScratchPadCountFA.fetchApiData("ATL", "1", "CP", "3");
 	  }
-  public static List<String> TripCodes = new ArrayList<>();
   @Test(priority = 15, enabled = true)
   public void test15() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test15").assignAuthor("VS/483");
+	  logger.info("Start over ");
+	  objCommon.startOver();
+	   }
+  @Test(priority = 16, enabled = true)
+  public void test16() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test16").assignAuthor("VS/483");
+	  logger.info("Assert Total scratchpad Line count ");
+	  objCommon.scrLinesTotalCount(ScratchPadCountFA.linecount);
+	   }
+ 
+  @Test(priority = 25, enabled = false)
+  public void test25() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test25").assignAuthor("VS/483");
 	  logger.info("Get trip Code for one Trip Get  trip Details");
 	  String txt=objCommon.getTripCode();
 	  logger.info("Get  trip Details"+ txt);
 	   }
-  @Test(priority = 16, enabled = false)
-  public void test16() throws JsonProcessingException  {
-	  logger = WbidBasepage.extent.createTest("test16").assignAuthor("VS/483");		  
+  @Test(priority = 26, enabled = false)
+  public void test26() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test26").assignAuthor("VS/483");		  
 	  logger.info("Get  All the trip Codes from UI ");
 	  TripCodes=objCommon.getAllTripCodes();
 	  logger.info("Fetching UI data"+TripCodes);
@@ -151,9 +166,9 @@ public class CommonTest extends WbidBasepage{
 	  Assert.assertTrue(objCommon.compareTripCodesAndFetchData(TripCodes));
 	  
 	  }
-  @Test(priority = 17, enabled = true)
-  public void test17() throws JsonProcessingException  {
-	  logger = WbidBasepage.extent.createTest("test17").assignAuthor("VS/483");		  
+  @Test(priority = 27, enabled = false)
+  public void test27() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test27").assignAuthor("VS/483");		  
 	  logger.info("Get  All the trip Codes from UI ");
 	  driver.navigate().refresh();
 	  objwait.waitS(5000);

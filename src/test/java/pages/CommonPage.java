@@ -335,6 +335,42 @@ public class CommonPage {
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
 	        return nextMonth.format(formatter);
 	    }
+//Get total ScratchPad line count 
+//have to perform start over
+		@FindBy(xpath = "//i[@class='fas fa-forward']")
+		public WebElement moveIcon;
+		
+		@FindBy(xpath = "//i[@class='fas fas fa-ellipsis-h']")
+		public WebElement moreDot;
+		
+		@FindBy(xpath = "//li[@class='dropdown-item']/a[text()='Start Over']")
+		public WebElement startOverBtn;
+		
+		@FindBy(xpath = "//button[text()='Yes']")
+		public WebElement yesBtn;
+		
+		public void startOver() {
+			objwait.waitForElementTobeVisible(driver, moveIcon, 90);
+			objaction.click(moveIcon);
+			objwait.waitForElementTobeVisible(driver, moreDot, 90);
+			objaction.click(moreDot);
+			objwait.waitForElementTobeVisible(driver, startOverBtn, 90);
+			objaction.click(startOverBtn);
+			objwait.waitForElementTobeVisible(driver, yesBtn, 90);
+			objaction.click(yesBtn);
+			objwait.waitForElementTobeVisible(driver, yesBtn, 90);
+			objaction.click(yesBtn);
+		}
+		@FindBy(xpath = "//h6[@class='scr-head']")
+		public WebElement scrLinesHead;
+		
+		public boolean scrLinesTotalCount(int total) {
+		    objwait.waitForElementTobeVisible(driver, scrLinesHead, 90);
+		    String text = scrLinesHead.getText().trim();
+		    WbidBasepage.logger.pass("scratchpad Lines total count : " + text);
+		    return text.contains(String.valueOf(total));
+		}
+
 //Get trip details-Trip Code
 		@FindBy(xpath = "//td[contains(@class,'left-side-radius trip-text-color ng-star-inserted')]")
 		public List<WebElement> tripList;
