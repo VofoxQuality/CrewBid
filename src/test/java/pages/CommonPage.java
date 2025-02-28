@@ -315,6 +315,116 @@ public class CommonPage {
 			objwait.waitForElemntTobeClickable(driver, coverLetterClose, 90);
 			objaction.click(coverLetterClose);
 		}
+		@FindBy(xpath = "(//button[@class='submit-cancel'])[7]")
+		public WebElement cancelFA;
+//Close cover letter FA
+		public void CoverLetterCloseFA() {
+			objwait.waitForElemntTobeClickable(driver, coverLetterClose, 90);
+			objaction.click(coverLetterClose);
+			objaction.click(yesBtn);
+			objaction.click(cancelFA);
+		}
+//Cover Letter content in FA
+		
+		@FindBy(xpath = "//*[@id='fileContent-Section']")
+		public WebElement coverLetterFA;
+//Cover Letter content in FA A-B-C position lines		
+		public boolean getABCPositionLinesFA(int abcLines) {
+		    objwait.waitForElementTobeVisible(driver, coverLetterFA, 90);
+		    objwait.waitS(3000);
+		    String actualText = coverLetterFA.getText().trim();
+		   
+		    // Extracting the specific content
+		    Pattern pattern = Pattern.compile("Number of A-B-C position lines:\\s*(\\d+)");
+		    Matcher matcher = pattern.matcher(actualText);
+		   
+		    if (matcher.find()) {
+		        String abcPositionLines = matcher.group(1);
+		        WbidBasepage.logger.pass("Extracted Number of A-B-C position lines:  UI:-" + abcPositionLines);
+		     // Check if the extracted value matches the expected dLines and return result
+		        boolean isMatch = abcPositionLines.equals(String.valueOf(abcLines));
+		        if (isMatch) {
+		            WbidBasepage.logger.pass("Expected and extracted ABC position lines match: API:- " + abcLines);
+		        } else {
+		            WbidBasepage.logger.fail("Mismatch! Expected: " + abcLines + ", Extracted: " + abcPositionLines);
+		        }
+		        return isMatch;
+		    } else {
+		        WbidBasepage.logger.fail("Failed to extract Number of ABC position lines. Text was: " + actualText);
+		        return false;
+		    }
+		}
+//Cover Letter content in FA-B-C position lines	
+		public boolean getBCPositionLinesFA(int bcLines) {
+		    objwait.waitForElementTobeVisible(driver, coverLetterFA, 90);
+		    String actualText = coverLetterFA.getText().trim();
+		    // Extracting the specific content
+		    Pattern pattern = Pattern.compile("Number of B-C position lines:\\s*(\\d+)");
+		    Matcher matcher = pattern.matcher(actualText);
+		   
+		    if (matcher.find()) {
+		        String bcdPositionLines = matcher.group(1);
+		        WbidBasepage.logger.pass("Extracted Number of B-C position lines: UI:- " + bcdPositionLines);
+		     // Check if the extracted value matches the expected dLines and return result
+		        boolean isMatch = bcdPositionLines.equals(String.valueOf(bcLines));
+		        if (isMatch) {
+		            WbidBasepage.logger.pass("Expected and extracted BC position lines match: API:-" + bcLines);
+		        } else {
+		            WbidBasepage.logger.fail("Mismatch! Expected: " + bcLines + ", Extracted: " + bcdPositionLines);
+		        }
+		        return isMatch;
+		    } else {
+		        WbidBasepage.logger.fail("Failed to extract Number of BC position lines. Text was: " + actualText);
+		        return false;
+		    }
+		}
+//Cover Letter content in FA A-B-C-D position lines
+		public boolean getABCDPositionLinesFA(int abcdLines) {
+		    objwait.waitForElementTobeVisible(driver, coverLetterFA, 90);
+		    String actualText = coverLetterFA.getText().trim();
+		    // Extracting the specific content
+		    Pattern pattern = Pattern.compile("Number of A-B-C-D position lines:\\s*(\\d+)");
+		    Matcher matcher = pattern.matcher(actualText);
+		    if (matcher.find()) {
+		        String abcdPositionLines = matcher.group(1);
+		        WbidBasepage.logger.pass("Extracted Number of A-B-C-D position lines: UI:- " + abcdPositionLines);
+		     // Check if the extracted value matches the expected dLines and return result
+		        boolean isMatch = abcdPositionLines.equals(String.valueOf(abcdLines));
+		        if (isMatch) {
+		            WbidBasepage.logger.pass("Expected and extracted ABCD position lines match: API:- " + abcdLines);
+		        } else {
+		            WbidBasepage.logger.fail("Mismatch! Expected: " + abcdLines + ", Extracted: " + abcdPositionLines);
+		        }
+		        return isMatch;
+		    } else {
+		        WbidBasepage.logger.fail("Failed to extract Number of ABCD position lines. Text was: " + actualText);
+		        return false;
+		    }
+		}
+//Cover Letter content in FA D position lines
+		public boolean getDPositionLinesFA(int dLines) {
+		    objwait.waitForElementTobeVisible(driver, coverLetterFA, 90);
+		    String actualText = coverLetterFA.getText().trim();
+		    // Extracting the specific content using regex
+		    Pattern pattern = Pattern.compile("Number of D-ONLY position lines:\\s*(\\d+)");
+		    Matcher matcher = pattern.matcher(actualText);
+		    if (matcher.find()) {
+		        String dPositionLines = matcher.group(1);
+		        WbidBasepage.logger.pass("Extracted Number of D-ONLY position lines: UI :-" + dPositionLines);
+		        // Check if the extracted value matches the expected dLines and return result
+		        boolean isMatch = dPositionLines.equals(String.valueOf(dLines));
+		        if (isMatch) {
+		            WbidBasepage.logger.pass("Expected and extracted D-ONLY position lines match: API:- " + dLines);
+		        } else {
+		            WbidBasepage.logger.fail("Mismatch! Expected: " + dLines + ", Extracted: " + dPositionLines);
+		        }
+		        return isMatch;
+		    } else {
+		        WbidBasepage.logger.fail("Failed to extract Number of D-ONLY position lines. Text was: " + actualText);
+		        return false;
+		    }
+		}
+
 //ScratchPad
 		@FindBy(xpath = "//ul[@class='m-auto header-title-section']/li")
 		public WebElement scratchpadHead;
@@ -367,7 +477,8 @@ public class CommonPage {
 		public boolean scrLinesTotalCount(int total) {
 		    objwait.waitForElementTobeVisible(driver, scrLinesHead, 90);
 		    String text = scrLinesHead.getText().trim();
-		    WbidBasepage.logger.pass("scratchpad Lines total count : " + text);
+		    WbidBasepage.logger.pass("scratchpad Lines total count UI: " + text);
+		    WbidBasepage.logger.pass("scratchpad Lines total count API: " + text);
 		    return text.contains(String.valueOf(total));
 		}
 

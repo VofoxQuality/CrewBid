@@ -37,6 +37,8 @@ public class CommonTest extends WbidBasepage{
 	public String ScratchpadPosition="Captain";
 	public String ScratchpadRound="Round 1";
 	public String year=objCommon.getNextMonthAndCurrentYear();
+	public String APIRound="1";
+	public String APIMonth="3";
 	public static List<String> TripCodes = new ArrayList<>();
 	
   @Test(priority = 1, enabled = true)
@@ -115,14 +117,14 @@ public class CommonTest extends WbidBasepage{
 	  objCommon.clickSeniorityCancel();
 	 }
   @Test(priority = 12, enabled = true)
-  public void test12() throws JsonProcessingException  {
+  public void test12()  {
 	  logger = WbidBasepage.extent.createTest("test12").assignAuthor("VS/483");	 
 	  logger.info("close Latest newz pop Up");
 	  objCommon.clickLatestNwzClose();
 	   }
   @Test(priority = 13, enabled = true)
   public void test13() throws JsonProcessingException  {
-	  logger = WbidBasepage.extent.createTest("test13").assignAuthor("VS/483");
+	  logger = WbidBasepage.extent.createTest("test13").assignAuthor("VS/483");	  
 	  logger.info("close Cover Letter pop Up");
 	  objCommon.clickCoverLetterClose();
 	  Assert.assertTrue(objCommon.verifyScratchpadHeading(domicile,ScratchpadPosition,ScratchpadRound,year));
@@ -131,8 +133,8 @@ public class CommonTest extends WbidBasepage{
   public void test14() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test14").assignAuthor("VS/483");
 	  logger.info("Fetchinh API data");
-	 // TrialBidAPI.fetchApiData(); 
-	  ScratchPadCountFA.fetchApiData("ATL", "1", "CP", "3");
+	  TrialBidAPI.fetchApiData(); 
+	  ScratchPadCountFA.fetchApiData(domicile, APIRound, position, APIMonth);
 	  }
   @Test(priority = 15, enabled = true)
   public void test15() throws JsonProcessingException  {
