@@ -889,40 +889,45 @@ public class BidDownloadPage {
 
 	public void checklinenumber() {
 
-		String selectedBase = Atl.trim().toUpperCase(); // Convert to uppercase
-		String selectedPosition = Cp.trim().toUpperCase();
+		 // Trim and normalize input values
+	    String selectedBase = "ATL".trim().toUpperCase();  
+	    String selectedPosition = "CA".trim().toUpperCase();  
 
-		if (selectedBase.isEmpty() || selectedPosition.isEmpty()) {
-			System.out.println("Base or Position is empty. Please check inputs.");
-			WbidBasepage.logger.fail("Base or Position is empty.");
-			return;
-		}
+	    if (selectedBase.isEmpty() || selectedPosition.isEmpty()) {
+	        System.out.println("Base or Position is empty. Please check inputs.");
+	        WbidBasepage.logger.fail("Base or Position is empty.");
+	        return;
+	    }
 
-		// Normalize spaces in content
-		content = content.replaceAll("\\s+", " ").toUpperCase();
+	    // Normalize spaces and convert content to uppercase
+	    content = content.replaceAll("\\s+", " ").toUpperCase();
+	    // ✅ Updated Regex: Extracts 271, 176, 34, and 61
+	    String regex = "\\b" + selectedBase + "\\s+" + selectedPosition + 
+	                   "\\s+(\\d+)\\s+(?:\\d+[-])?(\\d+)\\s+\\d+-\\d+\\s+\\((\\d+)\\)\\s+\\d+-\\d+\\s+\\((\\d+)\\)";
 
-		// Debug: Print actual content
-		System.out.println("DEBUG: Content = " + content);
+	    //WbidBasepage.logger.pass("Regex: " + regex);
+	    System.out.println("Regex: " + regex);
 
-		// Regex pattern to find the number based on the base and position
-		String regex = selectedBase + " (" + selectedPosition + ")";
-		WbidBasepage.logger.pass("Regex: " + regex);
-		Pattern pattern = Pattern.compile(regex);
-		WbidBasepage.logger.info("Pattern: " + pattern);
-		Matcher matcher = pattern.matcher(content);
-		WbidBasepage.logger.info("Matcher: " + matcher);
+	    Pattern pattern = Pattern.compile(regex);
+	    Matcher matcher = pattern.matcher(content);
 
-		// Check and print the extracted number
-		if (matcher.find()) {
-			String extractedNumber = matcher.group(1);
-			WbidBasepage.logger.info("Extracted Number: " + extractedNumber);
-			System.out.println(
-					"Extracted number for " + selectedBase + " (" + selectedPosition + "): " + extractedNumber);
-			WbidBasepage.logger
-					.pass("Extracted number for " + selectedBase + " (" + selectedPosition + "): " + extractedNumber);
-		} else {
-			System.out.println("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
-			WbidBasepage.logger.fail("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
-		}
-	}
+	    // Check and extract the numbers
+	    if (matcher.find()) {
+	    	String total = matcher.group(1);   // ✅ Extracts 271
+	        String hard = matcher.group(2);    // ✅ Extracts 176
+	        String reserve = matcher.group(3); // ✅ Extracts 34
+	        String blank = matcher.group(4);   // ✅ Extracts 61
+
+	        String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n" +
+	                        " -🔥 Total  : " + total + "\n" +
+	                        " -🔥 Hard   : " + hard + "\n" +
+	                        " -🔥 Reserve: " + reserve + "\n" +
+	                        " -🔥 Blank  : " + blank;
+
+	        System.out.println(output);
+	        WbidBasepage.logger.pass(output);
+	    } else {
+	        System.out.println("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
+	        WbidBasepage.logger.fail("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
+	    }}
 }
