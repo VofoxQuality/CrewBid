@@ -1,6 +1,7 @@
 package testCases;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.openqa.selenium.WebDriver;
@@ -25,9 +26,10 @@ public class CommonTest extends WbidBasepage{
 	LoginPage objpage = new LoginPage(driver);
 	BidDownloadPage objdownload = new BidDownloadPage(driver);
 	CommonPage objCommon=new CommonPage(driver);
+	HashMap<String, String> testDataMap = testData("qa environment");
 	
 	public String actualVersion;
-	public String expectedVersion="10.4.16.2";
+	public String expectedVersion=testDataMap.get("Version");
 	public String domicile="ATL";
 	public String position="CP";
 	public String round="1st Round";
@@ -149,7 +151,7 @@ public class CommonTest extends WbidBasepage{
 	  Assert.assertTrue(objCommon.compareTripCodesAndFetchData(TripCodes));
 	  
 	  }
-  @Test(priority = 17, enabled = false)
+  @Test(priority = 17, enabled = true)
   public void test17() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test17").assignAuthor("VS/483");		  
 	  logger.info("Get  All the trip Codes from UI ");
