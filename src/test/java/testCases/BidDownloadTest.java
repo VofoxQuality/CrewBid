@@ -30,11 +30,14 @@ public class BidDownloadTest extends WbidBasepage {
 		Assert.assertEquals(actualtitle, expectedtitle);
 	}
 
-	@Test(priority = 2, enabled = false)
+	@Test(priority = 2, enabled = true)
 	public void CBW003001000002() {
 		logger = extent.createTest(" BID DATA DOWNLOAD (CBW003001000001)").assignAuthor("VS/482");
 		logger.info("Verify the update popup");
-
+		objlogin.updateVersionLogin();
+		// objwait.waitS(3000);
+		logger.info("Assert that Home page header shows updated version.");
+		Assert.assertTrue(objlogin.gettexthome(), "Home page header does not show updated version");
 	}
 
 	@Test(priority = 3, enabled = false)
@@ -47,7 +50,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000004() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000004)").assignAuthor("VS/482");
 		logger.info("Verify the login (subscribed user)");
-		objlogin.login();
+		//objlogin.login();
 		objwait.waitS(9000);
 		logger.info("Assert the title : \"Crewbid\" in the top left");
 		Assert.assertTrue(objdownload.fordisplaylogo(), "❌ Logo not display");
@@ -162,7 +165,7 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("✅ Assert : All the base cities");
 	}
 
-	@Test(priority = 17, enabled = false)
+	@Test(priority = 17, enabled = true)
 	public void CBW003001000017() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000017)").assignAuthor("VS/482");
 		logger.info("To check the positions are enabled state");
@@ -170,7 +173,7 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("✅ Assert : CP , FO and FA");
 	}
 
-	@Test(priority = 18, enabled = false)
+	@Test(priority = 18, enabled = true)
 	public void CBW003001000018() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000018)").assignAuthor("VS/482");
 		logger.info("To check the next month in default condition");
@@ -178,7 +181,7 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("✅ Assert: Next month is selected by default.");
 	}
 
-	@Test(priority = 19, enabled = false)
+	@Test(priority = 19, enabled = true)
 	public void CBW003001000019() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000019)").assignAuthor("VS/482");
 		logger.info("Verify the Current month to previous months in disable state");
@@ -188,7 +191,7 @@ public class BidDownloadTest extends WbidBasepage {
 
 	}
 
-	@Test(priority = 20, enabled = false)
+	@Test(priority = 20, enabled = true)
 	public void CBW003001000020() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000020)").assignAuthor("VS/482");
 		logger.info("Verify the next month to upcoming month of the current year in enabled state");
@@ -203,7 +206,7 @@ public class BidDownloadTest extends WbidBasepage {
 
 	}
 
-	@Test(priority = 22, enabled = false)
+	@Test(priority = 22, enabled = true)
 	public void CBW003001000022() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000022)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -213,7 +216,7 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("✅Assert: Download button is enabled ");
 	}
 
-	@Test(priority = 23, enabled = false)
+	@Test(priority = 23, enabled = true)
 	public void CBW003001000023() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000023)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -222,7 +225,7 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("✅Assert: Download button is enabled ");
 	}
 
-	@Test(priority = 24, enabled = false)
+	@Test(priority = 24, enabled = true)
 	public void CBW003001000024() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000024)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -232,7 +235,7 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("✅Assert: Download button is enabled ");
 	}
 
-	@Test(priority = 25, enabled = false)
+	@Test(priority = 25, enabled = true)
 	public void CBW003001000025() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000025)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -245,7 +248,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000026() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000026)").assignAuthor("VS/482");
 		logger.info("Verify user can able to view the \"Seniority list\" popup");
-		objdownload.checkbiddownloadsteps();
+		objdownload.checkDownloadBid();
 		logger.info("Verify the loader is appers while download the bid");
 		Assert.assertTrue(objdownload.fordisplayloadingicon(), "❌ Load Icon not display");
 		objwait.waitS(5000);

@@ -645,15 +645,106 @@ public class BidDownloadPage {
 
 	String Atl;
 	String Cp;
+	String selectedBase;
+	String selectedPosition;
+	@FindBy(xpath = "//button[text()=\"Ok\"]")
+	public WebElement popupokbtn;
+	@FindBy(xpath = "//button[text()=\"OK\"]")
+	public WebElement warningpopupokbtn;
 
-	public void checkbiddownloadsteps() {
-		objaction.click(atl);
-		Atl = objaction.gettext(atl);
-		objaction.click(cp);
-		Cp = objaction.gettext(cp);
-		objaction.click(firstround);
-		formonthselection();
-		objaction.click(download_btn);
+	public boolean checkDownloadBid() {
+		WbidBasepage.logger
+				.info("🎯 Verifying user can select appropriate rounds and positions with all applicable domiciles:");
+		boolean isDownloadEnabled = false;
+		int currentDay = LocalDate.now().getDayOfMonth();
+		int lastDayOfMonth = LocalDate.now().lengthOfMonth();
+
+		// Determine applicable condition
+		if (currentDay >= 4 && currentDay <= lastDayOfMonth) {
+			isDownloadEnabled = processDownload("CP", "FO", firstround);
+		}
+		if (currentDay >= 2 && currentDay <= lastDayOfMonth) {
+			isDownloadEnabled |= processDownload("FA", "FA", firstround);
+		}
+		if (currentDay >= 17 && currentDay <= lastDayOfMonth) {
+			isDownloadEnabled |= processDownload("CP", "FO", secondround);
+		}
+		if (currentDay >= 11 && currentDay <= lastDayOfMonth) {
+			isDownloadEnabled |= processDownload("FA", "FA", secondround);
+		}
+
+		if (!isDownloadEnabled) {
+			WbidBasepage.logger.info("❌ Not able to download bid data");
+		}
+		return isDownloadEnabled;
+	}
+
+	private boolean processDownload(String pos1, String pos2, WebElement round) {
+		boolean isDownloadEnabled = false;
+		selectedBase = "";
+		selectedPosition = "";
+
+		WbidBasepage.logger.info("✅ Success: Report is available");
+
+		for (WebElement city : basecities) {
+			String cityName = city.getText().trim();
+
+			// Skip AUS and FLL for Pilot
+			if ((pos1.equals("CP") || pos1.equals("FO"))
+					&& (cityName.equalsIgnoreCase("AUS") || cityName.equalsIgnoreCase("FLL"))) {
+				WbidBasepage.logger.info("⚠️ Skipping domicile: " + cityName + " as per scenario.");
+				continue;
+			}
+
+			WbidBasepage.logger.info("✨ Domicile Selected: " + cityName);
+			objwait.waitForElemntTobeClickable(driver, city, 5);
+			objaction.click(city);
+
+			for (WebElement position : positionlist) {
+				String pos = position.getText().trim();
+
+				if (pos.equalsIgnoreCase(pos1) || pos.equalsIgnoreCase(pos2)) {
+					WbidBasepage.logger.info("✨ Position Selected: " + pos);
+					objwait.waitForElemntTobeClickable(driver, position, 5);
+					objaction.click(position);
+
+					// Store selected base and position
+					selectedBase = cityName;
+					selectedPosition = pos;
+
+					// Select round
+					objwait.waitForElemntTobeClickable(driver, round, 5);
+					objaction.click(round);
+					WbidBasepage.logger.info("✅ Round selected for " + pos + " at domicile " + cityName);
+
+					// Get next month in SHORT format (e.g., "Mar")
+					formonthselection();
+
+					// Check if download button is enabled
+					if (download_btn.isEnabled()) {
+						WbidBasepage.logger.pass("⬇️ Download button is enabled for " + cityName + " - " + pos);
+						objaction.click(download_btn);
+						isDownloadEnabled = true;
+						break; // **Break out of the position loop**
+					} else {
+						WbidBasepage.logger.fail("🚫 Download button is NOT enabled for " + cityName + " - " + pos);
+						objaction.click(popupokbtn);
+						objaction.click(warningpopupokbtn);
+						continue; // **Continue checking next position**
+					}
+				}
+			}
+
+			// **If download is successful, break the city loop**
+			if (isDownloadEnabled) {
+				break;
+			}
+		}
+
+		WbidBasepage.logger.info("📌 Final Selected Base: " + selectedBase);
+		WbidBasepage.logger.info("📌 Final Selected Position: " + selectedPosition);
+
+		return isDownloadEnabled;
 	}
 
 	// TC28
@@ -889,45 +980,43 @@ public class BidDownloadPage {
 
 	public void checklinenumber() {
 
-		 // Trim and normalize input values
-	    String selectedBase = "ATL".trim().toUpperCase();  
-	    String selectedPosition = "CA".trim().toUpperCase();  
+		// Trim and normalize input values
+		selectedBase = selectedBase.toUpperCase();
+		selectedPosition = selectedPosition.toUpperCase();
 
-	    if (selectedBase.isEmpty() || selectedPosition.isEmpty()) {
-	        System.out.println("Base or Position is empty. Please check inputs.");
-	        WbidBasepage.logger.fail("Base or Position is empty.");
-	        return;
-	    }
+		if (selectedBase.isEmpty() || selectedPosition.isEmpty()) {
+			System.out.println("Base or Position is empty. Please check inputs.");
+			WbidBasepage.logger.fail("Base or Position is empty.");
+			return;
+		}
 
-	    // Normalize spaces and convert content to uppercase
-	    content = content.replaceAll("\\s+", " ").toUpperCase();
-	    // ✅ Updated Regex: Extracts 271, 176, 34, and 61
-	    String regex = "\\b" + selectedBase + "\\s+" + selectedPosition + 
-	                   "\\s+(\\d+)\\s+(?:\\d+[-])?(\\d+)\\s+\\d+-\\d+\\s+\\((\\d+)\\)\\s+\\d+-\\d+\\s+\\((\\d+)\\)";
+		// Normalize spaces and convert content to uppercase
+		content = content.replaceAll("\\s+", " ").toUpperCase();
+		// Regex: Extracts 271, 176, 34, and 61
+		String regex = "\\b" + selectedBase + "\\s+" + selectedPosition
+				+ "\\s+(\\d+)\\s+(?:\\d+[-])?(\\d+)\\s+\\d+-\\d+\\s+\\((\\d+)\\)\\s+\\d+-\\d+\\s+\\((\\d+)\\)";
 
-	    //WbidBasepage.logger.pass("Regex: " + regex);
-	    System.out.println("Regex: " + regex);
+		System.out.println("Regex: " + regex);
 
-	    Pattern pattern = Pattern.compile(regex);
-	    Matcher matcher = pattern.matcher(content);
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(content);
 
-	    // Check and extract the numbers
-	    if (matcher.find()) {
-	    	String total = matcher.group(1);   // ✅ Extracts 271
-	        String hard = matcher.group(2);    // ✅ Extracts 176
-	        String reserve = matcher.group(3); // ✅ Extracts 34
-	        String blank = matcher.group(4);   // ✅ Extracts 61
+		// Check and extract the numbers
+		if (matcher.find()) {
+			String total = matcher.group(1); // Extracts 271
+			String hard = matcher.group(2); // Extracts 176
+			String reserve = matcher.group(3); // Extracts 34
+			String blank = matcher.group(4); // Extracts 61
 
-	        String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n" +
-	                        " -🔥 Total  : " + total + "\n" +
-	                        " -🔥 Hard   : " + hard + "\n" +
-	                        " -🔥 Reserve: " + reserve + "\n" +
-	                        " -🔥 Blank  : " + blank;
+			String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n"
+					+ " -🔥 Total  : " + total + "\n" + " -🔥 Hard   : " + hard + "\n" + " -🔥 Reserve: " + reserve
+					+ "\n" + " -🔥 Blank  : " + blank;
 
-	        System.out.println(output);
-	        WbidBasepage.logger.pass(output);
-	    } else {
-	        System.out.println("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
-	        WbidBasepage.logger.fail("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
-	    }}
+			System.out.println(output);
+			WbidBasepage.logger.pass(output);
+		} else {
+			System.out.println("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
+			WbidBasepage.logger.fail("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
+		}
+	}
 }
