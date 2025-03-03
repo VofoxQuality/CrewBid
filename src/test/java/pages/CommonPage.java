@@ -445,6 +445,11 @@ public class CommonPage {
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
 	        return nextMonth.format(formatter);
 	    }
+		public String getNextMonth() {
+	        LocalDate nextMonth = LocalDate.now().plusMonths(1); // Get next month
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM"); // Format as "MM"
+	        return nextMonth.format(formatter);
+	    }
 //Get total ScratchPad line count 
 //have to perform start over
 		@FindBy(xpath = "//i[@class='fas fa-forward']")

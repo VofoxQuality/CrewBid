@@ -36,7 +36,7 @@ public String ScratchpadRound="Round 1";
 public String year=objCommon.getNextMonthAndCurrentYear();
 public static List<String> TripCodes = new ArrayList<>();
 public String APIRound="1";
-public String APIMonth="3";
+public String APIMonth = String.valueOf(objCommon.getNextMonth());
 
 @Test(priority = 1, enabled = true)
 public void test1() {
