@@ -47,7 +47,7 @@ public class TrialBidAPI  {
 	public static int passCount = 0, errorCount = 0;
 
 	@Test(priority = 1)
-	public static void fetchApiData() throws JsonProcessingException {
+	public static void fetchApiData(String domicile,String expectedRound, String expectedPosition, String expectedMonth) throws JsonProcessingException {
 		WbidBasepage.logger = WbidBasepage.extent.createTest("Bid Download API").assignAuthor("VS/445");
 
 		WbidBasepage.logger.info("Cred Values in an array");
@@ -78,10 +78,21 @@ public class TrialBidAPI  {
 
 // Step 2: Use the Token as Authorization in the Next API Call
 		String nextEndpoint = "/BidData/GetMonthlyBidFiles/";
-		String requestBody2 = "{" + "\"Domicile\": \"ATL\"," + "\"EmpNum\": \"21221\"," + "\"FromAppNumber\": \"12\","
-				+ "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": 3," + "\"Platform\": \"Web\","
-				+ "\"Position\": \"CP\"," + "\"Round\": 1," + "\"secretEmpNum\": \"21221\","
-				+ "\"Version\": \"10.4.16.2\"," + "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
+		String requestBody2 = "{"
+		        + "\"Domicile\": \"" + domicile + "\","
+		        + "\"EmpNum\": \"21221\","
+		        + "\"FromAppNumber\": \"12\","
+		        + "\"IsQATest\": false,"
+		        + "\"IsRetrieveNewBid\": true,"
+		        + "\"Month\": " + expectedMonth + ","
+		        + "\"Platform\": \"Web\","
+		        + "\"Position\": \"" + expectedPosition + "\","
+		        + "\"Round\": " + expectedRound + ","
+		        + "\"secretEmpNum\": \"21221\","
+		        + "\"Version\": \"10.4.16.3\","
+		        + "\"Year\": 2025,"
+		        + "\"isSecretUser\": true"
+		        + "}";// Replace with
 																										// your next API
 																										// endpoint
 		Response nextResponse = given().header("Authorization", "Bearer " + token)
