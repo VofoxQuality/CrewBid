@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +53,7 @@ public class FetchDates extends WbidBasepage {
 	public static int passCount = 0, errorCount = 0;
 
 	@Test(priority = 1)
-	public static void fetchApiData(String domicile,String expectedRound, String expectedPosition, String expectedMonth) throws JsonProcessingException {
+	public static void fetchApiData(String domicile,String expectedRound, String expectedPosition, String expectedMonth) throws JsonProcessingException, ParseException {
 		WbidBasepage.logger = extent.createTest("Bid Download API").assignAuthor("VS/445");
 
 		logger.info("Cred Values in an array");
@@ -96,6 +99,7 @@ public class FetchDates extends WbidBasepage {
 		        + "\"Year\": 2025,"
 		        + "\"isSecretUser\": true"
 		        + "}";// Replace with
+// Replace with
 																										// your next API
 																										// endpoint
 		Response nextResponse = given().header("Authorization", "Bearer " + token)
@@ -106,12 +110,7 @@ public class FetchDates extends WbidBasepage {
 				.extract().response();
 
 		String fileContents = nextResponse.jsonPath().getString("lstBidDataFiles.FileContent[0]");
-		
-		
-		
-		
-		
-		
+
 		String filePath = "WBL_Decompressed.txt";
 		String decompressedString = LZString.decompressFromUTF16(fileContents);
 
@@ -148,13 +147,12 @@ public class FetchDates extends WbidBasepage {
 
 // Get the "Lines" object
 		JSONObject linesObject = responseObject.getJSONObject("Lines");
-int linecount=0;
+		int linecount = 0;
 // Iterate through the keys of "Lines"
 		for (String lineKey : linesObject.keySet()) {
-			
+
 			JSONObject lineData = linesObject.getJSONObject(lineKey);
-			
-				
+
 			// Check if "Pairings" exists and is an array
 			if (lineData.has("Pairings")) {
 				JSONArray pairingsArray = lineData.getJSONArray("Pairings");
@@ -166,357 +164,63 @@ int linecount=0;
 				}
 			}
 		}
-		
-		 // List to store tripName, date, and line number
-        List<TripEntry> tripData = new ArrayList<>();
 
-        // Iterate over all lines
-        for (String lineKey : linesObject.keySet()) {
-            JSONObject line = linesObject.getJSONObject(lineKey);
-            JSONArray bidLineTemplates = line.getJSONArray("BidLineTemplates");
+		// List to store tripName, date, and line number
+		List<TripEntry> tripData = new ArrayList<>();
+		// Date formatter
+		SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM");
 
-            // Iterate over each BidLineTemplate
-            for (int i = 0; i < bidLineTemplates.length(); i++) {
-                JSONObject bidLine = bidLineTemplates.getJSONObject(i);
-                
-                if (bidLine.has("TripName") && bidLine.get("TripName") != JSONObject.NULL) {
-                    String tripName = bidLine.getString("TripName");
+		// Iterate over all lines
+		for (String lineKey : linesObject.keySet()) {
+			JSONObject line = linesObject.getJSONObject(lineKey);
+			JSONArray bidLineTemplates = line.getJSONArray("BidLineTemplates");
 
-                    // Check if tripName starts with any of the specified prefixes
-                    for (String prefix : allPairings) {
-                        if (tripName.startsWith(prefix)) {
-                            String date = bidLine.getString("Date");
-                            tripData.add(new TripEntry(tripName, date, Integer.parseInt(lineKey))); // Store line number
-                            break; // No need to check other prefixes once matched
-                        }
-                    }
-                }
-            }
-        }
-     // Sort the list by line number in ascending order
-        Collections.sort(tripData, Comparator.comparingInt(entry -> entry.lineNumber));
-        
-        System.out.println("Matching TripName - Date - Line Pairs:");
-        for (TripEntry entry : tripData) {
-            //System.out.println("Line: " + entry.lineNumber + " | TripName: " + entry.tripName + " -> Date: " + entry.date);
-        	logger.info("Line: " + entry.lineNumber + " | TripName: " + entry.tripName + " -> Date: " + entry.date);
-        }
-	}
-        
-        static class TripEntry {
-            String tripName;
-            String date;
-            int lineNumber; // Changed to integer for proper sorting
+			// Iterate over each BidLineTemplate
+			for (int i = 0; i < bidLineTemplates.length(); i++) {
+				JSONObject bidLine = bidLineTemplates.getJSONObject(i);
 
-            TripEntry(String tripName, String date, int lineNumber) {
-                this.tripName = tripName;
-                this.date = date;
-                this.lineNumber = lineNumber;
-            }
-        }
-		/*************************************************/
-		/*
-		 // List to store tripName-date pairs
-        List<SimpleEntry<String, String>> tripData = new ArrayList<>();
+				if (bidLine.has("TripName") && bidLine.get("TripName") != JSONObject.NULL) {
+					String tripName = bidLine.getString("TripName");
 
-        // Iterate over all lines
-        for (String lineKey : linesObject.keySet()) {
-            JSONObject line = linesObject.getJSONObject(lineKey);
-            JSONArray bidLineTemplates = line.getJSONArray("BidLineTemplates");
-
-            // Iterate over each BidLineTemplate
-            for (int i = 0; i < bidLineTemplates.length(); i++) {
-                JSONObject bidLine = bidLineTemplates.getJSONObject(i);
-                
-                if (bidLine.has("TripName") && bidLine.get("TripName") != JSONObject.NULL) {
-                    String tripName = bidLine.getString("TripName");
-
-                    // Check if tripName starts with any of the specified prefixes
-                    for (String prefix : allPairings) {
-                        if (tripName.startsWith(prefix)) {
-                            String date = bidLine.getString("Date");
-                            tripData.add(new SimpleEntry<>(tripName, date)); // Save Pair
-                            break; // No need to check other prefixes once matched
-                        }
-                    }
-                }
-            }
-        }
-
-        // Print stored results
-        System.out.println("Matching TripName - Date Pairs:");
-        for (SimpleEntry<String, String> entry : tripData) {
-            //System.out.println("TripName: " + entry.getKey() + " -> Date: " + entry.getValue());
-            logger.info("TripName: " + entry.getKey() + " -> Date: " + entry.getValue());
-        }
-		System.out.println("Lines count= " + linecount);*/
-		/**************************************************/
-
-// Convert the list to an String array
-		/*
-		String[] allPairingsArray = allPairings.toArray(new String[0]);
-
-// Print the array
-		System.out.println("All Pairings in a Single Array:");
-		for (String pairing : allPairingsArray) {
-			// System.out.println(pairing);
-		}
-
-		// Initialize a new array to store the first 4 characters of each pairing
-		String[] firstFourCharsArray = new String[allPairingsArray.length];
-
-		// Extract the first 4 characters from each pairing
-		for (int i = 0; i < allPairingsArray.length; i++) {
-			firstFourCharsArray[i] = allPairingsArray[i].substring(0, 4);
-		}
-
-		// Print the new array
-		System.out.println("First 4 Characters from Pairings:");
-		for (String pairing1 : firstFourCharsArray) {
-			// System.out.println(pairing1);
-		}
-
-		JSONObject tripsData = new JSONObject(prettyJson1);
-		Set<String> firstFourSet = new HashSet<>(Arrays.asList(firstFourCharsArray));
-
-		// Iterate through each trip in the JSON object
-		tripsData.keys().forEachRemaining(tripCode -> {
-			if (firstFourSet.contains(tripCode.substring(0, 4))) {
-				JSONObject tripDetails = tripsData.getJSONObject(tripCode);
-				double tafb = tripDetails.getInt("Tafb");
-				// Store tafb values along with trip codes
-
-				tafbMap.put(tripCode, tafb);
-				double TotRigAdg = tripDetails.getDouble("RigAdg");
-				totRigAdgMap.put(tripCode, TotRigAdg);
-				totRigAdgMap
-						.forEach((key, value) -> System.out.println("TripCode: " + key + ", TotalRigAdg: " + value));
-
-				// Start building the output for this trip
-				tripOutput = new StringBuilder(tripCode + "  ");
-
-				// Extract the DutyPeriods array
-				JSONArray dutyPeriods = tripDetails.getJSONArray("DutyPeriods");
-				for (int i = 0; i < dutyPeriods.length(); i++) {
-					JSONObject dutyPeriod = dutyPeriods.getJSONObject(i);
-					// Extract FlightSeqNum and Tfp
-					int DutSeqNum = dutyPeriod.getInt("DutPerSeqNum");
-					double TOTALtfp = dutyPeriod.getDouble("Tfp");
-					double Dutyhrs = dutyPeriod.getDouble("DutyTime");
-
-					// Calculate hours and remaining minutes
-					int hours = (int) (Dutyhrs / 60);
-					int minutes = (int) (Dutyhrs % 60);
-					double timeAsDouble = hours + (minutes / 100.0);
-
-					double RigAdg = dutyPeriod.getDouble("RigAdg");
-
-					tripOutput.append("DutySeqNum" + DutSeqNum + " TOTALfp").append(":").append(TOTALtfp + RigAdg)
-							.append(" ").append(" Dutyhrs " + timeAsDouble + " ");
-
-					// Extract the Flights array
-					JSONArray flights = dutyPeriod.getJSONArray("Flights");
-					for (int j = 0; j < flights.length(); j++) {
-						JSONObject flight = flights.getJSONObject(j);
-
-						// Extract FlightSeqNum and Tfp
-						int flightSeqNum = flight.getInt("FlightSeqNum");
-						double tfp = flight.getDouble("Tfp");
-
-						// Append to the trip output
-						tripOutput.append("FlightSeqNum " + flightSeqNum).append(" ").append("Tfp:" + tfp)
-								.append("   ");
+					// Check if tripName starts with any of the specified prefixes
+					for (String prefix : allPairings) {
+						if (tripName.startsWith(prefix)) {
+							String rawDate = bidLine.getString("Date");
+							// Date date = (Date) inputFormat.parse(rawDate); // Parse original date
+							java.util.Date utilDate = inputFormat.parse(rawDate); // Parse util.Date
+							java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime()); // Convert to SQL Date
+							String formattedDate = outputFormat.format(sqlDate);
+							tripData.add(new TripEntry(tripName, formattedDate, Integer.parseInt(lineKey))); // Store
+																												// line
+																												// number
+							break; // No need to check other prefixes once matched
+						}
 					}
 				}
-
-				// convert stringbuilder to string
-
-				String strOutput = tripOutput.toString();
-				// Save the string to an array
-
-				dynamicArray.add(strOutput);
-
 			}
-		});
-		System.out.println("Stored Tafb Data:");
-		tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ", Tafb: " + value));
-
-		for (int i = 0; i < dynamicArray.size(); i++) {
-
-			logger.info("Dynamic Array element " + i + " " + dynamicArray.get(i));
 		}
+		// Sort the list by line number in ascending order
+		Collections.sort(tripData, Comparator.comparingInt(entry -> entry.lineNumber));
 
-		for (String s : dynamicArray) {
-			String[] parts = s.trim().split("\\s+");
-
-			tripCode = parts[0]; // "AAA9"
-			tafb = tafbMap.get(tripCode);
-			TotalRigAdg = totRigAdgMap.get(tripCode);
-			TotalRigAdg = Math.round(TotalRigAdg * 100.0) / 100.0;
-
-			// Extract and calculate the sum of TFP for each dynamic DutySeqNum
-
-			tfpSums = extractAndSumTfps(s);
-
-			dutyHrs = extractDutyHours(s);
-			CredCalculation();
-
+		System.out.println("Matching TripName - Date - Line Pairs:");
+		for (TripEntry entry : tripData) {
+			// System.out.println("Line: " + entry.lineNumber + " | TripName: " +
+			// entry.tripName + " -> Date: " + entry.date);
+			logger.info("Line: " + entry.lineNumber + " | TripName: " + entry.tripName + " -> Date: " + entry.date);
 		}
-		System.out.println("Error count= " + errorCount);
-		System.out.println("Pass count= " + passCount);
 	}
 
-	public static List<Double> extractDutyHours(String input) {
-		List<Double> dutyHrs = new ArrayList<>();
-		String[] parts = input.split("Dutyhrs ");
-		for (int i = 1; i < parts.length; i++) {
-			dutyHrs.add(Double.parseDouble(parts[i].split("FlightSeqNum")[0].trim()));
+	static class TripEntry {
+		String tripName;
+		String date;
+		int lineNumber; // Changed to integer for proper sorting
+
+		TripEntry(String tripName, String date, int lineNumber) {
+			this.tripName = tripName;
+			this.date = date;
+			this.lineNumber = lineNumber;
 		}
-		return dutyHrs;
 	}
 
-	// Method to extract and sum the TFP values for all DutySeqNum numbers
-	// dynamically
-	public static List<Double> extractAndSumTfps(String data) {
-		List<Double> tfpSums = new ArrayList<>();
-
-		// Regular expression to match DutySeqNum followed by number and Tfp values
-		String dutySeqPattern = "DutySeqNum(\\d+).*?TOTALfp:[\\d\\.]+(.*?)((?=DutySeqNum|$))";
-
-		Pattern pattern = Pattern.compile(dutySeqPattern, Pattern.DOTALL); // Pattern.DOTALL allows for multiline
-																			// matching
-		Matcher matcher = pattern.matcher(data);
-
-		// Loop through each DutySeqNum block
-		while (matcher.find()) {
-			String dutySeqData = matcher.group(2); // Extract the Tfp values section for this DutySeqNum
-			double sum = sumTfpValues(dutySeqData); // Sum the Tfp values for this DutySeqNum
-			tfpSums.add(sum);
-		}
-
-		return tfpSums;
-	}
-
-	// Method to sum the TFP values for a given DutySeqNum section
-	public static double sumTfpValues(String dutySeqData) {
-		double sum = 0.0;
-
-		// Pattern to match Tfp values under each DutySeqNum section
-		String tfpPattern = "Tfp:([\\d\\.]+)"; // Match any Tfp value
-
-		Pattern pattern = Pattern.compile(tfpPattern);
-		Matcher matcher = pattern.matcher(dutySeqData);
-
-		// Sum all the Tfp values in this section
-		while (matcher.find()) {
-			sum += Double.parseDouble(matcher.group(1)); // Sum the TFP values
-		}
-
-		return sum;
-	}
-
-	// Method to round a number to a specified number of decimal places
-	public static double roundToDecimal(double value, int places) {
-		BigDecimal bd = new BigDecimal(value);
-		bd = bd.setScale(places, RoundingMode.HALF_UP); // Round to specified decimal places
-		return bd.doubleValue();
-	}
-
-	public static void CredCalculation() {
-
-		// Initial values
-
-		double threshold = 5.0; // Threshold for rig dpm
-		double tmpPerHour = 6.5; // TMP value per hour
-
-		// Step 1: Calculate new rig dpm values
-		List<Double> newRigDpm = new ArrayList<>();
-		for (double value : tfpSums) {
-			newRigDpm.add(Math.max(value, threshold));
-		}
-
-		// Step 2: Calculate new dhr values
-		List<Double> newDhr = new ArrayList<>();
-		for (double value : dutyHrs) {
-			int hours = (int) value; // Extract hours
-			double minutes = (value - hours) * 100; // Extract minutes
-			newDhr.add((hours + (minutes / 60)) * 0.74); // Perform the calculation
-
-		}
-
-		// Step 3: Compare new rig dpm with new dhr to get new cred values
-		List<Double> ar = new ArrayList<>();
-		for (int i = 0; i < tfpSums.size(); i++) {
-			ar.add(Math.max(newRigDpm.get(i), newDhr.get(i)));
-		}
-
-		// Step 4: Calculate total cred value
-		double totCredValue = ar.stream().mapToDouble(Double::doubleValue).sum();
-
-		// Step 5: Calculate TMP
-		double tmp = tmpPerHour * tfpSums.size(); // TMP = per hour value count
-		SoftAssert soft1 = new SoftAssert();
-		int size = tfpSums.size();
-
-		// Calculate hours and remaining minutes
-		int tafbhours = (int) (tafb / 60);
-		int tafbminutes = (int) (tafb % 60);
-		double tafbtimeAsDouble = (tafbhours + (tafbminutes / 100.0));
-
-		double RigAdg = 0;
-
-		double RigThr = 0;
-		double newTafbhr = (tafb / 60);
-
-		double newTafb = newTafbhr / 3;
-
-		if (tmp > totCredValue && tmp >= newTafb) {
-
-			RigAdg = Math.round((tmp - totCredValue) * 100.0) / 100.0;
-
-		} else if (newTafb > totCredValue && newTafb > tmp) {
-
-			RigThr = Math.round((newTafb - totCredValue) * 100.0) / 100.0;
-
-		}
-
-		// Output the results
-		logger.info("Trip Code:" + tripCode);
-		logger.info("New Rig DPM: " + newRigDpm);
-		logger.info("New DHR: " + newDhr);
-		logger.info("New Cred Values (ar): " + ar);
-		logger.info("Total Cred Value: " + totCredValue);
-		logger.info("TMP: " + tmp);
-		logger.info("Calculated TAFB in hrs: " + newTafbhr);
-		logger.info("New TAFB: " + newTafb);
-		logger.info("Rig Adg: " + RigAdg);
-		logger.info("Rig Thr: " + RigThr);
-		SoftAssert softAssert = new SoftAssert();
-		boolean assertionPassed = true;
-
-		String strTotRigAdg = Double.toString(TotalRigAdg);
-
-		// Perform soft assertion (this will NOT throw an exception immediately)
-
-		softAssert.assertEquals(RigAdg, TotalRigAdg, .05, "RigAdgs are not equal");
-
-		// Validate soft assertions at the end
-		try {
-			softAssert.assertAll(); // This will throw AssertionError if any assertion failed
-			WbidBasepage.logger.log(Status.PASS, "RigAdgs are equal: " + strTotRigAdg);
-			passCount++;
-		} catch (AssertionError e) {
-			assertionPassed = false; // Mark failure
-			WbidBasepage.logger.log(Status.FAIL, "Soft Assertion failed: " + e.getMessage());
-			errorCount++;
-		}
-
-		System.out.println("Execution continues...");
-
-	}
-
-	public static double roundToDecimal(double value) {
-		return Math.round(value * 100.0) / 100.0; // Rounds to 2 decimal places*/
-	}
-
-
+}

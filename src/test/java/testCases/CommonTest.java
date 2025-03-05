@@ -1,5 +1,6 @@
 package testCases;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +133,7 @@ public class CommonTest extends WbidBasepage{
 	  Assert.assertTrue(objCommon.verifyScratchpadHeading(domicile,ScratchpadPosition,ScratchpadRound,year));
 	  }
   @Test(priority = 14, enabled = true)
-  public void test14() throws JsonProcessingException  {
+  public void test14() throws JsonProcessingException, ParseException  {
 	  logger = WbidBasepage.extent.createTest("test14").assignAuthor("VS/483");
 	  logger.info("Fetchinh API data");
 	  FetchDates.fetchApiData(domicile, APIRound, position, APIMonth); 
