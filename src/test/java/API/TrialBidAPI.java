@@ -37,6 +37,7 @@ public class TrialBidAPI  {
 	public List<String> acftChanges;
 	public static Map<String, Double> tafbMap = new HashMap<>();
 	public static Map<String, Double> totRigAdgMap = new HashMap<>();
+	public static Map<String, Double> tafbMapNew = new HashMap<>();
 	// public static int i=0;
 	public static List<String> dynamicArray = new ArrayList<>();
 	public static List<Double> tfpSums = new ArrayList<>();
@@ -417,6 +418,8 @@ public class TrialBidAPI  {
 		int tafbhours = (int) (tafb / 60);
 		int tafbminutes = (int) (tafb % 60);
 		double tafbtimeAsDouble = (tafbhours + (tafbminutes / 100.0));
+		double tafbUI = tafbtimeAsDouble* 100.0;
+		tafbMapNew.put(tripCode, tafbUI);
 
 // Step 6: Determine final cred
 		// double finalCred = Math.max(tmp, tafbtimeAsDouble/size);

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
@@ -42,7 +43,7 @@ public class CommonTest extends WbidBasepage{
 	public String APIRound="1";
 	public String APIMonth=String.valueOf(objCommon.getNextMonth());
 	public static List<String> TripCodes = new ArrayList<>();
-	public static List<String> TripDates = new ArrayList<>();
+//	public static List<String> TripDates = new ArrayList<>();
 	
   @Test(priority = 1, enabled = true)
   public void test1() {
@@ -152,17 +153,17 @@ public class CommonTest extends WbidBasepage{
 	  logger.info("Assert Total scratchpad Line count ");
 	  objCommon.scrLinesTotalCount(ScratchPadCountFA.linecount);
 	   }
- 
-  @Test(priority = 25, enabled = true)
-  public void test25() throws JsonProcessingException  {
-	  logger = WbidBasepage.extent.createTest("test25").assignAuthor("VS/483");
+  @Test(priority = 24, enabled = true)
+  public void test24() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test24").assignAuthor("VS/483");
 	  logger.info("Get trip Code for one Trip Get  trip Details");
 	  String txt=objCommon.getTripCode();
 	  logger.info("Get  trip Details"+ txt);
 	   }
-  @Test(priority = 26, enabled = false)
-  public void test26() throws JsonProcessingException  {
-	  logger = WbidBasepage.extent.createTest("test26").assignAuthor("VS/483");		  
+ 
+  @Test(priority = 25, enabled = false)
+  public void test25() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test25").assignAuthor("VS/483");
 	  logger.info("Get  All the trip Codes from UI ");
 	  TripCodes=objCommon.getAllTripCodes();
 	  logger.info("Fetching UI data"+TripCodes);
@@ -171,22 +172,41 @@ public class CommonTest extends WbidBasepage{
 	  //objCommon.compareTripCodesAndFetchData(TripCodes);
 	  Assert.assertTrue(objCommon.compareTripCodesAndFetchData(TripCodes));
 	  
+	   }
+  @Test(priority = 26, enabled = false)
+  public void test26() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test26").assignAuthor("VS/483");		  
+	  logger.info("Get  All the trip Codes from UI ");
+	  driver.navigate().refresh();
+	  objwait.waitS(5000);
+	  objCommon.getAllTripLinesValues();	   
 	  }
   @Test(priority = 27, enabled = false)
   public void test27() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test27").assignAuthor("VS/483");		  
-	  logger.info("Get  All the trip Codes from UI ");
-	  driver.navigate().refresh();
-	  objwait.waitS(5000);
-	  objCommon.getAllTripLinesValues();
-	  	  
-	  logger.info("Compare All the trip Codes from UI with trip code fetched from API and get cred values ");
-	  }
-  @Test(priority = 28, enabled = true)
+	  logger.info("Get  trip Details ");
+	  objCommon.getAllTripData();
+	  logger.info("Get  trip Details- date ");
+	  objCommon.getAllTripDates();
+	}
+  @Test(priority = 28, enabled = false)
   public void test28() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test28").assignAuthor("VS/483");
-	  logger.info("Get  trip Details- date ");
-	  TripDates=objCommon.getAllTripDates();
-	  logger.info("Get  trip Details"+ TripDates);
+	  
+	  logger.info("Get  trip Details from UI- Trip Code and Trip date and compare with API Trip code and dates");
+	  objCommon.getAllTripDataAndCompare(FetchDates.tripData);
+	  }
+  
+  @Test(priority = 29, enabled = true)
+  public void test29() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test29").assignAuthor("VS/483");
+	  
+	  logger.info("Get  trip Details from UI- Trip Code and corresponding TAFB ");
+	 // objCommon.getAllTAFB();
+	  logger.info("Get  trip Details from UI- Trip Code and TAFB and compare with API Trip code and TAFB");
+	//  logger.info(" converted TAFB "+TrialBidAPI.tafbMapNew);
+	  Assert.assertTrue(objCommon.getAllTAFBAndCompare(TrialBidAPI.tafbMapNew));
+	  
+	  
 	   }
 }

@@ -47,6 +47,8 @@ public class FetchDates extends WbidBasepage {
 	public static List<String> dynamicArray = new ArrayList<>();
 	public static List<Double> tfpSums = new ArrayList<>();
 	public static List<Double> dutyHrs = new ArrayList<>();
+	public static List<TripEntry> tripData = new ArrayList<>();
+	public static List<TripEntry> sortedTripData = new ArrayList<>();
 	public static double tafb;
 	public static double TotalRigAdg;
 	public static String tripCode;
@@ -166,7 +168,7 @@ public class FetchDates extends WbidBasepage {
 		}
 
 		// List to store tripName, date, and line number
-		List<TripEntry> tripData = new ArrayList<>();
+		
 		// Date formatter
 		SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM");
@@ -192,7 +194,7 @@ public class FetchDates extends WbidBasepage {
 							java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime()); // Convert to SQL Date
 							String formattedDate = outputFormat.format(sqlDate);
 							tripData.add(new TripEntry(tripName, formattedDate, Integer.parseInt(lineKey))); // Store
-																												// line
+																										// line
 																												// number
 							break; // No need to check other prefixes once matched
 						}
@@ -202,25 +204,35 @@ public class FetchDates extends WbidBasepage {
 		}
 		// Sort the list by line number in ascending order
 		Collections.sort(tripData, Comparator.comparingInt(entry -> entry.lineNumber));
-
+		Collections.sort(sortedTripData, Comparator.comparingInt(entry -> entry.lineNumber));
+		
 		System.out.println("Matching TripName - Date - Line Pairs:");
 		for (TripEntry entry : tripData) {
 			// System.out.println("Line: " + entry.lineNumber + " | TripName: " +
 			// entry.tripName + " -> Date: " + entry.date);
 			logger.info("Line: " + entry.lineNumber + " | TripName: " + entry.tripName + " -> Date: " + entry.date);
+			
 		}
 	}
 
-	static class TripEntry {
-		String tripName;
-		String date;
-		int lineNumber; // Changed to integer for proper sorting
+	public static class TripEntry {
+		public	String tripName;
+		public String date;
+		public int lineNumber; // Changed to integer for proper sorting
 
-		TripEntry(String tripName, String date, int lineNumber) {
+	public TripEntry(String tripName, String date, int lineNumber) {
 			this.tripName = tripName;
 			this.date = date;
 			this.lineNumber = lineNumber;
 		}
+	public String getTripCode() {
+        return tripName;
+    }
+
+    // ✅ Getter for Trip Date
+    public String getTripDate() {
+        return date;
+    }
 	}
 
 }
