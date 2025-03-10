@@ -3,6 +3,7 @@ package testCases;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import pages.BidDownloadPage;
 import pages.LoginPage;
@@ -50,7 +51,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000004() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000004)").assignAuthor("VS/482");
 		logger.info("Verify the login (subscribed user)");
-		//objlogin.login();
+		// objlogin.login();
 		objwait.waitS(9000);
 		logger.info("Assert the title : \"Crewbid\" in the top left");
 		Assert.assertTrue(objdownload.fordisplaylogo(), "❌ Logo not display");
@@ -161,7 +162,7 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("Verify the all the base is enabled");
 		objdownload.forclickokbtn();
 		objwait.waitS(3000);
-	//	Assert.assertTrue(objdownload.checkcities_isenable(), "❌ Base not enable");
+		// Assert.assertTrue(objdownload.checkcities_isenable(), "❌ Base not enable");
 		logger.info("✅ Assert : All the base cities");
 	}
 
@@ -249,11 +250,15 @@ public class BidDownloadTest extends WbidBasepage {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000026)").assignAuthor("VS/482");
 		logger.info("Verify user can able to view the \"Seniority list\" popup");
 		objdownload.checkDownloadBid();
-		logger.info("Verify the loader is appers while download the bid");
-		Assert.assertTrue(objdownload.fordisplayloadingicon(), "❌ Load Icon not display");
 		objwait.waitS(5000);
-		Assert.assertEquals(objdownload.fordisplay_seniority(), "Seniority List", "❌ Mismatch header");
+		logger.info("Verify the loader is appers while download the bid");
+		SoftAssert soft = new SoftAssert();
+		// soft.assertTrue(objdownload.fordisplayloadingicon(), "❌ Load Icon not
+		// display");
+		objwait.waitS(5000);
+		soft.assertEquals(objdownload.fordisplay_seniority(), "Seniority List", "❌ Mismatch header");
 		logger.info("✅Assert : Seniority list popup appers");
+		soft.assertAll();
 	}
 
 	@Test(priority = 27, enabled = true)
@@ -446,7 +451,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000049() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000049)").assignAuthor("VS/482");
 		logger.info("Verify the user can select the Arrow button");
-		Assert.assertTrue(objdownload.verifymovearrowclickable(),"❌ Icon not clickable");
+		Assert.assertTrue(objdownload.verifymovearrowclickable(), "❌ Icon not clickable");
 		logger.info("✅Assert : Arrow button\n" + "Button should be clickable");
 	}
 
@@ -454,13 +459,15 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000050() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000050)").assignAuthor("VS/482");
 		logger.info("Verify all the lines moved in the scractpad to bidlist");
-		logger.info("✅ Assert : Bidlsit count should be the previous count count of the scratchpad view");
+		Assert.assertTrue(objdownload.checklinemovestobid(), "❌ Bid Count not changed");
+		logger.info("✅ Assert : Bidlsit count should be the previous count of the scratchpad view");
 	}
 
 	@Test(priority = 51, enabled = true)
 	public void CBW003001000051() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000051)").assignAuthor("VS/482");
 		logger.info("Verify the ellipsis icon");
+		Assert.assertTrue(objdownload.forvisibleellipisicon(), "❌ Ellipis icon not displayed");
 		logger.info("✅ Assert : Ellipsis icon");
 	}
 
@@ -469,6 +476,9 @@ public class BidDownloadTest extends WbidBasepage {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000052)").assignAuthor("VS/482");
 		logger.info("Check line Number");
 		objdownload.checklinenumber();
+		objdownload.startOver();
+		objwait.waitS(4000);
+		Assert.assertTrue(objdownload.checkLineNumberFromScratchpad());
 		logger.info("✅Scratch pad combination matches");
 	}
 
@@ -476,6 +486,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000053() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000053)").assignAuthor("VS/482");
 		logger.info("");
+		objdownload.checkreservelines();
 		logger.info("✅");
 	}
 
