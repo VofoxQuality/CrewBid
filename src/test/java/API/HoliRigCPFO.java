@@ -2,6 +2,7 @@ package API;
 
 import static io.restassured.RestAssured.given;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -23,6 +24,12 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.Assert;
@@ -37,7 +44,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import utilities.WbidBasepage;
 
-public class HoliRig extends WbidBasepage {
+public class HoliRigCPFO extends WbidBasepage {
 	public static StringBuilder tripOutput = null;
 	LZString lzstring = new LZString();
 	public static String[] array;
@@ -53,9 +60,11 @@ public class HoliRig extends WbidBasepage {
 	public static String tripCode;
 	public static int passCount = 0, errorCount = 0;
 	public static List<Map<String, Object>> holirigResult = new ArrayList<>();
+	//SHashMap<String, String> testDataMap = testData("holidayList");
 
 	@Test(priority = 1)
-	public static void fetchApiData(String domicile,String expectedRound, String expectedPosition, String expectedMonth) throws JsonProcessingException, ParseException {
+	public static void fetchApiData(String domicile, String expectedRound, String expectedPosition,
+			String expectedMonth) throws ParseException, NumberFormatException, IOException {
 		WbidBasepage.logger = extent.createTest("Bid Download API").assignAuthor("VS/445");
 
 		logger.info("Cred Values in an array");
@@ -72,7 +81,7 @@ public class HoliRig extends WbidBasepage {
 		System.out.println("Response is " + response.getStatusCode());
 		try {
 			// Simulate a failure
-			Assert.assertEquals(response.getStatusCode(), 400, "Status Code does not match");
+			Assert.assertEquals(response.getStatusCode(), 200, "Status Code does not match");
 		} catch (AssertionError e) {
 
 			// Log the error and screenshot in the report
@@ -86,24 +95,14 @@ public class HoliRig extends WbidBasepage {
 
 // Step 2: Use the Token as Authorization in the Next API Call
 		String nextEndpoint = "/BidData/GetMonthlyBidFiles/";
-		String requestBody2 = "{"
-		        + "\"Domicile\": \"" + domicile + "\","
-		        + "\"EmpNum\": \"21221\","
-		        + "\"FromAppNumber\": \"12\","
-		        + "\"IsQATest\": false,"
-		        + "\"IsRetrieveNewBid\": true,"
-		        + "\"Month\": " + expectedMonth + ","
-		        + "\"Platform\": \"Web\","
-		        + "\"Position\": \"" + expectedPosition + "\","
-		        + "\"Round\": " + expectedRound + ","
-		        + "\"secretEmpNum\": \"21221\","
-		        + "\"Version\": \"10.4.16.3\","
-		        + "\"Year\": 2025,"
-		        + "\"isSecretUser\": true"
-		        + "}";// Replace with
+		String requestBody2 = "{" + "\"Domicile\": \"" + domicile + "\"," + "\"EmpNum\": \"21221\","
+				+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
+				+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
+				+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," + "\"Version\": \"10.4.16.3\","
+				+ "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
 // Replace with
-																										// your next API
-																										// endpoint
+		// your next API
+		// endpoint
 		Response nextResponse = given().header("Authorization", "Bearer " + token)
 				.header("Content-Type", "application/json").body(requestBody2).when().post(nextEndpoint) // Replace with
 																											// POST/GET/PUT
@@ -202,53 +201,79 @@ public class HoliRig extends WbidBasepage {
 				}
 			}
 		}
-		// Sort the list by line number in ascending order
-		Collections.sort(tripData, Comparator.comparingInt(entry -> entry.lineNumber));
 		
 		
-		System.out.println("Matching TripName - Date - Line Pairs:");
-		for (TripEntry entry : tripData) {
-			// System.out.println("Line: " + entry.lineNumber + " | TripName: " +
-			// entry.tripName + " -> Date: " + entry.date);
-		//	logger.info("Line: " + entry.lineNumber + " | TripName: " + entry.tripName + " -> Date: " + entry.date);
-		}
-		
-		//HashMap<String, Object> holirigMap = new HashMap<>();
-        String targetDate = "20 Apr";
-        Map<Integer, Double> resultMap = new LinkedHashMap<>();
-        // Process each line
-        for (TripEntry entry : tripData) {
-            // Extract the line number from the first character
-        	
-          
-        	String lineNumber = "Lines" + String.valueOf(entry.lineNumber);
-        	
-            // Determine HoliRig value
-            double holiRig = entry.date.equals(targetDate) ? 6.5 : 0.0;
-            
-         // If the line number is already present in resultMap, check if HolRig should be updated
-            if (!resultMap.containsKey(entry.lineNumber)) {
-                resultMap.put(entry.lineNumber, holiRig);
-            } else {
-                // If we find a HolRig = 6.5, we want to update that line
-                if (holiRig == 6.5) {
-                    resultMap.put(entry.lineNumber, holiRig);
-                }
-            }
-           
-        }
-     // After processing all trip data, convert the resultMap to the desired list format
-        for (Map.Entry<Integer, Double> entry : resultMap.entrySet()) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("Lines", entry.getKey());  // Line number
-            map.put("HolRig", entry.getValue());  // HolRig value
-            holirigResult.add(map);
-        }
+		List<String> targetDates = getTargetDatesFromExcel(Integer.parseInt(expectedMonth));
+		Map<Integer, Double> resultMap = new LinkedHashMap<>();
 
-        // Print the result to check if it's as expected
-        
-        logger.info("Holirig Final result: "+holirigResult);
-        
+		for (TripEntry entry : tripData) {
+			long matches = targetDates.stream().filter(date -> date.equals(entry.date)).count();
+			
+			 double holiRig = matches > 0 ? matches * 6.5 : 0.0;
+	            
+	         // If the line number is already present in resultMap, check if HolRig should be updated
+	            if (!resultMap.containsKey(entry.lineNumber)) {
+	                resultMap.put(entry.lineNumber, holiRig);
+	            } else {
+	                // If we find a HolRig = 6.5, we want to update that line
+	                if (holiRig == 6.5) {
+	                    resultMap.put(entry.lineNumber, holiRig);
+	                }
+	            }
+			/*if (matches > 0) {
+				resultMap.put(entry.lineNumber, matches * 6.5);
+			}
+			// ✅ If no match, set HolRig to 0.0
+		    else {
+		        resultMap.put(entry.lineNumber, 0.0);
+		    }*/
+		}
+
+		for (Map.Entry<Integer, Double> entry : resultMap.entrySet()) {
+			Map<String, Object> map = new LinkedHashMap<>();
+			map.put("Lines", entry.getKey());
+			map.put("HolRig", entry.getValue());
+			holirigResult.add(map);
+		}
+		holirigResult.sort(Comparator.comparingInt(o -> (int) o.get("Lines")));
+		logger.info("Holirig Final result: " + holirigResult);
+	}
+
+	public static List<String> getTargetDatesFromExcel(int month) throws IOException {
+		List<String> targetDates = new ArrayList<>();
+		FileInputStream fis = new FileInputStream(System.getProperty("user.dir") +"\\src\\main\\resources\\Excelfiles\\Excelfile.xls");
+		Workbook workbook = new HSSFWorkbook(fis);
+		Sheet sheet = workbook.getSheetAt(2);
+
+		boolean isHeader = true; // Flag to skip the header row
+		for (Row row : sheet) {
+			if (isHeader) {
+				isHeader = false;
+				continue; // Skip the header row
+			}
+
+			int cellMonth;
+			try {
+				if (row.getCell(0).getCellType() == CellType.NUMERIC) {
+					cellMonth = (int) row.getCell(0).getNumericCellValue();
+				} else if (row.getCell(0).getCellType() == CellType.STRING) {
+					cellMonth = Integer.parseInt(row.getCell(0).getStringCellValue().trim());
+				} else {
+					continue; // Skip invalid rows
+				}
+
+				if (cellMonth == month) {
+					targetDates.add(row.getCell(1).getStringCellValue());
+				}
+			} catch (NumberFormatException e) {
+				// Log the invalid row and continue
+				System.out.println("Skipping invalid row: " + row.getRowNum());
+				continue;
+			}
+		}
+
+		workbook.close();
+		return targetDates;
 	}
 
 	static class TripEntry {
