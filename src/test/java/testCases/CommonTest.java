@@ -1,8 +1,10 @@
 package testCases;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
@@ -10,6 +12,7 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import API.FetchDates;
 import API.ScratchPadCountFA;
 import API.TrialBidAPI;
 import pages.BidDownloadPage;
@@ -38,8 +41,9 @@ public class CommonTest extends WbidBasepage{
 	public String ScratchpadRound="Round 1";
 	public String year=objCommon.getNextMonthAndCurrentYear();
 	public String APIRound="1";
-	public String APIMonth="3";
+	public String APIMonth=String.valueOf(objCommon.getNextMonth());
 	public static List<String> TripCodes = new ArrayList<>();
+//	public static List<String> TripDates = new ArrayList<>();
 	
   @Test(priority = 1, enabled = true)
   public void test1() {
@@ -130,11 +134,12 @@ public class CommonTest extends WbidBasepage{
 	  Assert.assertTrue(objCommon.verifyScratchpadHeading(domicile,ScratchpadPosition,ScratchpadRound,year));
 	  }
   @Test(priority = 14, enabled = true)
-  public void test14() throws JsonProcessingException  {
+  public void test14() throws JsonProcessingException, ParseException  {
 	  logger = WbidBasepage.extent.createTest("test14").assignAuthor("VS/483");
 	  logger.info("Fetchinh API data");
-	  TrialBidAPI.fetchApiData(); 
-	  ScratchPadCountFA.fetchApiData(domicile, APIRound, position, APIMonth);
+	  FetchDates.fetchApiData(domicile, APIRound, position, APIMonth); 
+	  TrialBidAPI.fetchApiData(domicile, APIRound, position, APIMonth); 
+	 // ScratchPadCountFA.fetchApiData(domicile, APIRound, position, APIMonth);
 	  }
   @Test(priority = 15, enabled = true)
   public void test15() throws JsonProcessingException  {
@@ -148,17 +153,17 @@ public class CommonTest extends WbidBasepage{
 	  logger.info("Assert Total scratchpad Line count ");
 	  objCommon.scrLinesTotalCount(ScratchPadCountFA.linecount);
 	   }
- 
-  @Test(priority = 25, enabled = false)
-  public void test25() throws JsonProcessingException  {
-	  logger = WbidBasepage.extent.createTest("test25").assignAuthor("VS/483");
+  @Test(priority = 24, enabled = true)
+  public void test24() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test24").assignAuthor("VS/483");
 	  logger.info("Get trip Code for one Trip Get  trip Details");
 	  String txt=objCommon.getTripCode();
 	  logger.info("Get  trip Details"+ txt);
 	   }
-  @Test(priority = 26, enabled = false)
-  public void test26() throws JsonProcessingException  {
-	  logger = WbidBasepage.extent.createTest("test26").assignAuthor("VS/483");		  
+ 
+  @Test(priority = 25, enabled = false)
+  public void test25() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test25").assignAuthor("VS/483");
 	  logger.info("Get  All the trip Codes from UI ");
 	  TripCodes=objCommon.getAllTripCodes();
 	  logger.info("Fetching UI data"+TripCodes);
@@ -167,17 +172,41 @@ public class CommonTest extends WbidBasepage{
 	  //objCommon.compareTripCodesAndFetchData(TripCodes);
 	  Assert.assertTrue(objCommon.compareTripCodesAndFetchData(TripCodes));
 	  
+	   }
+  @Test(priority = 26, enabled = false)
+  public void test26() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test26").assignAuthor("VS/483");		  
+	  logger.info("Get  All the trip Codes from UI ");
+	  driver.navigate().refresh();
+	  objwait.waitS(5000);
+	  objCommon.getAllTripLinesValues();	   
 	  }
   @Test(priority = 27, enabled = false)
   public void test27() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test27").assignAuthor("VS/483");		  
-	  logger.info("Get  All the trip Codes from UI ");
-	  driver.navigate().refresh();
-	  objwait.waitS(5000);
-	  objCommon.getAllTripLinesValues();
-	  	  
-	  logger.info("Compare All the trip Codes from UI with trip code fetched from API and get cred values ");
-	//  Assert.assertTrue();
+	  logger.info("Get  trip Details ");
+	  objCommon.getAllTripData();
+	  logger.info("Get  trip Details- date ");
+	  objCommon.getAllTripDates();
+	}
+  @Test(priority = 28, enabled = false)
+  public void test28() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test28").assignAuthor("VS/483");
 	  
+	  logger.info("Get  trip Details from UI- Trip Code and Trip date and compare with API Trip code and dates");
+	  objCommon.getAllTripDataAndCompare(FetchDates.tripData);
 	  }
+  
+  @Test(priority = 29, enabled = true)
+  public void test29() throws JsonProcessingException  {
+	  logger = WbidBasepage.extent.createTest("test29").assignAuthor("VS/483");
+	  
+	  logger.info("Get  trip Details from UI- Trip Code and corresponding TAFB ");
+	 // objCommon.getAllTAFB();
+	  logger.info("Get  trip Details from UI- Trip Code and TAFB and compare with API Trip code and TAFB");
+	//  logger.info(" converted TAFB "+TrialBidAPI.tafbMapNew);
+	  Assert.assertTrue(objCommon.getAllTAFBAndCompare(TrialBidAPI.tafbMapNew));
+	  
+	  
+	   }
 }

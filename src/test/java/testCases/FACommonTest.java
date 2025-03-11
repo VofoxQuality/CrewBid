@@ -150,6 +150,19 @@ public void test16() throws JsonProcessingException  {
   objCommon.scrLinesTotalCount(ScratchPadCountFA.linecount);
    }
 
+@Test(priority = 17, enabled = false)
+public void test17() throws JsonProcessingException  {
+  logger = WbidBasepage.extent.createTest("test17").assignAuthor("VS/483");
+  logger.info("Get start date of Trip ");
+  objCommon.getDatesWithoutTrip();
+   }
+@Test(priority = 18, enabled = true)
+public void test18() throws JsonProcessingException  {
+  logger = WbidBasepage.extent.createTest("test18").assignAuthor("VS/483");
+  logger.info("Get start date of Trip ");
+  objCommon.getTripStartDates();
 
+//objCommon.findTripStartDatesForEachCalendar();
+   }
 }
 

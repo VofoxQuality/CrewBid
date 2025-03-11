@@ -1,15 +1,18 @@
 package pages;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeoutException;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -17,7 +20,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-
+import API.FetchDates.TripEntry;
 import API.TrialBidAPI;
 import utilities.ActionUtilities;
 import utilities.WaitCondition;
@@ -47,16 +50,13 @@ public class CommonPage {
         String version = null;
         String regex = "\\(\\s*(\\d+\\.\\d+\\.\\d+\\.\\d+)\\s*\\)";
         java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(regex).matcher(hometext);
-
         if (matcher.find()) {
             version = matcher.group(1).trim(); // Get the version part
             WbidBasepage.logger.info("Extracted Version: " + version);
         } else {
             WbidBasepage.logger.info("Version not found in home text.");
-        }
-        
+        } 
         return version;
-    
     }
 
 	@FindBy(id = "navbardrop")
@@ -65,14 +65,12 @@ public class CommonPage {
 	public void click_retrievedownload() {
 		objaction.click(retrivedropdown);
 	}
-
 	@FindBy(xpath = "//a[text()='Retrieve New BidData']")
 	public WebElement retrievenewbiddata;
 
 	public void forclicknewbiddata() {
 		objaction.click(retrievenewbiddata);
 	}
-
 	// Enter Emplyee ID
 	@FindBy(name = "empNum")
 	public WebElement empplaceholder;
@@ -85,7 +83,6 @@ public class CommonPage {
 		objaction.sendkey(empplaceholder, String.valueOf((int) Double.parseDouble(WbidBasepage.username)));
 		objaction.click(okBtn);
 	}
-
 //selecting and verifying Base
 	@FindBy(xpath = "//*[@id='newBidModal']/div/div/div[2]/div[1]/div[2]/button")
 	public List<WebElement> basecities;
@@ -102,7 +99,6 @@ public class CommonPage {
 			}
 		}
 	}
-
 	public boolean verifyBaseEnabled(String domicile) {
 		boolean isEnabled = false;
 		WbidBasepage.logger.info("Verifying base city: " + domicile);
@@ -127,7 +123,6 @@ public class CommonPage {
 		}
 		return isEnabled;
 	}
-
 //selecting  and verifying Position
 	@FindBy(xpath = "//*[@id='newBidModal']/div/div/div[2]/div[2]/div[2]/button")
 	public List<WebElement> positionList;
@@ -144,7 +139,6 @@ public class CommonPage {
 			}
 		}
 	}
-
 	public boolean verifyPositionEnabled(String position) {
 		boolean isEnabled = false;
 		WbidBasepage.logger.info("Verifying base city: " + position);
@@ -169,7 +163,6 @@ public class CommonPage {
 		}
 		return isEnabled;
 	}
-
 //selecting  and verifying Round
 	@FindBy(xpath = "//*[@id='newBidModal']/div/div/div[2]/div[3]/div[2]/button")
 	public List<WebElement> roundList;
@@ -186,7 +179,6 @@ public class CommonPage {
 			}
 		}
 	}
-
 	public boolean verifyRoundEnabled(String Round) {
 		boolean isEnabled = false;
 		WbidBasepage.logger.info("Verifying Round selected: " + Round);
@@ -211,7 +203,6 @@ public class CommonPage {
 		}
 		return isEnabled;
 	}
-
 //Download Bid Button
 	@FindBy(xpath = "(//button[text()=' Download '])[1]")
 	public WebElement downloadBtn;
@@ -221,7 +212,6 @@ public class CommonPage {
 		objaction.click(downloadBtn);
 	}
 // common method to select Domicile, Position and Round
-
 	public void selectOptions(String domicile, String position, String round) {
 		WbidBasepage.logger.info(
 				"Attempting to select options - Base: " + domicile + ", Position: " + position + ", Round: " + round);
@@ -229,7 +219,6 @@ public class CommonPage {
 		selectFromList(positionList, position, "Position");
 		selectFromList(roundList, round, "Round");
 	}
-
 	private void selectFromList(List<WebElement> elements, String value, String elementType) {
 		for (WebElement option : elements) {
 			objwait.waitForElementTobeVisible(driver, option, 60);
@@ -244,9 +233,7 @@ public class CommonPage {
 		}
 		WbidBasepage.logger.fail("❌ " + elementType + " '" + value + "' not found in the list.");
 	}
-
 //common method to Verify  Domicile, Position and Round anre enabled
-	
 	public boolean verifyOptionsEnabled(String domicile, String position, String round) {
 		WbidBasepage.logger.info("Verifying if options are enabled - Base: " + domicile + ", Position: " + position
 				+ ", Round: " + round);
@@ -257,7 +244,6 @@ public class CommonPage {
 
 		return isDomicileEnabled && isPositionEnabled && isRoundEnabled;
 	}
-
 	private boolean verifyElementEnabled(List<WebElement> elements, String value, String elementType) {
 		boolean isEnabled = false;
 		WbidBasepage.logger.info("Verifying " + elementType + ": " + value);
@@ -324,8 +310,7 @@ public class CommonPage {
 			objaction.click(yesBtn);
 			objaction.click(cancelFA);
 		}
-//Cover Letter content in FA
-		
+//Cover Letter content in FA	
 		@FindBy(xpath = "//*[@id='fileContent-Section']")
 		public WebElement coverLetterFA;
 //Cover Letter content in FA A-B-C position lines		
@@ -424,7 +409,6 @@ public class CommonPage {
 		        return false;
 		    }
 		}
-
 //ScratchPad
 		@FindBy(xpath = "//ul[@class='m-auto header-title-section']/li")
 		public WebElement scratchpadHead;
@@ -450,7 +434,6 @@ public class CommonPage {
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM"); // Format as "MM"
 	        return nextMonth.format(formatter);
 	    }
-//Get total ScratchPad line count 
 //have to perform start over
 		@FindBy(xpath = "//i[@class='fas fa-forward']")
 		public WebElement moveIcon;
@@ -476,6 +459,7 @@ public class CommonPage {
 			objwait.waitForElementTobeVisible(driver, yesBtn, 90);
 			objaction.click(yesBtn);
 		}
+//Get total ScratchPad line count 
 		@FindBy(xpath = "//h6[@class='scr-head']")
 		public WebElement scrLinesHead;
 		
@@ -486,13 +470,12 @@ public class CommonPage {
 		    WbidBasepage.logger.pass("scratchpad Lines total count API: " + text);
 		    return text.contains(String.valueOf(total));
 		}
-
 //Get trip details-Trip Code
-		@FindBy(xpath = "//td[contains(@class,'left-side-radius trip-text-color ng-star-inserted')]")
-		public List<WebElement> tripList;
+		@FindBy(xpath = "//td[contains(@class,'left-side-radius')]")
+		public List<WebElement> tripList;//Trip detail visible when we click tripList
 		
 		@FindBy(xpath = "//*[@id='fullHeightModalRight']/div/div/div/div/div[1]/div/pre")
-		public WebElement tripSequence;
+		public WebElement tripSequence;//Trip code Extracted from Trip Sequence
 //Get trip Code for one Trip		
 		public String getTripCode() {
 		    // Click on the first element in the trip list
@@ -505,18 +488,15 @@ public class CommonPage {
 		    // Get the text from the trip sequence element
 		    String tripSequenceText = objaction.gettext(tripSequence).trim();
 		    WbidBasepage.logger.info("Trip Sequence Text: " + tripSequenceText);
-		    
 		    // Normalize whitespace and extract the trip code using regex
 		    tripSequenceText = tripSequenceText.replaceAll("\\s+", " "); // Replace multiple spaces with a single space
 		    Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
 		    Matcher matcher = pattern.matcher(tripSequenceText);
-		    
 		    if (matcher.find()) {
 		        String tripCode = matcher.group(1).trim();
 		        WbidBasepage.logger.info("Extracted Trip Code: " + tripCode);
 		        return tripCode;
 		    }
-		    
 		    WbidBasepage.logger.fail("Trip code not found in the trip sequence text.");
 		    return null;
 		}
@@ -527,14 +507,11 @@ public class CommonPage {
 		    for (WebElement tripElement : tripList) {
 		        try {
 		            objwait.waitForElementTobeVisible(driver, tripElement, 90);
-		            
 		            // Scroll into view with an offset to avoid being covered by headers
 		            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
-		            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
-		            
+		            objwait.waitForElemntTobeClickable(driver, tripElement, 30);	            
 		            // Use JavaScript click to avoid "element click intercepted" issues
-		            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
-		            
+		            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);		            
 		            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
 		            
 		            String tripSequenceText = objaction.gettext(tripSequence).trim();
@@ -562,55 +539,451 @@ public class CommonPage {
 		    }
 		    return tripCodes;
 		}
-//Get compare trip Code from UI to tripCode fromAPI response
-		public void UITripCodesAndFetchDataFromAPI(List<String> tripCodesFromUI) {
-		    // Get all trip codes from the UI
-		    //List<String> tripCodesFromUI = getAllTripCodes();
-		    WbidBasepage.logger.info("Trip Codes from UI: " + tripCodesFromUI);
-
-		    // Loop through each trip code
-		    for (String tripCode : tripCodesFromUI) {
-		        boolean found = false;
-
-		        // Compare each trip code with the dynamic array
-		        for (String dynamicData : TrialBidAPI.dynamicArray) {
-		            if (dynamicData.startsWith(tripCode)) {
-		                found = true;
-		                WbidBasepage.logger.info("Matching Trip Code found: " + tripCode);
-		                WbidBasepage.logger.info("Corresponding Data: " + dynamicData);
-		                break;
-		            }
-		        }
-
-		        if (!found) {
-		            WbidBasepage.logger.fail("Trip Code not found in dynamic array: " + tripCode);
-		        }
-		    }
-		}
+//Get compare trip Code from UI to tripCode fromAPI responses
 		public boolean compareTripCodesAndFetchData(List<String> tripCodesFromUI) {
 		    WbidBasepage.logger.info("Trip Codes from UI: " + tripCodesFromUI);
 		    boolean allMatched = true; // Assume all matches are found initially
 
 		    for (String tripCode : tripCodesFromUI) {
 		        boolean found = false;
-
 		        for (String dynamicData : TrialBidAPI.dynamicArray) {
 		            if (dynamicData.startsWith(tripCode)) {
 		                found = true;
 		                WbidBasepage.logger.info("Matching Trip Code found: " + tripCode);
-		                WbidBasepage.logger.info("Corresponding Data: " + dynamicData);
-		                
+		                WbidBasepage.logger.info("Corresponding Data: " + dynamicData);		            
 		                break;
 		            }
 		        }
-
 		        if (!found) {
 		            WbidBasepage.logger.fail("Trip Code not found in dynamic array: " + tripCode);
 		            allMatched = false; // Set to false if any trip code is not found
 		        }
-		    }
-		    
+		    }		    
 		    return allMatched;
+		}
+//Get trip Details 
+		@FindBy(xpath = "(//pre[@style='text-decoration: inherit;' and normalize-space(.)!=''])[position() > 2]")
+		public List<WebElement> tripdata;//gets data starting  from trip details skip 1st 2 lines which show trip code and table header
+		
+		public List<String> getAllTripDates() {
+		    List<String> tripDates = new ArrayList<>();
+		    for (WebElement tripElement : tripList) {  
+		        try {
+		            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+		            // Scroll into view
+		            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+		            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+		            // Try normal click first, fallback to JavaScript click
+		            try {
+		                tripElement.click();
+		            } catch (Exception e) {
+		                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+		            }
+		            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+		            String tripSequenceText = objaction.gettext(tripSequence).trim();
+		            WbidBasepage.logger.info("Trip Sequence Text: " + tripSequenceText);
+		            
+		            tripSequenceText = tripSequenceText.replaceAll("\\s+", " ");
+		            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+		            Matcher matcher = pattern.matcher(tripSequenceText);
+		            
+		            if (matcher.find()) {
+		                String tripCode = matcher.group(1).trim();
+		                WbidBasepage.logger.info("Extracted Trip Code: " + tripCode);
+		              //  tripCodes.add(tripCode);
+
+		            for (WebElement tripEle : tripdata) {
+		                String tripDataText = objaction.gettext(tripEle).trim();
+		                WbidBasepage.logger.info("Trip Data Text: " + tripDataText);
+
+		                // Ignore trip data starting with "Rpt" or "TAFB"
+		                if (tripDataText.startsWith("Rpt") || tripDataText.startsWith("TAFB")) {
+		                    WbidBasepage.logger.info("Ignoring trip data: " + tripDataText);
+		                    continue;
+		                }
+		                tripDataText = tripDataText.replaceAll("\\s+", " ");		                
+		                // Extract date (e.g., "01Apr", "15May")
+		                Pattern patternD = Pattern.compile("^(\\d{2}[A-Za-z]{3})\\b");
+		                Matcher matcherD = patternD.matcher(tripDataText);
+
+		                if (matcherD.find()) {
+		                    String tripDate = matcherD.group(1).trim();
+		                    System.out.println("Extracted Trip Code :"+tripCode+"and Trip Date: "+ tripDate);
+		                    WbidBasepage.logger.info("Extracted Trip Code UI:"+tripCode+"and Trip Date: "+ tripDate);
+		                    tripDates.add(tripDate);
+		                     } else {
+		                    WbidBasepage.logger.fail("Trip code not found in the trip sequence text.");
+		                }
+		            }
+		            // Close modal properly
+		            try {
+		                Actions actions = new Actions(driver);
+		                actions.sendKeys(Keys.ESCAPE).perform();
+		            } catch (Exception e) {
+		                WbidBasepage.logger.info("Modal close action failed, continuing.");
+		            }
+		        } 
+		        }catch (Exception e) {
+		            WbidBasepage.logger.fail("Failed to interact with trip element: " + e.getMessage());
+		        }
+		    }
+		    return tripDates;
+		}
+//Get all Trip data
+		public Map<String, String> getAllTripData() {
+		    Map<String, String> tripDataMap = new HashMap<>(); // Stores (Trip Code -> Date)
+
+		    for (WebElement tripElement : tripList) {  
+		        try {
+		            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+
+		            // Scroll into view
+		            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+		            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+
+		            // Try normal click first, fallback to JavaScript click
+		            try {
+		                tripElement.click();
+		            } catch (Exception e) {
+		                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+		            }
+
+		            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+		            String tripSequenceText = objaction.gettext(tripSequence).trim();
+		            WbidBasepage.logger.info("Trip Sequence Text: " + tripSequenceText);
+		            
+		            tripSequenceText = tripSequenceText.replaceAll("\\s+", " ");
+		            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated"); // Extract Trip Code
+		            Matcher matcher = pattern.matcher(tripSequenceText);
+		            
+		            if (matcher.find()) {
+		                String tripCode = matcher.group(1).trim();
+		                WbidBasepage.logger.info("Extracted Trip Code: " + tripCode);
+
+		                for (WebElement tripEle : tripdata) {
+		                    String tripDataText = objaction.gettext(tripEle).trim();
+		                    WbidBasepage.logger.info("Trip Data Text: " + tripDataText);
+
+		                    // Ignore unwanted trip data
+		                    if (tripDataText.startsWith("Rpt") || tripDataText.startsWith("TAFB")) {
+		                        WbidBasepage.logger.info("Ignoring trip data: " + tripDataText);
+		                        continue;
+		                    }
+
+		                    tripDataText = tripDataText.replaceAll("\\s+", " ");
+		                    
+		                    // Extract date (e.g., "01Apr", "15May")
+		                    Pattern patternD = Pattern.compile("^(\\d{2}[A-Za-z]{3})\\b");
+		                    Matcher matcherD = patternD.matcher(tripDataText);
+
+		                    if (matcherD.find()) {
+		                        String tripDate = matcherD.group(1).trim();
+		                        WbidBasepage.logger.info("Extracted Trip Code: " + tripCode + " and Trip Date: " + tripDate);
+
+		                        // Store the trip code and date in the map
+		                        tripDataMap.put(tripCode, tripDate);
+		                        
+		                    } else {
+		                        WbidBasepage.logger.fail("Trip date not found in the trip sequence text.");
+		                    }
+		                }
+		            }
+
+		            // Close modal properly
+		            try {
+		                new Actions(driver).sendKeys(Keys.ESCAPE).perform();
+		            } catch (Exception e) {
+		                WbidBasepage.logger.info("Modal close action failed, continuing.");
+		            }
+		        } catch (Exception e) {
+		            WbidBasepage.logger.fail("Failed to interact with trip element: " + e.getMessage());
+		        }
+		    }
+		    return tripDataMap; // Return trip code and corresponding date
+		}
+//using TreeSet get trip code and corresponding date from UI to API
+
+		public boolean getAllTripDataAndCompare(List<TripEntry> apiTripList) {
+		    Map<String, Set<String>> uiTripDataMap = new LinkedHashMap<>(); // Stores (Trip Code -> Dates)
+		    Map<String, Set<String>> apiTripMap = new LinkedHashMap<>();  // Convert API List<TripEntry> to Map
+		    boolean isDataMatching = true; // Assume data matches initially
+
+		    // ✅ Convert API List to Map<String, Set<String>> to prevent duplicates
+		    for (TripEntry entry : apiTripList) {
+		        String tripCode = entry.getTripCode().trim().toUpperCase();
+		        if (tripCode.length() >= 4) {
+		            tripCode = tripCode.substring(0, 4); // ✅ Extract first 4 characters
+		        }
+		        String tripDate = entry.getTripDate().trim().replaceAll("\\s+", ""); // Normalize API date format
+		        apiTripMap.computeIfAbsent(tripCode, k -> new TreeSet<>()).add(tripDate); // ✅ Use TreeSet for auto-sorting
+		    }
+		 //   int i = 0;
+		    for (WebElement tripElement : tripList) {  
+		        try {
+		  //          i++;
+		   //         if (i <= 5)
+		        	{
+		                objwait.waitForElementTobeVisible(driver, tripElement, 90);
+		                // Scroll into view
+		                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+		                objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+
+		                // Try normal click first, fallback to JavaScript click
+		                try {
+		                    tripElement.click();
+		                } catch (Exception e) {
+		                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+		                }
+		                objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+		                String tripSequenceText = objaction.gettext(tripSequence).trim();
+		              //  WbidBasepage.logger.info("Trip Sequence Text: " + tripSequenceText);
+
+		                tripSequenceText = tripSequenceText.replaceAll("\\s+", " ");
+		                Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated"); // Extract Trip Code
+		                Matcher matcher = pattern.matcher(tripSequenceText);
+
+		                if (matcher.find()) {
+		                    String tripCode = matcher.group(1).trim();
+		                  //  WbidBasepage.logger.info("Extracted Trip Code: " + tripCode);
+
+		                    for (WebElement tripEle : tripdata) {
+		                    	 objwait.waitForElementTobeVisible(driver, tripEle, 90);
+		                        String tripDataText = objaction.gettext(tripEle).trim();
+		                     //   WbidBasepage.logger.info("Trip Data Text: " + tripDataText);
+
+		                        // Ignore unwanted trip data
+		                        if (tripDataText.startsWith("Rpt") || tripDataText.startsWith("TAFB")) {
+		                           // WbidBasepage.logger.info("Ignoring trip data: " + tripDataText);
+		                            continue;
+		                        }
+		                        tripDataText = tripDataText.replaceAll("\\s+", " ");
+		                        // Extract date (e.g., "01Apr", "15May")
+		                        Pattern patternD = Pattern.compile("^(\\d{2}[A-Za-z]{3})\\b");
+		                        Matcher matcherD = patternD.matcher(tripDataText);
+
+		                        if (matcherD.find()) {
+		                            String tripDate = matcherD.group(1).trim();
+		                        //    WbidBasepage.logger.info("Extracted Trip Code UI: " + tripCode + " and Trip Date UI: " + tripDate);
+
+		                            // ✅ Store dates in Set inside Map (Avoids duplicates)
+		                            uiTripDataMap.computeIfAbsent(tripCode, k -> new TreeSet<>()).add(tripDate);
+		                        } else {
+		                            WbidBasepage.logger.fail("Trip date not found in the trip sequence text.");
+		                            isDataMatching = false;
+		                        }
+		                    }
+		                }
+		                // Close modal properly
+		                try {
+		                    new Actions(driver).sendKeys(Keys.ESCAPE).perform();
+		                } catch (Exception e) {
+		                    WbidBasepage.logger.info("Modal close action failed, continuing.");
+		                }
+		            }
+		        } catch (Exception e) {
+		            WbidBasepage.logger.fail("Failed to interact with trip element: " + e.getMessage());
+		            isDataMatching = false;
+		        }
+		    }
+		    // ✅ Compare UI vs API Dates AFTER collecting all data
+		    for (String tripCode : apiTripMap.keySet()) {
+		        Set<String> apiDates = apiTripMap.getOrDefault(tripCode, new TreeSet<>());
+		        Set<String> uiDates = uiTripDataMap.getOrDefault(tripCode, new TreeSet<>());
+
+		        if (!uiDates.equals(apiDates)) {
+		            WbidBasepage.logger.fail("Mismatch Found: Trip Code: " + tripCode + 
+		                " | UI Dates: " + uiDates + " | API Dates: " + apiDates);
+		            isDataMatching = false;
+		        } else {
+		            WbidBasepage.logger.info("Matching Data: Trip Code: " + tripCode + " | Dates: " + uiDates);
+		        }
+		    }
+		    // ✅ Final Check: Trips in API but Missing in UI
+		    for (String apiTripCode : apiTripMap.keySet()) {
+		        if (!uiTripDataMap.containsKey(apiTripCode)) {
+		            WbidBasepage.logger.fail("Trip Code " + apiTripCode + " found in API but missing in UI!");
+		            isDataMatching = false;
+		        }
+		    }
+		    return isDataMatching; // True if all data matches, false if mismatches are found
+		}
+//Get TAFB from UI for each Trip(corresponding TipCode)
+		@FindBy(xpath = "(//pre[@style='text-decoration: inherit;' and normalize-space(.)!=''])[last()]")
+		public WebElement tripTAFB;//get last data starting containing TAFB
+		
+		public Map<String, Double> getAllTAFB() {
+		    Map<String, String> tripTAFBMap = new HashMap<>(); 
+			Map<String, Double> tafbMapUI = new HashMap<>();
+           int i=0;
+		    for (WebElement tripElement : tripList) {  
+		        try {
+		        	i++;
+		        if(i<=5) {
+		            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+		            // Scroll into view
+		            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+		            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+		            // Try normal click first, fallback to JavaScript click
+		            try {
+		                tripElement.click();
+		            } catch (Exception e) {
+		                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+		            }
+
+		            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+		            String tripSequenceText = objaction.gettext(tripSequence).trim();
+		            WbidBasepage.logger.info("Trip Sequence Text: " + tripSequenceText);
+
+		            tripSequenceText = tripSequenceText.replaceAll("\\s+", " ");
+		            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated"); // Extract Trip Code
+		            Matcher matcher = pattern.matcher(tripSequenceText);
+
+		            if (matcher.find()) {
+		                String tripCode = matcher.group(1).trim();
+		                WbidBasepage.logger.info("Extracted Trip Code: " + tripCode);
+
+		              
+		                    String tripDataText = objaction.gettext(tripTAFB).trim();
+		                    WbidBasepage.logger.info("Trip Data Text: " + tripDataText);
+
+		                    // Look for TAFB data
+		                    if (tripDataText.startsWith("TAFB")) {
+		                    //    WbidBasepage.logger.info("trip data: " + tripDataText);
+		                        tripDataText = tripDataText.replaceAll("\\s+", " ");
+
+		                        // Extract TAFB value (e.g., "TAFB 5250")
+		                        Pattern patternD = Pattern.compile("TAFB\\s+(\\d+)");
+		                        Matcher matcherD = patternD.matcher(tripDataText);
+
+		                        if (matcherD.find()) {
+		                            String tripTAFB = matcherD.group(1).trim();
+		                            WbidBasepage.logger.info("UI Extracted Trip Code: " + tripCode + " UI Trip TAFB: " + tripTAFB);
+
+		                            // Store the trip code and TAFB in the map
+		                                if (tripTAFBMap.containsKey(tripCode)) {
+		                                tafbMapUI.put(tripCode, Double.parseDouble(tripTAFBMap.get(tripTAFB)));
+		                            }
+		                        } else {
+		                            WbidBasepage.logger.fail("TAFB value not found in trip data.");
+		                        }
+		                    }
+		                }
+		            }
+
+		            // Close modal properly after processing the trip
+		            try {
+		                new Actions(driver).sendKeys(Keys.ESCAPE).perform();
+		            } catch (Exception e) {
+		                WbidBasepage.logger.info("Modal close action failed, continuing.");
+		            }
+
+		        
+		        } catch (Exception e) {
+		            WbidBasepage.logger.fail("Failed to interact with trip element: " + e.getMessage());
+		        }
+		    }
+
+		    return tafbMapUI; // Return trip code and corresponding TAFB value
+		}
+//Compare TAFB with API data
+		public boolean getAllTAFBAndCompare(Map<String, Double> apiTAFBMap) {
+		    Map<String, Double> tafbMapUI = new HashMap<>();
+		    boolean isDataMatching = true; // Assume data matches initially
+		    int i = 0;
+
+		    for (WebElement tripElement : tripList) {  
+		        try {
+		         //   i++;
+		          //  if (i <= 5) { // Process only the first 5 trips
+		                objwait.waitForElementTobeVisible(driver, tripElement, 90);
+		                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+		                objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+
+		                // Try normal click, fallback to JavaScript click
+		                try {
+		                    tripElement.click();
+		                } catch (Exception e) {
+		                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+		                }
+
+		                objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+		                String tripSequenceText = objaction.gettext(tripSequence).trim();
+		            //    WbidBasepage.logger.info("Trip Sequence Text: " + tripSequenceText);
+
+		                tripSequenceText = tripSequenceText.replaceAll("\\s+", " ");
+		                Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated"); // Extract Trip Code
+		                Matcher matcher = pattern.matcher(tripSequenceText);
+
+		                if (matcher.find()) {
+		                    String tripCode = matcher.group(1).trim();
+		              //      WbidBasepage.logger.info("Extracted Trip Code: " + tripCode);
+
+		                    // Extract TAFB from UI
+		                    String tripDataText = objaction.gettext(tripTAFB).trim();
+		             //       WbidBasepage.logger.info("Trip Data Text: " + tripDataText);
+
+		                    if (tripDataText.startsWith("TAFB")) {
+		                        tripDataText = tripDataText.replaceAll("\\s+", " ");
+
+		                        // Extract TAFB value (supporting decimals)
+		                        Pattern patternD = Pattern.compile("TAFB\\s+(\\d+\\.?\\d*)");
+		                        Matcher matcherD = patternD.matcher(tripDataText);
+
+		                        if (matcherD.find()) {
+		                            String tripTAFB = matcherD.group(1).trim();
+		                            Double tafbValue = Double.parseDouble(tripTAFB);
+		                            WbidBasepage.logger.info("UI Extracted Trip Code: " + tripCode + " | UI Trip TAFB: " + tafbValue);
+
+		                            // Store in UI Map
+		                            tafbMapUI.put(tripCode, tafbValue);
+		                        } else {
+		                            WbidBasepage.logger.fail("TAFB value not found for Trip Code: " + tripCode);
+		                        }
+		                    }
+		                }
+
+		                // Close modal properly after processing the trip
+		                try {
+		                    new Actions(driver).sendKeys(Keys.ESCAPE).perform();
+		                } catch (Exception e) {
+		                    WbidBasepage.logger.info("Modal close action failed, continuing.");
+		                }
+		           // }
+		      } catch (Exception e) {
+		            WbidBasepage.logger.fail("Failed to interact with trip element: " + e.getMessage());
+		        }
+		    }
+		 // ✅ **Compare API vs UI TAFB Values**
+		    for (String tripCode : apiTAFBMap.keySet()) {
+		        Double apiTAFB = apiTAFBMap.get(tripCode);
+		        Double uiTAFB = tafbMapUI.get(tripCode);
+
+		        if (uiTAFB == null) {
+		            WbidBasepage.logger.fail("Trip Code " + tripCode + " found in API but missing in UI!");
+		            isDataMatching = false;
+		            continue;
+		        }
+
+		        // ✅ Compare with tolerance
+		        if (Math.abs(uiTAFB - apiTAFB) > 0.0001) {  // EPSILON = 0.0001
+		            WbidBasepage.logger.fail("TAFB Mismatch for Trip " + tripCode +
+		                    " | UI TAFB: " + uiTAFB + " | API TAFB: " + apiTAFB);
+		            isDataMatching = false;
+		        } else {
+		            WbidBasepage.logger.info("TAFB Match for Trip " + tripCode +
+		                    " | UI TAFB: " + uiTAFB + " | API TAFB: " + apiTAFB);
+		        }
+		    }
+
+		    // ✅ Check for Trips in UI but Missing in API
+		    for (String uiTripCode : tafbMapUI.keySet()) {
+		        if (!apiTAFBMap.containsKey(uiTripCode)) {
+		            WbidBasepage.logger.fail("Trip Code " + uiTripCode + " found in UI but missing in API!");
+		            isDataMatching = false;
+		        }
+		    }
+
+		    return isDataMatching; // Returns false if any mismatch is found
 		}
 //Get cred value
 		@FindBy(xpath = "//*[@id='fullHeightModalRight']/div/div/div/div/div/div/pre")
@@ -640,13 +1013,73 @@ public class CommonPage {
 		    return tripLines;
 		}
 
-		@FindBy(xpath = "(//*[@class='date-tab'])[1]/tr/td[contains(@class,'left-side-radius trip-text-color ng-star-inserted')]")
-		public List<WebElement> tripdataLine1;
 		
-		@FindBy(xpath = "//*[@id[contains(.,'line_')]]//div[@class='cala-centre']//td[contains(@class,'left-side-radius') and contains(@class,'trip-text-color') and contains(@class,'ng-star-inserted')]")
-		public List<WebElement> allTripDataForAllLines;
+//		Get Trip Start date 
+		
+		@FindBy(xpath = "//*[contains(@class, 'top-wrapper') and normalize-space(.)='2']/preceding::td[contains(@class, 'ul-date')]//p")
+		public List<WebElement> allDateElements;
+		
+		@FindBy(xpath = "//*[contains(@class, 'top-wrapper') and normalize-space(.)='2']/preceding::td[contains(@class, 'trip') and not(contains(@style,'background-color'))and not(contains(@class,'disabled '))]//p")
+		public List<WebElement> datesWithoutTrip;
+		
+		public void getDatesWithoutTrip() {
+			System.out.println("datesWithoutTrip Count: " + datesWithoutTrip.size());
+	        for (WebElement trip : datesWithoutTrip) {
+	        	WbidBasepage.logger.info("Dates Without Trip : " + trip.getText());
+	        	
+	        	
+	        }
+	    }
+		@FindBy(xpath = "//*[contains(@class, 'top-wrapper') and normalize-space(.)='2']/preceding::td[contains(@class,'left-side-radius')]")
+		public List<WebElement> tripStartDates;
+		
+		@FindBy(xpath = "//*[contains(@class, 'top-wrapper') and normalize-space(.)='2']/preceding::td[contains(@class,'right-side-radius')]")
+		public List<WebElement> tripEndDates;
+		
+		@FindBy(xpath = "//*[contains(@class, 'top-wrapper') and normalize-space(.)='2']/preceding::td[contains(@class,'left-side-radius right-side-radius')]")
+		public List<WebElement> tripStartEndSameDate;
+		
+		@FindBy(xpath = "//*[contains(@class, 'top-wrapper') and normalize-space(.)='2']/preceding::td[contains(@class, 'trip1_1')]")
+		public List<WebElement> calandercount;
 
-		@FindBy(xpath = "//*[contains(@class, 'middle-wrapper') and contains(@id, 'line_')]//following-sibling::div[@class='cala-centre']//td[contains(@class, 'trip-text-color ng-star-inserted')]")
-		public List<WebElement> allTripData;
+		public void getTripStartDates() {
+		    List<Integer> visibleDates = new ArrayList<>();
 
+		    // Get next month's year and month
+		    LocalDate today = LocalDate.now();
+		    LocalDate nextMonthDate = today.plusMonths(1);
+		    int nextMonthDays = YearMonth.of(nextMonthDate.getYear(), nextMonthDate.getMonthValue()).lengthOfMonth();
+
+		    WbidBasepage.logger.info("Next Month: " + nextMonthDate.getMonth() + " Days: " + nextMonthDays);
+
+		    // Extract visible dates (where no trips are present)
+		    for (WebElement date : datesWithoutTrip) {
+		        String text = date.getText().trim();
+		        if (!text.isEmpty() && text.matches("\\d+")) {  // Ensure it's a valid date
+		            int dateValue = Integer.parseInt(text);
+		            visibleDates.add(dateValue);
+		            WbidBasepage.logger.info("Date Without Trip: " + dateValue);
+		        }
+		    }
+
+		    // Get the total number of trip elements (to ensure correct trip count)
+		    int totalTrips = calandercount.size();
+		    WbidBasepage.logger.info("Total Trips Count: " + totalTrips);
+
+		    // Sort visible dates
+		    Collections.sort(visibleDates);
+
+		    // Find missing dates (trip start dates)
+		    List<Integer> tripStartDatesDerived = new ArrayList<>();
+		    for (int i = 1; i <= nextMonthDays; i++) {  // Use next month's days limit
+		        if (!visibleDates.contains(i)) {
+		            tripStartDatesDerived.add(i); // Missing dates = Trip start dates
+		        }
+		    }
+
+		    // Log all derived trip start dates
+		    System.out.println("Derived Trip Start Dates: " + tripStartDatesDerived);
+		    WbidBasepage.logger.info("Derived Trip Start Dates: " + tripStartDatesDerived);
+		}
+		
 }
