@@ -1017,9 +1017,9 @@ public class BidDownloadPage {
 			reserve = matcher.group(3);
 			blank = matcher.group(4);
 
-			String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n"
-					+ " -🔥 Total  : " + total + "\n" + " -🔥 Hard   : " + hard + "\n" + " -🔥 Reserve: " + reserve
-					+ "\n" + " -🔥 Blank  : " + blank;
+			String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n" + " 🔥 Total  : "
+					+ total + "\n" + " 🔥 Hard   : " + hard + "\n" + " 🔥 Reserve: " + reserve + "\n" + " 🔥 Blank  : "
+					+ blank;
 
 			System.out.println(output);
 			WbidBasepage.logger.pass(output);
@@ -1195,11 +1195,82 @@ public class BidDownloadPage {
 	@FindBy(xpath = "//div/span/small[text()=\"R\"]")
 	List<WebElement> reservelines;
 
-	 public void checkreservelines() {
-	        if (reservelines != null) {
-	            System.out.println("Total Reserve Lines: " + reservelines.size());
-	        } else {
-	            System.out.println("No Reserve Lines Found.");
+	public boolean checkreservelines() {
+		String count = String.valueOf(reservelines.size());
+		WbidBasepage.logger.info("💡Reserve lines: " + count);
+
+		if (count.equals(reserve)) {
+			System.out.println("Total Reserve Lines: " + count);
+			WbidBasepage.logger.pass("✅ Total Reserve Lines: " + count);
+			return true;
+		} else {
+			System.out.println("No Reserve Lines Found.");
+			WbidBasepage.logger.fail("❌ No Reserve Lines Found.");
+			return false;
+		}
+	}
+
+	@FindBy(xpath = "//span/small[text()=\"\"]")
+	List<WebElement> blanklines;
+
+	public boolean checkblankline() {
+		String count = String.valueOf(blanklines.size());
+		WbidBasepage.logger.info("💡Blank lines: " + count);
+
+		if (count.equals(blank.trim())) {
+			System.out.println("Total Blank Lines: " + count);
+			WbidBasepage.logger.pass("✅ Total Blank Lines: " + count);
+			return true;
+		} else {
+			System.out.println("No Blank Lines Found.");
+			WbidBasepage.logger.fail("❌ Blank Lines Found Mismatch." + count);
+			return false;
+		}
+	}
+
+	@FindBy(xpath = "//div/span/small")
+	List<WebElement> linecount;
+	@FindBy(xpath = "//td[contains(@class,\"ul-date seven-cols trip\")]")
+	List<WebElement> tripday;
+	@FindBy(xpath="//div[@class=\"cala-view ng-star-inserted\"]")
+	List<WebElement> calendar;
+	public void linecount() {
+	    int count = linecount.size(); // Assuming 'linecount' is a list of WebElements
+	    WbidBasepage.logger.info("💡 Lines Count: " + count);
+
+	    for (int i = 1; i <= count; i++) {
+	        WbidBasepage.logger.info("💡 Value: " + i);
+
+	        boolean tripFound = false; // Flag to track if a trip is found
+	        int iterationCount = 0;
+	        for (WebElement option : tripday) {
+	        	 if (iterationCount >= 35) {
+	                 WbidBasepage.logger.info("⏳ Skipping remaining days after 35 checks.");
+	                 break; // Stop checking after 35 iterations
+	             }
+	            String att = objaction.getAttribute(option, "style");
+
+	            // Debug log to check what value is being retrieved
+	            WbidBasepage.logger.info("🔍 Retrieved 'style' attribute: " + (att.isEmpty() ? "EMPTY" : att));
+
+	            if (att != null && !att.isEmpty() && (
+	                att.contains("background-color: rgb(220, 100, 5);")  ||
+	                att.contains("background-color: rgb(255, 0, 0);") ||
+	                att.contains("background-color: rgb(185, 54, 16);") ||
+	                att.contains("background-color: rgb(17, 166, 124);"))) {
+	                
+	                WbidBasepage.logger.info("✅ This day contains the trip");
+	                tripFound = true;
+	                break; // Exit inner loop once a trip is found
+	            }
+	        }
+
+	        if (!tripFound) {
+	            WbidBasepage.logger.info("❌ This day does not have a trip");
 	        }
 	    }
+	}
+	//LIne parameters
+	@FindBy(xpath = "(//div[@class=\"cala-right\"])[1]")
+	public WebElement lineparam;
 }

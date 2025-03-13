@@ -485,22 +485,24 @@ public class BidDownloadTest extends WbidBasepage {
 	@Test(priority = 53, enabled = true)
 	public void CBW003001000053() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000053)").assignAuthor("VS/482");
-		logger.info("");
-		objdownload.checkreservelines();
-		logger.info("✅");
+		logger.info("Check Reserve lines count");
+		Assert.assertTrue(objdownload.checkreservelines(), "❌ No Reserve Lines Found.");
+		logger.info("✅ Reserve line count matches ");
 	}
 
 	@Test(priority = 54, enabled = true)
 	public void CBW003001000054() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000054)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("✅");
+		logger.info("Check Blank lines count");
+		Assert.assertTrue(objdownload.checkblankline(), "❌ No Blank Lines Found.");
+		logger.info("✅ Blank line count matches ");
 	}
 
 	@Test(priority = 55, enabled = true)
 	public void CBW003001000055() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000055)").assignAuthor("VS/482");
 		logger.info("");
+		objdownload.linecount();
 		logger.info("✅");
 	}
 
