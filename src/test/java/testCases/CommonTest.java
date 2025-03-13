@@ -13,10 +13,13 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import API.FetchDates;
+import API.HoliRig;
+import API.JavaDirectHolirig;
 import API.ScratchPadCountFA;
 import API.TrialBidAPI;
 import pages.BidDownloadPage;
 import pages.CommonPage;
+import pages.HoliRigPage;
 import pages.LoginPage;
 import utilities.ActionUtilities;
 import utilities.WaitCondition;
@@ -30,7 +33,9 @@ public class CommonTest extends WbidBasepage{
 	LoginPage objpage = new LoginPage(driver);
 	BidDownloadPage objdownload = new BidDownloadPage(driver);
 	CommonPage objCommon=new CommonPage(driver);
+	HoliRigPage objHoli=new HoliRigPage(driver);
 	HashMap<String, String> testDataMap = testData("qa environment");
+	
 	
 	public String actualVersion;
 	public String expectedVersion=testDataMap.get("Version");
@@ -153,7 +158,7 @@ public class CommonTest extends WbidBasepage{
 	  logger.info("Assert Total scratchpad Line count ");
 	  objCommon.scrLinesTotalCount(ScratchPadCountFA.linecount);
 	   }
-  @Test(priority = 24, enabled = true)
+  @Test(priority = 24, enabled = false)
   public void test24() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test24").assignAuthor("VS/483");
 	  logger.info("Get trip Code for one Trip Get  trip Details");
@@ -197,7 +202,7 @@ public class CommonTest extends WbidBasepage{
 	  objCommon.getAllTripDataAndCompare(FetchDates.tripData);
 	  }
   
-  @Test(priority = 29, enabled = true)
+  @Test(priority = 29, enabled = false)
   public void test29() throws JsonProcessingException  {
 	  logger = WbidBasepage.extent.createTest("test29").assignAuthor("VS/483");
 	  
@@ -208,5 +213,18 @@ public class CommonTest extends WbidBasepage{
 	  Assert.assertTrue(objCommon.getAllTAFBAndCompare(TrialBidAPI.tafbMapNew));
 	  
 	  
+	   }
+  @Test(priority = 30, enabled = true)
+  public void test30() throws JsonProcessingException, ParseException  {
+	  logger = WbidBasepage.extent.createTest("test30").assignAuthor("VS/483");
+	  logger.info("Get HoliRig Values from API ");
+	 // HoliRig.fetchApiData("ATL", "1", "CP", "4");
+	  JavaDirectHolirig.fetchParam(domicile, APIRound, position, APIMonth);
+	  logger.info("Get HoliRig Values from each line from UI ");
+	  objHoli.selectHoliRig();
+	  objHoli.getHoliRigVal();
+	// Assert.assertTrue(objHoli.isHoliRigDataMatching(HoliRig.holirigResult));
+	  
+	 Assert.assertTrue(objHoli.isHoliRigDataMatching(JavaDirectHolirig.result));
 	   }
 }

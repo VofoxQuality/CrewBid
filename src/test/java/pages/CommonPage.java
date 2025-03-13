@@ -832,7 +832,7 @@ public class CommonPage {
 
 		            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
 		            String tripSequenceText = objaction.gettext(tripSequence).trim();
-		            WbidBasepage.logger.info("Trip Sequence Text: " + tripSequenceText);
+		          //  WbidBasepage.logger.info("Trip Sequence Text: " + tripSequenceText);
 
 		            tripSequenceText = tripSequenceText.replaceAll("\\s+", " ");
 		            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated"); // Extract Trip Code
@@ -840,11 +840,11 @@ public class CommonPage {
 
 		            if (matcher.find()) {
 		                String tripCode = matcher.group(1).trim();
-		                WbidBasepage.logger.info("Extracted Trip Code: " + tripCode);
+		            //    WbidBasepage.logger.info("Extracted Trip Code: " + tripCode);
 
 		              
 		                    String tripDataText = objaction.gettext(tripTAFB).trim();
-		                    WbidBasepage.logger.info("Trip Data Text: " + tripDataText);
+		           //         WbidBasepage.logger.info("Trip Data Text: " + tripDataText);
 
 		                    // Look for TAFB data
 		                    if (tripDataText.startsWith("TAFB")) {
@@ -889,7 +889,7 @@ public class CommonPage {
 		public boolean getAllTAFBAndCompare(Map<String, Double> apiTAFBMap) {
 		    Map<String, Double> tafbMapUI = new HashMap<>();
 		    boolean isDataMatching = true; // Assume data matches initially
-		    int i = 0;
+		 //   int i = 0;
 
 		    for (WebElement tripElement : tripList) {  
 		        try {
