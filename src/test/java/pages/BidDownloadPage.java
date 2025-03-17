@@ -480,8 +480,7 @@ public class BidDownloadPage {
 //TC23
 	/////////// Condition 2////////////
 	public boolean checkCondition2DownloadBid() {
-		WbidBasepage.logger
-				.info("🎯 Verifying user can select round 1 and pilot (CP & FO) with all applicable domiciles:");
+		WbidBasepage.logger.info("🎯 Verifying user can select round 1 and pilot (FA) with all applicable domiciles:");
 		boolean isDownloadEnabled = false;
 		////// 2nd of month
 		if (currentDay >= 2 && currentDay <= lastDayOfMonth) {
@@ -532,7 +531,7 @@ public class BidDownloadPage {
 	///////// Condition 3/////////
 	public boolean checkCondition3DownloadBid() {
 		WbidBasepage.logger
-				.info("🎯 Verifying user can select round 1 and pilot (CP & FO) with all applicable domiciles:");
+				.info("🎯 Verifying user can select round 2 and pilot (CP & FO) with all applicable domiciles:");
 		boolean isDownloadEnabled = false;
 		// 4th of the month
 		if (currentDay >= 17 && currentDay <= lastDayOfMonth) {
@@ -586,8 +585,7 @@ public class BidDownloadPage {
 	// TC 25
 	////////////// Condition 4////////////////
 	public boolean checkCondition4DownloadBid() {
-		WbidBasepage.logger
-				.info("🎯 Verifying user can select round 1 and pilot (CP & FO) with all applicable domiciles:");
+		WbidBasepage.logger.info("🎯 Verifying user can select round 2 and pilot (FA) with all applicable domiciles:");
 		boolean isDownloadEnabled = false;
 		////// 11th of month
 		if (currentDay >= 11 && currentDay <= lastDayOfMonth) {
@@ -655,38 +653,39 @@ public class BidDownloadPage {
 	public boolean checkDownloadBid() {
 		WbidBasepage.logger
 				.info("🎯 Verifying user can select appropriate rounds and positions with all applicable domiciles:");
-		boolean isDownloadEnabled = false;
+		boolean isAnyDownloadAttempted = false;
 		int currentDay = LocalDate.now().getDayOfMonth();
 		int lastDayOfMonth = LocalDate.now().lengthOfMonth();
 
-		// Determine applicable condition
-		if (currentDay >= 4 && currentDay <= lastDayOfMonth) {
-			isDownloadEnabled = processDownload("CP", "FO", firstround);
-		}
-		if (currentDay >= 2 && currentDay <= lastDayOfMonth) {
-			isDownloadEnabled |= processDownload("FA", "FA", firstround);
-		}
-		if (currentDay >= 17 && currentDay <= lastDayOfMonth) {
-			isDownloadEnabled |= processDownload("CP", "FO", secondround);
-		}
-		if (currentDay >= 11 && currentDay <= lastDayOfMonth) {
-			isDownloadEnabled |= processDownload("FA", "FA", secondround);
+		// Check applicable conditions for CP and FO only
+		boolean firstRoundSuccess = (currentDay >= 4 && currentDay <= lastDayOfMonth)
+				&& processDownload("CP", "FO", firstround);
+
+		boolean secondRoundCP = (currentDay >= 17 && currentDay <= lastDayOfMonth)
+				&& processDownload("CP", "FO", secondround);
+
+		// Ensure all conditions are processed
+		isAnyDownloadAttempted = firstRoundSuccess && secondRoundCP;
+
+		if (!isAnyDownloadAttempted) {
+			WbidBasepage.logger.info("❌ Not able to download bid data for all required conditions.");
 		}
 
-		if (!isDownloadEnabled) {
-			WbidBasepage.logger.info("❌ Not able to download bid data");
-		}
-		return isDownloadEnabled;
+		return isAnyDownloadAttempted;
 	}
 
 	private boolean processDownload(String pos1, String pos2, WebElement round) {
-		boolean isDownloadEnabled = false;
+		boolean isDownloadAttempted = false;
+		boolean exitLoop = false; // Flag to break the outer loop
 		selectedBase = "";
 		selectedPosition = "";
 
-		WbidBasepage.logger.info("✅ Success: Report is available");
+		WbidBasepage.logger.info("✅ Checking download attempt for " + pos1 + " and " + pos2);
 
 		for (WebElement city : basecities) {
+			if (exitLoop)
+				break; // Break outer loop if needed
+
 			String cityName = city.getText().trim();
 
 			// Skip AUS and FLL for Pilot
@@ -701,6 +700,9 @@ public class BidDownloadPage {
 			objaction.click(city);
 
 			for (WebElement position : positionlist) {
+				if (exitLoop)
+					break; // Break inner loop if needed
+
 				String pos = position.getText().trim();
 
 				if (pos.equalsIgnoreCase(pos1) || pos.equalsIgnoreCase(pos2)) {
@@ -720,31 +722,32 @@ public class BidDownloadPage {
 					// Get next month in SHORT format (e.g., "Mar")
 					formonthselection();
 
-					// Check if download button is enabled
-					if (download_btn.isEnabled()) {
-						WbidBasepage.logger.pass("⬇️ Download button is enabled for " + cityName + " - " + pos);
-						objaction.click(download_btn);
-						isDownloadEnabled = true;
-						break; // **Break out of the position loop**
-					} else {
-						WbidBasepage.logger.fail("🚫 Download button is NOT enabled for " + cityName + " - " + pos);
+					// Click the download button regardless of its state
+					WbidBasepage.logger.info("⬇️ Clicking the download button for " + cityName + " - " + pos);
+					objaction.click(download_btn);
+
+					if (objaction.fordisplay(popupokbtn)) {
+						objwait.waitForElemntTobeClickable(driver, popupokbtn, 10);
 						objaction.click(popupokbtn);
+						objwait.waitForElemntTobeClickable(driver, warningpopupokbtn, 10);
 						objaction.click(warningpopupokbtn);
-						continue; // **Continue checking next position**
+
+						isDownloadAttempted = true;
+					} else {
+						WbidBasepage.logger.info("❌ No popup displayed, exiting the method.");
+						objaction.fordisplay(loading);
+
+						exitLoop = true; // Set flag to break both loops
+						break;
 					}
 				}
-			}
-
-			// **If download is successful, break the city loop**
-			if (isDownloadEnabled) {
-				break;
 			}
 		}
 
 		WbidBasepage.logger.info("📌 Final Selected Base: " + selectedBase);
 		WbidBasepage.logger.info("📌 Final Selected Position: " + selectedPosition);
 
-		return isDownloadEnabled;
+		return isDownloadAttempted;
 	}
 
 	// TC28
@@ -977,12 +980,19 @@ public class BidDownloadPage {
 	}
 
 	// For line number from cover letter
+	String total;
+	String hard;
+	String reserve;
+	String blank;
 
 	public void checklinenumber() {
 
 		// Trim and normalize input values
+
 		selectedBase = selectedBase.toUpperCase();
-		selectedPosition = selectedPosition.toUpperCase();
+		if (selectedPosition.equalsIgnoreCase("Cp")) {
+			selectedPosition = "ca".toUpperCase();
+		}
 
 		if (selectedBase.isEmpty() || selectedPosition.isEmpty()) {
 			System.out.println("Base or Position is empty. Please check inputs.");
@@ -1000,17 +1010,16 @@ public class BidDownloadPage {
 
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(content);
-
 		// Check and extract the numbers
 		if (matcher.find()) {
-			String total = matcher.group(1); // Extracts 271
-			String hard = matcher.group(2); // Extracts 176
-			String reserve = matcher.group(3); // Extracts 34
-			String blank = matcher.group(4); // Extracts 61
+			total = matcher.group(1);
+			hard = matcher.group(2);
+			reserve = matcher.group(3);
+			blank = matcher.group(4);
 
-			String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n"
-					+ " -🔥 Total  : " + total + "\n" + " -🔥 Hard   : " + hard + "\n" + " -🔥 Reserve: " + reserve
-					+ "\n" + " -🔥 Blank  : " + blank;
+			String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n" + " 🔥 Total  : "
+					+ total + "\n" + " 🔥 Hard   : " + hard + "\n" + " 🔥 Reserve: " + reserve + "\n" + " 🔥 Blank  : "
+					+ blank;
 
 			System.out.println(output);
 			WbidBasepage.logger.pass(output);
@@ -1019,4 +1028,249 @@ public class BidDownloadPage {
 			WbidBasepage.logger.fail("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
 		}
 	}
+
+	@FindBy(xpath = "//h6[@class=\"scr-head\"]")
+	public WebElement scratchpadlinenumber;
+	int extractedNumber;
+	int totalNumber;
+
+	public boolean checkLineNumberFromScratchpad() {
+		String text = objaction.gettext(scratchpadlinenumber);
+
+		// Regex to find a number in the given text
+		Pattern pattern = Pattern.compile("\\b(\\d+)\\b");
+		Matcher matcher = pattern.matcher(text);
+
+		if (matcher.find()) {
+			extractedNumber = Integer.parseInt(matcher.group(1)); // Convert extracted number to int
+			totalNumber = Integer.parseInt(total.trim()); // Convert total to int after trimming spaces
+
+			System.out.println("Extracted Number: " + extractedNumber);
+			System.out.println("Total: " + totalNumber);
+
+			// Compare extracted number with totalNumber
+			if (extractedNumber == totalNumber) {
+				System.out.println("✅ Extracted number matches the total.");
+				return true; // Return true if numbers match
+			} else {
+				System.out.println("❌ Extracted number does NOT match the total.");
+				return false; // Return false if numbers do not match
+			}
+		} else {
+			System.out.println("No number found.");
+			return false; // Return false if no number is found
+		}
+	}
+
+	////////// Check only FA condition
+	public boolean checkDownloadBidFA() {
+		WbidBasepage.logger
+				.info("🎯 Verifying user can select appropriate rounds and positions with all applicable domiciles:");
+		boolean isAnyDownloadAttempted = false;
+		int currentDay = LocalDate.now().getDayOfMonth();
+		int lastDayOfMonth = LocalDate.now().lengthOfMonth();
+
+		// Check applicable conditions for FA only
+		boolean firstRoundFA = (currentDay >= 2 && currentDay <= lastDayOfMonth)
+				&& processDownloadFA("FA", "FA", firstround);
+
+		boolean secondRoundFA = (currentDay >= 11 && currentDay <= lastDayOfMonth)
+				&& processDownloadFA("FA", "FA", secondround);
+
+		// Ensure all conditions are processed
+		isAnyDownloadAttempted = firstRoundFA && secondRoundFA;
+
+		if (!isAnyDownloadAttempted) {
+			WbidBasepage.logger.info("❌ Not able to download bid data for all required conditions.");
+		}
+
+		return isAnyDownloadAttempted;
+	}
+
+	private boolean processDownloadFA(String pos1, String pos2, WebElement round) {
+		boolean isDownloadAttempted = false;
+		boolean exitLoop = false; // Flag to break the outer loop
+		selectedBase = "";
+		selectedPosition = "";
+
+		WbidBasepage.logger.info("✅ Checking download attempt for " + pos1 + " and " + pos2);
+
+		for (WebElement city : basecities) {
+			if (exitLoop)
+				break; // Break outer loop if needed
+
+			String cityName = city.getText().trim();
+
+			WbidBasepage.logger.info("✨ Domicile Selected: " + cityName);
+			objwait.waitForElemntTobeClickable(driver, city, 5);
+			objaction.click(city);
+
+			for (WebElement position : positionlist) {
+				if (exitLoop)
+					break; // Break inner loop if needed
+
+				String pos = position.getText().trim();
+
+				if (pos.equalsIgnoreCase(pos1) || pos.equalsIgnoreCase(pos2)) {
+					WbidBasepage.logger.info("✨ Position Selected: " + pos);
+					objwait.waitForElemntTobeClickable(driver, position, 5);
+					objaction.click(position);
+
+					// Store selected base and position
+					selectedBase = cityName;
+					selectedPosition = pos;
+
+					// Select round
+					objwait.waitForElemntTobeClickable(driver, round, 5);
+					objaction.click(round);
+					WbidBasepage.logger.info("✅ Round selected for " + pos + " at domicile " + cityName);
+
+					// Get next month in SHORT format (e.g., "Mar")
+					formonthselection();
+
+					// Click the download button
+					WbidBasepage.logger.info("⬇️ Clicking the download button for " + cityName + " - " + pos);
+					objaction.click(download_btn);
+
+					if (objaction.fordisplay(popupokbtn)) {
+						objwait.waitForElemntTobeClickable(driver, popupokbtn, 10);
+						objaction.click(popupokbtn);
+						objwait.waitForElemntTobeClickable(driver, warningpopupokbtn, 10);
+						objaction.click(warningpopupokbtn);
+
+						isDownloadAttempted = true;
+					} else {
+						WbidBasepage.logger.info("❌ No popup displayed, exiting the method.");
+						objaction.fordisplay(loading);
+
+						exitLoop = true; // Break both loops
+						break;
+					}
+				}
+			}
+		}
+
+		WbidBasepage.logger.info("📌 Final Selected Base: " + selectedBase);
+		WbidBasepage.logger.info("📌 Final Selected Position: " + selectedPosition);
+
+		return isDownloadAttempted;
+	}
+	// have to perform start over
+
+	@FindBy(xpath = "//i[@class='fas fas fa-ellipsis-h']")
+	public WebElement moreDot;
+
+	@FindBy(xpath = "//li[@class='dropdown-item']/a[text()='Start Over']")
+	public WebElement startOverBtn;
+
+	@FindBy(xpath = "//button[text()='Yes']")
+	public WebElement yesBtn;
+
+	public void startOver() {
+		objwait.waitForElementTobeVisible(driver, moreDot, 90);
+		objaction.click(moreDot);
+		objwait.waitForElementTobeVisible(driver, startOverBtn, 90);
+		objaction.click(startOverBtn);
+		objwait.waitForElementTobeVisible(driver, yesBtn, 90);
+		objaction.click(yesBtn);
+		objwait.waitForElementTobeVisible(driver, yesBtn, 90);
+		objaction.click(yesBtn);
+	}
+
+	public boolean forvisibleellipisicon() {
+		return objaction.fordisplay(moreDot);
+	}
+
+	public boolean checklinemovestobid() {
+		if (extractedNumber == 0) {
+			WbidBasepage.logger.pass("✅ Lines are moved");
+			return true;
+		} else {
+			WbidBasepage.logger.fail("❌ Lines are not moved");
+			return false;
+		}
+	}
+
+	// Checking Reserve Lines
+	@FindBy(xpath = "//div/span/small[text()=\"R\"]")
+	List<WebElement> reservelines;
+
+	public boolean checkreservelines() {
+		String count = String.valueOf(reservelines.size());
+		WbidBasepage.logger.info("💡Reserve lines: " + count);
+
+		if (count.equals(reserve)) {
+			System.out.println("Total Reserve Lines: " + count);
+			WbidBasepage.logger.pass("✅ Total Reserve Lines: " + count);
+			return true;
+		} else {
+			System.out.println("No Reserve Lines Found.");
+			WbidBasepage.logger.fail("❌ No Reserve Lines Found.");
+			return false;
+		}
+	}
+
+	@FindBy(xpath = "//span/small[text()=\"\"]")
+	List<WebElement> blanklines;
+
+	public boolean checkblankline() {
+		String count = String.valueOf(blanklines.size());
+		WbidBasepage.logger.info("💡Blank lines: " + count);
+
+		if (count.equals(blank.trim())) {
+			System.out.println("Total Blank Lines: " + count);
+			WbidBasepage.logger.pass("✅ Total Blank Lines: " + count);
+			return true;
+		} else {
+			System.out.println("No Blank Lines Found.");
+			WbidBasepage.logger.fail("❌ Blank Lines Found Mismatch." + count);
+			return false;
+		}
+	}
+
+	@FindBy(xpath = "//div/span/small")
+	List<WebElement> linecount;
+	@FindBy(xpath = "//td[contains(@class,\"ul-date seven-cols trip\")]")
+	List<WebElement> tripday;
+	@FindBy(xpath="//div[@class=\"cala-view ng-star-inserted\"]")
+	List<WebElement> calendar;
+	public void linecount() {
+	    int count = linecount.size(); // Assuming 'linecount' is a list of WebElements
+	    WbidBasepage.logger.info("💡 Lines Count: " + count);
+
+	    for (int i = 1; i <= count; i++) {
+	        WbidBasepage.logger.info("💡 Value: " + i);
+
+	        boolean tripFound = false; // Flag to track if a trip is found
+	        int iterationCount = 0;
+	        for (WebElement option : tripday) {
+	        	 if (iterationCount >= 35) {
+	                 WbidBasepage.logger.info("⏳ Skipping remaining days after 35 checks.");
+	                 break; // Stop checking after 35 iterations
+	             }
+	            String att = objaction.getAttribute(option, "style");
+
+	            // Debug log to check what value is being retrieved
+	            WbidBasepage.logger.info("🔍 Retrieved 'style' attribute: " + (att.isEmpty() ? "EMPTY" : att));
+
+	            if (att != null && !att.isEmpty() && (
+	                att.contains("background-color: rgb(220, 100, 5);")  ||
+	                att.contains("background-color: rgb(255, 0, 0);") ||
+	                att.contains("background-color: rgb(185, 54, 16);") ||
+	                att.contains("background-color: rgb(17, 166, 124);"))) {
+	                
+	                WbidBasepage.logger.info("✅ This day contains the trip");
+	                tripFound = true;
+	                break; // Exit inner loop once a trip is found
+	            }
+	        }
+
+	        if (!tripFound) {
+	            WbidBasepage.logger.info("❌ This day does not have a trip");
+	        }
+	    }
+	}
+	//LIne parameters
+	@FindBy(xpath = "(//div[@class=\"cala-right\"])[1]")
+	public WebElement lineparam;
 }
