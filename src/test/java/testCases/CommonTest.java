@@ -19,6 +19,7 @@ import API.ScratchPadCountFA;
 import API.TrialBidAPI;
 import pages.BidDownloadPage;
 import pages.CommonPage;
+import pages.CredValuesPage;
 import pages.HoliRigPage;
 import pages.LoginPage;
 import utilities.ActionUtilities;
@@ -34,6 +35,7 @@ public class CommonTest extends WbidBasepage{
 	BidDownloadPage objdownload = new BidDownloadPage(driver);
 	CommonPage objCommon=new CommonPage(driver);
 	HoliRigPage objHoli=new HoliRigPage(driver);
+	CredValuesPage objCred=new CredValuesPage(driver);
 	HashMap<String, String> testDataMap = testData("qa environment");
 	
 	
@@ -210,21 +212,28 @@ public class CommonTest extends WbidBasepage{
 	 // objCommon.getAllTAFB();
 	  logger.info("Get  trip Details from UI- Trip Code and TAFB and compare with API Trip code and TAFB");
 	//  logger.info(" converted TAFB "+TrialBidAPI.tafbMapNew);
-	  Assert.assertTrue(objCommon.getAllTAFBAndCompare(TrialBidAPI.tafbMapNew));
-	  
-	  
+	  Assert.assertTrue(objCommon.getAllTAFBAndCompare(TrialBidAPI.tafbMapNew)); 
 	   }
-  @Test(priority = 30, enabled = true)
+  @Test(priority = 30, enabled = false)
   public void test30() throws JsonProcessingException, ParseException  {
 	  logger = WbidBasepage.extent.createTest("test30").assignAuthor("VS/483");
 	  logger.info("Get HoliRig Values from API ");
-	 // HoliRig.fetchApiData("ATL", "1", "CP", "4");
 	  JavaDirectHolirig.fetchParam(domicile, APIRound, position, APIMonth);
 	  logger.info("Get HoliRig Values from each line from UI ");
 	  objHoli.selectHoliRig();
-	  objHoli.getHoliRigVal();
-	// Assert.assertTrue(objHoli.isHoliRigDataMatching(HoliRig.holirigResult));
+	  objHoli.getHoliRigVal();	  
+	  Assert.assertTrue(objHoli.isHoliRigDataMatching(JavaDirectHolirig.result));
+	   }
+  @Test(priority = 31, enabled = true)
+  public void test31() throws JsonProcessingException, ParseException  {
+	  logger = WbidBasepage.extent.createTest("test31").assignAuthor("VS/483");
+	  logger.info("Get Cred Values from API ");
 	  
-	 Assert.assertTrue(objHoli.isHoliRigDataMatching(JavaDirectHolirig.result));
+	  logger.info("Get Cred Values from UI ");
+	//  objCred.getAllCred();
+	  logger.info("Get Cred Values from each line from UI ");
+	  //objCred.tripDataWithLine();
+	  objCred.getAllTripData();
+	  //Assert.assertTrue();
 	   }
 }

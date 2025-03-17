@@ -59,10 +59,11 @@ public class CommonPage {
         return version;
     }
 
-	@FindBy(id = "navbardrop")
+	@FindBy(xpath = "//a[@id='navbardrop']")
 	public WebElement retrivedropdown;
 
 	public void click_retrievedownload() {
+		objwait.waitForElementTobeVisible(driver, retrivedropdown,90);
 		objaction.click(retrivedropdown);
 	}
 	@FindBy(xpath = "//a[text()='Retrieve New BidData']")
@@ -814,11 +815,11 @@ public class CommonPage {
 		public Map<String, Double> getAllTAFB() {
 		    Map<String, String> tripTAFBMap = new HashMap<>(); 
 			Map<String, Double> tafbMapUI = new HashMap<>();
-           int i=0;
+         //  int i=0;
 		    for (WebElement tripElement : tripList) {  
 		        try {
-		        	i++;
-		        if(i<=5) {
+		        //	i++;
+		        //if(i<=5) {
 		            objwait.waitForElementTobeVisible(driver, tripElement, 90);
 		            // Scroll into view
 		            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
@@ -868,7 +869,7 @@ public class CommonPage {
 		                        }
 		                    }
 		                }
-		            }
+		            //}
 
 		            // Close modal properly after processing the trip
 		            try {
