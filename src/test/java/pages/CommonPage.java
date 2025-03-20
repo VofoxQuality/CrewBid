@@ -768,6 +768,8 @@ public class CommonPage {
 
 		                            // ✅ Store dates in Set inside Map (Avoids duplicates)
 		                            uiTripDataMap.computeIfAbsent(tripCode, k -> new TreeSet<>()).add(tripDate);
+		                            WbidBasepage.logger.info("Extracted Trip Data UI " + uiTripDataMap);
+
 		                        } else {
 		                            WbidBasepage.logger.fail("Trip date not found in the trip sequence text.");
 		                            isDataMatching = false;
@@ -790,7 +792,8 @@ public class CommonPage {
 		    for (String tripCode : apiTripMap.keySet()) {
 		        Set<String> apiDates = apiTripMap.getOrDefault(tripCode, new TreeSet<>());
 		        Set<String> uiDates = uiTripDataMap.getOrDefault(tripCode, new TreeSet<>());
-
+		        WbidBasepage.logger.info(" API Dates"+apiDates);
+		        WbidBasepage.logger.info(" UI Dates"+uiDates);
 		        if (!uiDates.equals(apiDates)) {
 		            WbidBasepage.logger.fail("Mismatch Found: Trip Code: " + tripCode + 
 		                " | UI Dates: " + uiDates + " | API Dates: " + apiDates);
@@ -805,7 +808,7 @@ public class CommonPage {
 		            WbidBasepage.logger.fail("Trip Code " + apiTripCode + " found in API but missing in UI!");
 		            isDataMatching = false;
 		        }
-		    }
+		        }
 		    return isDataMatching; // True if all data matches, false if mismatches are found
 		}
 //Get TAFB from UI for each Trip(corresponding TipCode)

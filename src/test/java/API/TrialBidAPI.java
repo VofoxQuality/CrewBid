@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,10 @@ import io.restassured.response.Response;
 import utilities.WbidBasepage;
 
 public class TrialBidAPI  {
+	 public static Map<String, Map<String, List<Integer>>> apiCredData = new LinkedHashMap<>();
 	public static StringBuilder tripOutput = null;
+	public static StringBuilder comparisonArray = null;
+	public static StringBuilder tripCompare = null;
 	LZString lzstring = new LZString();
 	public static String[] array;
 	public List<String> acftChanges;
@@ -200,13 +204,19 @@ public class TrialBidAPI  {
 
 				// Start building the output for this trip
 				tripOutput = new StringBuilder(tripCode + "  ");
-
+				tripCompare = new StringBuilder("API Trip code and Individual Cred:"+tripCode);
+				
+				
+				
+				
 				// Extract the DutyPeriods array
 				JSONArray dutyPeriods = tripDetails.getJSONArray("DutyPeriods");
 				for (int i = 0; i < dutyPeriods.length(); i++) {
 					JSONObject dutyPeriod = dutyPeriods.getJSONObject(i);
 					// Extract FlightSeqNum and Tfp
 					int DutSeqNum = dutyPeriod.getInt("DutPerSeqNum");
+					// Convert to String
+					String dutSeqNumStr = String.valueOf(DutSeqNum);  
 					double TOTALtfp = dutyPeriod.getDouble("Tfp");
 					double Dutyhrs = dutyPeriod.getDouble("DutyTime");
 
@@ -220,7 +230,12 @@ public class TrialBidAPI  {
 
 					tripOutput.append("DutySeqNum" + DutSeqNum + " TOTALfp").append(":").append(TOTALtfp + RigAdg)
 							.append(" ").append(" Dutyhrs " + timeAsDouble + " ");
-
+					
+					 List<Integer> credList = new ArrayList<>(); // Store all cred values
+ 					tripCompare.append(  "DutSeqNum: "+DutSeqNum);
+ 					
+ 					
+ 					
 					// Extract the Flights array
 					JSONArray flights = dutyPeriod.getJSONArray("Flights");
 					for (int j = 0; j < flights.length(); j++) {
@@ -229,11 +244,26 @@ public class TrialBidAPI  {
 						// Extract FlightSeqNum and Tfp
 						int flightSeqNum = flight.getInt("FlightSeqNum");
 						double tfp = flight.getDouble("Tfp");
-
+						                        
+                        double comparetfp = flight.getDouble("Tfp");
+                        int cred = BigDecimal.valueOf(comparetfp * 100)
+                                             .setScale(0, RoundingMode.HALF_UP)
+                                             .intValue();
+                       
+                     // Store the cred value
+                        credList.add(cred);
 						// Append to the trip output
 						tripOutput.append("FlightSeqNum " + flightSeqNum).append(" ").append("Tfp:" + tfp)
-								.append("   ");
+								.append("   ");				
+						tripCompare.append(cred+",");	
+						
+						apiCredData
+						.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
+	 	                .computeIfAbsent(dutSeqNumStr, k -> new ArrayList<>())
+	 	                .add(cred);
 					}
+					WbidBasepage.logger.info("API " + tripCompare);
+					
 				}
 
 				// Print the result for this trip
@@ -242,7 +272,7 @@ public class TrialBidAPI  {
 
 				String strOutput = tripOutput.toString();
 				// Save the string to an array
-
+								
 				dynamicArray.add(strOutput);
 				// System.out.println("Stored Tafb Data:");
 				// tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ",

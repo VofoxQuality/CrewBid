@@ -1,5 +1,6 @@
 package testCases;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,12 @@ import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import API.FetchDates;
+import API.ScratchPadBlankReservedLines;
+import API.ScratchPadCountFA;
+import API.TrialBidAPI;
 import pages.BidDownloadPage;
 import pages.CommonPage;
 import pages.CredValuesPage;
@@ -156,10 +163,12 @@ public class IndividualCredValueTest extends WbidBasepage {
 	  Assert.assertTrue(isDownloadSuccessful,"Bid Download was not successful");
   }
   @Test(priority = 12, dependsOnMethods = {"CBW0100030000011"})
-  public void CBW0100030000012 () {
+  public void CBW0100030000012 () throws JsonProcessingException {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000012").assignAuthor("VS/483");
-		logger.info("Verify the subscription expiring alert ");
-		logger.info("Expiring alert  not visible");
+	  logger.info("Fetchinh API data");
+	  ScratchPadBlankReservedLines.fetchApiData(domicile, APIRound, position, APIMonth);
+	  TrialBidAPI.fetchApiData(domicile, APIRound, position, APIMonth);
+	  logger.info("Verify the subscription expiring alert - Expiring alert  not visible ");
   }
   @Test(priority = 13, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000013 () {
@@ -176,7 +185,6 @@ public class IndividualCredValueTest extends WbidBasepage {
   @Test(priority = 15, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000015 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000015").assignAuthor("VS/483");
-	  
 		logger.info("Verify user can able to view the Seniority list popup");
 		Assert.assertEquals(objInCred.displaySeniority(), "Seniority List", "Seniority list popup not visible");
 	 
@@ -185,78 +193,81 @@ public class IndividualCredValueTest extends WbidBasepage {
   public void CBW0100030000016 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000016").assignAuthor("VS/483");
 		logger.info("Verify the user can able to view the 'Latest news' popup");
-		 if (isDownloadSuccessful) {
-			 logger.info("close Seniority list Pop Up");
-			 objCommon.clickSeniorityCancel();
-			 logger.info("Verify the user can able to view the 'Latest news' popup");
-			 Assert.assertEquals(objInCred.latestnewHeader(), "Latest News", "Headers mismatch");
-		 }
+		logger.info("close Seniority list Pop Up");
+		objCommon.clickSeniorityCancel();
+		logger.info("Verify the user can able to view the 'Latest news' popup");
+		Assert.assertEquals(objInCred.latestnewHeader(), "Latest News", "Headers mismatch");
+		 
   }
   @Test(priority = 17, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000017 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000017").assignAuthor("VS/483");
 		logger.info("Verify the user can able to view the Cover letter popup");
-		if (isDownloadSuccessful) {
-			 logger.info("close Latest Pop Up");
-			 objCommon.clickLatestNwzClose();
-			 logger.info("Verify the user can able to view the 'Latest news' popup");
-			 Assert.assertEquals(objInCred.coverLetterHeader(), "Cover Letter", "Headers mismatch");
-		 }
-	
+		logger.info("close Latest Pop Up");
+		objCommon.clickLatestNwzClose();
+		logger.info("Verify the user can able to view the 'Latest news' popup");
+		Assert.assertEquals(objInCred.coverLetterHeader(), "Cover Letter", "Headers mismatch");
+		logger.info("close Cover Letter pop Up");
+		objCommon.clickCoverLetterClose();
+		Assert.assertTrue(objCommon.verifyScratchpadHeading(domicile,ScratchpadPosition,ScratchpadRound,year));	 
   }
+  public int initialScratchPadCount;
   @Test(priority = 18, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000018 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000018").assignAuthor("VS/483");
 		logger.info("User can able to start over the bid");
-			
-	
+		logger.info("Verify the user can select the Arrow button");
+		initialScratchPadCount=objInCred.scrLinesTotalCount();
+		Assert.assertTrue(objInCred.movearrowclickable(), "Icon not clickable");
   }
   @Test(priority = 19, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000019 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000019").assignAuthor("VS/483");
-		logger.info("");
-			
-	
+		logger.info("Bidlsit count should be the previous count count of the scratchpad view");
+		Assert.assertEquals(objInCred.bidListHeadCount(),initialScratchPadCount, "Bidlsit count not same as previous count count of the scratchpad view");	
   }
   @Test(priority = 20, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000020 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000020").assignAuthor("VS/483");
-		logger.info("");
-			
-	
+		logger.info("Verify the ellipsis icon");
+		Assert.assertTrue(objInCred.ellipisIconVisible(), "Ellipis icon not displayed");
   }
   @Test(priority = 21, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000021 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000021").assignAuthor("VS/483");
-		logger.info("");
-			
-	
+		logger.info("Verify Start over button - scratch pad should be in default state");		
+		objInCred.startOver();
+		logger.info("Compare with Scratchpad count from the UI and the  Line count from the cover letter API should be same");
+		Assert.assertTrue(objCommon.scrLinesTotalCount(ScratchPadBlankReservedLines.linecount));	   
   }
   @Test(priority = 22, dependsOnMethods = {"CBW0100030000011"})
-  public void CBW0100030000022 () {
+  public void CBW0100030000022 () throws JsonProcessingException, ParseException {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000022").assignAuthor("VS/483");
-		logger.info("");
-			
-	
-  }
+	  logger.info("Assert: Inside the trip details , the dates are shown same as the dates of the trips and should be same as its in the wbl file");
+	  logger.info("Get  trip Details from UI- Trip Code and Trip date and compare with API Trip code and dates");
+	  FetchDates.fetchApiData(domicile, APIRound, position, APIMonth); 
+	  //Assert.assertTrue(objCommon.getAllTripDataAndCompare(FetchDates.tripData));	
+}
   @Test(priority = 23, dependsOnMethods = {"CBW0100030000011"})
-  public void CBW0100030000023 () {
+  public void CBW0100030000023 ()  {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000023").assignAuthor("VS/483");
-		logger.info("");
-			
-	
+	  logger.info("Assert the 'cred' inside the trip detials ");
+	 // Assert.assertTrue(objInCred.CredHeadVisible(),"cred not visible inside the trip detials " );	
   }
   @Test(priority = 24, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000024 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000024").assignAuthor("VS/483");
-		logger.info("");
-			
-	
+		logger.info("Verify the Individual cred value in the trip details  in same as its in the wbp file for each leg ");
+		//objInCred.getAllIndivdualCred();
+		logger.info("Get individual cred from UI");
+		//objInCred.getIndividualCred();
+		logger.info("compare API and UI cred");
+		objInCred.compareCredDatas(objInCred.getIndividualCred(),TrialBidAPI.apiCredData);
   }
   @Test(priority = 25, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000025 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000025").assignAuthor("VS/483");
-		logger.info("");
+		logger.info("Verify the sum of individual cred value for each day is shown in cred values ");
 			
 	
   }

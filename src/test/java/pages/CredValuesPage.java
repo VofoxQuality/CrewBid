@@ -54,12 +54,12 @@ public class CredValuesPage {
    	 int lineCount =tripLines.size();
 	   
 	 //   for (WebElement tripLine : tripLines) {  
-	    for ( int i = 1;i<lineCount;i++) {  
+	    for ( int i = 1;i<3;i++) {  
 	        try {
-	        	
 	            // Find trip elements inside this specific trip line
 	        	String tripXPath = getTripXPath(i);
-	            List<WebElement> tripList = driver.findElements(By.xpath(tripXPath)); Map<String, String> tripDataMap = new HashMap<>(); // Stores (Trip Code -> Date) for each line
+	            List<WebElement> tripList = driver.findElements(By.xpath(tripXPath));
+	            Map<String, String> tripDataMap = new HashMap<>(); // Stores (Trip Code -> Date) for each line
 	            if (tripList.isEmpty()) {
 	                WbidBasepage.logger.info("No trips found in Line " + (i + 1));
 	                continue;
