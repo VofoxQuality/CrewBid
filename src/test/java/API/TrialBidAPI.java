@@ -33,8 +33,9 @@ import utilities.WbidBasepage;
 
 public class TrialBidAPI  {
 	 public static Map<String, Map<String, List<Integer>>> apiCredData = new LinkedHashMap<>();
+	 public static Map<String, Map<String, List<Integer>>> apiTotalCredData = new LinkedHashMap<>();
 	public static StringBuilder tripOutput = null;
-	public static StringBuilder comparisonArray = null;
+	public static StringBuilder totalTFPCompare = null;
 	public static StringBuilder tripCompare = null;
 	LZString lzstring = new LZString();
 	public static String[] array;
@@ -205,7 +206,7 @@ public class TrialBidAPI  {
 				// Start building the output for this trip
 				tripOutput = new StringBuilder(tripCode + "  ");
 				tripCompare = new StringBuilder("API Trip code and Individual Cred:"+tripCode);
-				
+				totalTFPCompare= new StringBuilder("API Trip code and Total Cred:"+tripCode);
 				
 				
 				
@@ -230,13 +231,25 @@ public class TrialBidAPI  {
 
 					tripOutput.append("DutySeqNum" + DutSeqNum + " TOTALfp").append(":").append(TOTALtfp + RigAdg)
 							.append(" ").append(" Dutyhrs " + timeAsDouble + " ");
-					
+ //Comapre individual cred with UI						
 					 List<Integer> credList = new ArrayList<>(); // Store all cred values
  					tripCompare.append(  "DutSeqNum: "+DutSeqNum);
+ //Comapre total cred with UI					
+ 					int totalTFP = (int) (TOTALtfp + RigAdg);
+ 					int totalCred = BigDecimal.valueOf(totalTFP * 100)
+                            .setScale(0, RoundingMode.HALF_UP)
+                            .intValue();
  					
+ 					totalTFPCompare.append("DutSeqNum: "+DutSeqNum).append("total Cred: "+totalCred);
+ 					WbidBasepage.logger.info("API:" + totalTFPCompare);
  					
+ 				// Store totalTFP in the map
+ 					apiTotalCredData.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
+ 					                .computeIfAbsent(dutSeqNumStr, k -> new ArrayList<>())
+ 					                .add(totalTFP);  // Store calculated sum
+ 					WbidBasepage.logger.info("API:" + apiTotalCredData);	
  					
-					// Extract the Flights array
+ 					// Extract the Flights array
 					JSONArray flights = dutyPeriod.getJSONArray("Flights");
 					for (int j = 0; j < flights.length(); j++) {
 						JSONObject flight = flights.getJSONObject(j);
@@ -249,8 +262,7 @@ public class TrialBidAPI  {
                         int cred = BigDecimal.valueOf(comparetfp * 100)
                                              .setScale(0, RoundingMode.HALF_UP)
                                              .intValue();
-                       
-                     // Store the cred value
+                        // Store the cred value
                         credList.add(cred);
 						// Append to the trip output
 						tripOutput.append("FlightSeqNum " + flightSeqNum).append(" ").append("Tfp:" + tfp)
@@ -262,7 +274,7 @@ public class TrialBidAPI  {
 	 	                .computeIfAbsent(dutSeqNumStr, k -> new ArrayList<>())
 	 	                .add(cred);
 					}
-					WbidBasepage.logger.info("API " + tripCompare);
+					WbidBasepage.logger.info("API:" + tripCompare);
 					
 				}
 

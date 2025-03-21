@@ -252,23 +252,28 @@ public class IndividualCredValueTest extends WbidBasepage {
   public void CBW0100030000023 ()  {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000023").assignAuthor("VS/483");
 	  logger.info("Assert the 'cred' inside the trip detials ");
-	 // Assert.assertTrue(objInCred.CredHeadVisible(),"cred not visible inside the trip detials " );	
+	  Assert.assertTrue(objInCred.CredHeadVisible(),"cred not visible inside the trip detials " );	
   }
   @Test(priority = 24, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000024 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000024").assignAuthor("VS/483");
 		logger.info("Verify the Individual cred value in the trip details  in same as its in the wbp file for each leg ");
 		//objInCred.getAllIndivdualCred();
-		logger.info("Get individual cred from UI");
+		logger.info("Get individual cred of Each Trip from UI and compare with API Data ");
 		//objInCred.getIndividualCred();
+		Assert.assertTrue(objInCred.IndividualCredCompareAPI());
 		logger.info("compare API and UI cred");
-		objInCred.compareCredDatas(objInCred.getIndividualCred(),TrialBidAPI.apiCredData);
+		//objInCred.compareCredDatas(objInCred.getIndividualCred(),TrialBidAPI.apiCredData);
+		
+		//objInCred.compareCredDatas(objInCred.getIndividualCred(),TrialBidAPI.apiCredData);
   }
   @Test(priority = 25, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000025 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000025").assignAuthor("VS/483");
-		logger.info("Verify the sum of individual cred value for each day is shown in cred values ");
-			
+		logger.info("Verify the sum of individual cred value (total Cred value) for each day is shown in cred values ");
+		driver.navigate().refresh();
+		objwait.waitS(7000);
+		objInCred.getTotalCred();
 	
   }
   @Test(priority = 26, dependsOnMethods = {"CBW0100030000011"})
