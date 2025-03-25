@@ -33,7 +33,7 @@ import utilities.WbidBasepage;
 
 public class TrialBidAPI  {
 	 public static Map<String, Map<String, List<Integer>>> apiCredData = new LinkedHashMap<>();
-	 public static Map<String, Map<String, List<Integer>>> apiTotalCredData = new LinkedHashMap<>();
+	 public static Map<String, Map<String,Integer>> apiTotalCredData = new LinkedHashMap<>();
 	public static StringBuilder tripOutput = null;
 	public static StringBuilder totalTFPCompare = null;
 	public static StringBuilder tripCompare = null;
@@ -235,7 +235,8 @@ public class TrialBidAPI  {
 					 List<Integer> credList = new ArrayList<>(); // Store all cred values
  					tripCompare.append(  "DutSeqNum: "+DutSeqNum);
  //Comapre total cred with UI					
- 					int totalTFP = (int) (TOTALtfp + RigAdg);
+ 					double totalTFP = (double) (TOTALtfp + RigAdg);
+ 					WbidBasepage.logger.info("Total TFP in integer:" + totalTFP);
  					int totalCred = BigDecimal.valueOf(totalTFP * 100)
                             .setScale(0, RoundingMode.HALF_UP)
                             .intValue();
@@ -244,9 +245,8 @@ public class TrialBidAPI  {
  					WbidBasepage.logger.info("API:" + totalTFPCompare);
  					
  				// Store totalTFP in the map
- 					apiTotalCredData.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
- 					                .computeIfAbsent(dutSeqNumStr, k -> new ArrayList<>())
- 					                .add(totalTFP);  // Store calculated sum
+ 					 apiTotalCredData.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
+ 	                .put(dutSeqNumStr, totalCred); // Store calculated sum
  					WbidBasepage.logger.info("API:" + apiTotalCredData);	
  					
  					// Extract the Flights array

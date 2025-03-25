@@ -18,7 +18,8 @@ import utilities.ActionUtilities;
 import utilities.WaitCondition;
 import utilities.WbidBasepage;
 
-public class FACommonTest extends WbidBasepage{WebDriver driver = returnDriver();
+public class FACommonTest extends WbidBasepage{
+WebDriver driver = returnDriver();
 WaitCondition objwait = new WaitCondition();
 ActionUtilities objaction = new ActionUtilities(driver);
 LoginPage objpage = new LoginPage(driver);

@@ -799,62 +799,11 @@ public class IndividualCredValuePage {
 
 		return isMatch;
 	}
-
-	
-/*
-	public void compareCredData(Map<String, Map<String, List<Integer>>> uiCredData,
-			Map<String, Map<String, List<Integer>>> apiCredData) {
-		boolean isMatch = true;
-
-		for (String tripCode : uiCredData.keySet()) {
-			if (!apiCredData.containsKey(tripCode)) {
-				WbidBasepage.logger.fail("Mismatch! UI has TripCode: " + tripCode + ", but API does not.");
-				isMatch = false;
-				continue;
-			}
-			Map<String, List<Integer>> uiDatesMap = uiCredData.get(tripCode);
-			Map<String, List<Integer>> apiDutSeqMap = apiCredData.get(tripCode);
-
-			// Sort UI Dates (e.g., ["07Apr", "08Apr", "09Apr"])
-			List<String> sortedUiDates = new ArrayList<>(uiDatesMap.keySet());
-			sortedUiDates.sort(Comparator.comparing(this::convertDateToComparable));
-
-			// Sort API DutySeqNum as Integers
-			List<String> sortedDutSeq = new ArrayList<>(apiDutSeqMap.keySet());
-			sortedDutSeq.sort(Comparator.comparingInt(Integer::parseInt));
-
-			// Compare credit values for each mapped Date - DutSeqNum pair
-			for (int i = 0; i < Math.min(sortedUiDates.size(), sortedDutSeq.size()); i++) {
-				String uiDate = sortedUiDates.get(i);
-				String dutySeq = sortedDutSeq.get(i);
-
-				List<Integer> uiCredits = uiDatesMap.get(uiDate);
-				List<Integer> apiCredits = apiDutSeqMap.get(dutySeq);
-				WbidBasepage.logger.info("|Trip Code: " + tripCode + " | UI Date: " + uiDate + " | UI Credits: "+ uiCredits + " | API Credits: " + apiCredits);
-			
-
-				if (!uiCredits.equals(apiCredits)) {
-					WbidBasepage.logger.fail("Credit mismatch for TripCode: " + tripCode + ", Date: " + uiDate
-							+ " (DutySeqNum: " + dutySeq + ")");
-					WbidBasepage.logger.info("UI Credits: " + uiCredits + " | API Credits: " + apiCredits);
-					isMatch = false;
-				}
-			}
-		}
-
-		if (isMatch) {
-
-			WbidBasepage.logger.info("✅ UI and API credits match perfectly!");
-		} else {
-			WbidBasepage.logger.fail("❌ Differences found in UI and API credit data!");
-		}
-	}
-*/
 //Converts "07Apr" to "Apr07" for correct sorting
 	private String convertDateToComparable(String date) {
 		return date.substring(2) + date.substring(0, 2);
 	}
-	
+/*	
 	public void compareCredDatas(Map<String, Map<String, List<Integer>>> uiCredData,
 			Map<String, Map<String, List<Integer>>> apiCredData) {
 		boolean isMatch = true;
@@ -922,7 +871,8 @@ public class IndividualCredValuePage {
 			WbidBasepage.logger.fail("❌ Differences found in UI and API credit data!");
 		}
 	}
-
+*/
+/*	
 // comparison for date missing senario
 	public Map<String, Map<String, List<Integer>>> getIndividualCredAndCompare() {
 		// Stores (Trip Code -> {Date -> List of Credits})
@@ -1016,19 +966,20 @@ public class IndividualCredValuePage {
 		WbidBasepage.logger.info("Final Extracted Trip Data: " + tripDataMap);
 		return tripDataMap;
 	}
-
-//TC 25  -->Get Total Cred
+*/
+//TC 25  -->Get Total Cred compare with API total cred
+// Format--->Stores (Trip Code -> no of times Rtp occurs in one trip-> total Credit})
 	
-	// Format--->Stores (Trip Code -> no of times Rtp occurs in one trip-> total Credits})
-	public Map<String, Map<Integer, List<Integer>>> getTotalCred() {
-	    // Format: (Trip Code -> {Rpt Count -> List of Credits})
-	    Map<String, Map<Integer, List<Integer>>> tripDataMap = new LinkedHashMap<>();
+	public boolean totalCredCompareAPI() {
+	    boolean isComparisonSuccessful = true; // Assume success unless proven otherwise
+	    Map<String, Map<Integer, Integer>> tripDataMap = new LinkedHashMap<>(); // Keep trip data across iterations
 
-	  int i = 0;
-	    for (WebElement tripElement : tripList) {
-	    	 if (i >= 3) break; // Limit to 5 iterations if required
-			 i++;
+	   // int i = 0;
+	     for (WebElement tripElement : tripList) {
 	        try {
+	        	// if (i >= 3) break; // Limit to 3 iterations if required
+				// i++;
+	        
 	            objwait.waitForElementTobeVisible(driver, tripElement, 90);
 	            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
 	            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
@@ -1042,15 +993,15 @@ public class IndividualCredValuePage {
 	            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
 	            String tripSequenceText = objaction.gettext(tripSequence).trim().replaceAll("\\s+", " ");
 
-	            // Extract Trip Code
-	            Matcher matcher = Pattern.compile("Trip\\s(\\w+)\\sDated").matcher(tripSequenceText);
+	            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+	            Matcher matcher = pattern.matcher(tripSequenceText);
+	            
 	            if (!matcher.find()) {
-	                WbidBasepage.logger.fail("Trip code not found in trip sequence text: " + tripSequenceText);
-	                continue;
+	                WbidBasepage.logger.fail("Trip code not found in text: " + tripSequenceText);
+	                continue; // Skip this trip element
 	            }
+	            
 	            String tripCode = matcher.group(1).trim();
-
-	            // Initialize trip entry
 	            tripDataMap.putIfAbsent(tripCode, new LinkedHashMap<>());
 	            int rptCount = 0;
 
@@ -1060,7 +1011,6 @@ public class IndividualCredValuePage {
 	                if (tripDataText.contains("Rpt")) {
 	                    rptCount++; // Count occurrences of "Rpt"
 
-	                    // Extract the last three-digit number for credit values
 	                    Matcher numberMatcher = Pattern.compile("\\b(\\d{3,4})\\b").matcher(tripDataText);
 	                    String lastCredit = null;
 	                    while (numberMatcher.find()) {
@@ -1070,18 +1020,22 @@ public class IndividualCredValuePage {
 	                    if (lastCredit != null) {
 	                        try {
 	                            int extractedCredit = Integer.parseInt(lastCredit);
-	                            tripDataMap.get(tripCode).computeIfAbsent(rptCount, k -> new ArrayList<>()).add(extractedCredit);
-	                            WbidBasepage.logger.info(" | Data: " + tripDataMap);
+	                            tripDataMap.get(tripCode).put(rptCount, extractedCredit);
 	                        } catch (NumberFormatException e) {
 	                            WbidBasepage.logger.fail("Failed to parse credit value: " + lastCredit);
 	                        }
 	                    }
 	                }
-	                
-	                WbidBasepage.logger.info("Individual Cred Data for Comparison: " + tripDataMap);
 	            }
-	            WbidBasepage.logger.info(" | Data: " + tripDataMap);
-	            
+
+	            WbidBasepage.logger.info("Extracted Data: " + tripDataMap);
+
+	            // Compare UI data with API data
+	            boolean isCurrentComparisonSuccessful = compareTotalCredData(tripDataMap, TrialBidAPI.apiTotalCredData);
+	            if (!isCurrentComparisonSuccessful) {
+	                isComparisonSuccessful = false; // Mark overall failure if one comparison fails
+	            }
+
 	            // Close modal popup if present
 	            try {
 	                new Actions(driver).sendKeys(Keys.ESCAPE).perform();
@@ -1090,13 +1044,57 @@ public class IndividualCredValuePage {
 	            }
 
 	        } catch (Exception e) {
-	            WbidBasepage.logger.info("Error processing trip element.");
+	            WbidBasepage.logger.fail("Error processing trip element: " + e.getMessage());
 	        }
 	    }
 
 	    WbidBasepage.logger.info("Final Extracted Trip Data: " + tripDataMap);
-	    return tripDataMap;
+	    return isComparisonSuccessful;
 	}
+	
+	public boolean compareTotalCredData(Map<String, Map<Integer, Integer>> uiData, Map<String, Map<String, Integer>> apiData) {
+	    boolean isDataMatching = true; // Assume data matches unless proven otherwise
 
+	    for (Map.Entry<String, Map<Integer, Integer>> uiEntry : uiData.entrySet()) {
+	        String tripCode = uiEntry.getKey();
+	        Map<Integer, Integer> uiTripData = uiEntry.getValue();
+
+	        if (!apiData.containsKey(tripCode)) {
+	            WbidBasepage.logger.fail("Trip Code missing in API data: " + tripCode);
+	            isDataMatching = false;
+	            continue; // Skip this trip and move to the next one
+	        }
+
+	        Map<String, Integer> apiTripData = apiData.get(tripCode);
+
+	        for (Map.Entry<Integer, Integer> uiInnerEntry : uiTripData.entrySet()) {
+	            String rptKey = String.valueOf(uiInnerEntry.getKey()); // Convert rptCount (Integer) to String
+	            int uiCreditValue = uiInnerEntry.getValue();
+
+	            if (!apiTripData.containsKey(rptKey)) {
+	                WbidBasepage.logger.fail("Rpt count " + rptKey + " missing in API data for trip: " + tripCode);
+	                isDataMatching = false;
+	                continue;
+	            }
+
+	            int apiCreditValue = apiTripData.get(rptKey);
+
+	            if (uiCreditValue != apiCreditValue) {
+	                WbidBasepage.logger.fail("Mismatch for Trip: " + tripCode + ", Rpt: " + rptKey +
+	                        " | UI Value: " + uiCreditValue + ", API Value: " + apiCreditValue);
+	                isDataMatching = false;
+	            }
+	        }
+	    }
+
+	    if (isDataMatching) {
+	        WbidBasepage.logger.info("All UI and API credit data match successfully.");
+	    } else {
+	        WbidBasepage.logger.fail("Discrepancies found in UI and API credit data.");
+	    }
+
+	    return isDataMatching;
+	}
+	  
 	
 }
