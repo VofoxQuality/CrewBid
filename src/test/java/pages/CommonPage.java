@@ -768,7 +768,7 @@ public class CommonPage {
 
 		                            // ✅ Store dates in Set inside Map (Avoids duplicates)
 		                            uiTripDataMap.computeIfAbsent(tripCode, k -> new TreeSet<>()).add(tripDate);
-		                            WbidBasepage.logger.info("Extracted Trip Data UI " + uiTripDataMap);
+	//	                            WbidBasepage.logger.info("Extracted Trip Data UI " + uiTripDataMap);
 
 		                        } else {
 		                            WbidBasepage.logger.fail("Trip date not found in the trip sequence text.");

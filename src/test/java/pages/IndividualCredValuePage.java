@@ -724,7 +724,7 @@ public class IndividualCredValuePage {
 	                }
 
 	                // Compare UI data with API data
-	                WbidBasepage.logger.info("Individual Cred Data for Comparison: " + tripDataMap);
+	//                WbidBasepage.logger.info("Individual Cred Data for Comparison: " + tripDataMap);
 	                
 	                boolean isCurrentComparisonSuccessful = compareCredData(tripDataMap, TrialBidAPI.apiCredData);
 	                if (!isCurrentComparisonSuccessful) {
@@ -977,7 +977,7 @@ public class IndividualCredValuePage {
 	   // int i = 0;
 	     for (WebElement tripElement : tripList) {
 	        try {
-	        	// if (i >= 3) break; // Limit to 3 iterations if required
+	        	// if (i >= 50) break; // Limit to 3 iterations if required
 				// i++;
 	        
 	            objwait.waitForElementTobeVisible(driver, tripElement, 90);
@@ -1016,7 +1016,6 @@ public class IndividualCredValuePage {
 	                    while (numberMatcher.find()) {
 	                        lastCredit = numberMatcher.group(1); // Get last occurrence
 	                    }
-
 	                    if (lastCredit != null) {
 	                        try {
 	                            int extractedCredit = Integer.parseInt(lastCredit);
@@ -1026,16 +1025,15 @@ public class IndividualCredValuePage {
 	                        }
 	                    }
 	                }
-	            }
-
-	            WbidBasepage.logger.info("Extracted Data: " + tripDataMap);
+	        
+	//            WbidBasepage.logger.info("Extracted Data: " + tripDataMap);
 
 	            // Compare UI data with API data
 	            boolean isCurrentComparisonSuccessful = compareTotalCredData(tripDataMap, TrialBidAPI.apiTotalCredData);
 	            if (!isCurrentComparisonSuccessful) {
 	                isComparisonSuccessful = false; // Mark overall failure if one comparison fails
 	            }
-
+	            }
 	            // Close modal popup if present
 	            try {
 	                new Actions(driver).sendKeys(Keys.ESCAPE).perform();
@@ -1095,6 +1093,326 @@ public class IndividualCredValuePage {
 
 	    return isDataMatching;
 	}
-	  
+//CP & FO reserve line  the Individual cred value in the trip details  is 6 	  
+//CP,FO-round 1 & 2---mR(mixed Reserve)--color-green,brown
 	
+//	Reserve Line Trip --color-->greenish-cyan and  dark orange-red(AM /PM)
+	@FindBy(xpath = "//td[contains(@class,'left-side-radius') and (contains(@style,'background-color: rgb(17, 166, 124)') or contains(@style,'background-color: rgb(185, 54, 16)'))]")
+	public List<WebElement> reserveTripsCP;// Trip detail visible for Reserve line 
+//	Reserve Line Trip --color-->greenish-cyan	
+	@FindBy(xpath = "//td[contains(@class,'left-side-radius') and (contains(@style,'background-color: rgb(17, 166, 124)'))]")
+	public List<WebElement> reserveAMTripsCP;// Trip detail visible for Reserve line 
+//	Reserve Line Trip --color-->dark orange-red	
+	@FindBy(xpath = "//td[contains(@class,'left-side-radius') and contains(@style,'background-color: rgb(185, 54, 16)')]")
+	public List<WebElement> reservePMTripsCP;// Trip detail visible for Reserve line 
+		
+	public boolean ReserveLinesIndividualCred() {
+	    boolean isComparisonSuccessful = true; // Assume success unless proven otherwise
+	    // int i = 0;
+	    for (WebElement tripElement : reserveTripsCP) {
+	        Map<String, Map<String, List<Integer>>> tripDataMap = new LinkedHashMap<>();
+	   
+	        try {
+	        //	 if (i >= 5) break; // Limit to 3 iterations if required
+			//	 i++;
+	            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+	            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+	            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+
+	            try {
+	                tripElement.click();
+	            } catch (Exception e) {
+	                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+	            }
+
+	            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+	            String tripSequenceText = objaction.gettext(tripSequence).trim().replaceAll("\\s+", " ");
+
+	            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+	            Matcher matcher = pattern.matcher(tripSequenceText);
+
+	            if (matcher.find()) {
+	                String tripCode = matcher.group(1).trim();
+
+	                for (WebElement tripEle : tripdata) {
+	                    String tripDataText = objaction.gettext(tripEle).trim().replaceAll("\\s+", " ");
+
+	                    if (tripDataText.startsWith("Rpt") || tripDataText.startsWith("TAFB")) {
+	                        continue;
+	                    }
+	                    // Extract date (e.g., "01Apr", "15May")
+	                    Pattern patternD = Pattern.compile("^(\\d{2}[A-Za-z]{3})\\b");
+	                    Matcher matcherD = patternD.matcher(tripDataText);
+
+	                    if (matcherD.find()) {
+	                        String tripDate = matcherD.group(1).trim();
+
+	                        // Extract only the last three-digit number for credit values
+	                        Pattern threeDigitPattern = Pattern.compile("\\b(\\d{3})\\b");
+	                        Matcher numberMatcher = threeDigitPattern.matcher(tripDataText);
+
+	                        String lastThreeDigit = null;
+	                        while (numberMatcher.find()) {
+	                            lastThreeDigit = numberMatcher.group(1); // Keep last occurrence
+	                        }
+	                        if (lastThreeDigit != null) {
+	                            try {
+	                                int extractedValue = Integer.parseInt(lastThreeDigit);
+	                               // WbidBasepage.logger.info("Individual credit: " + extractedValue);
+	                                
+	                                // Store only the last credit value
+	                                tripDataMap.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
+	                                           .computeIfAbsent(tripDate, k -> new ArrayList<>()).add(extractedValue);
+
+	                            } catch (NumberFormatException e) {
+	                                WbidBasepage.logger.fail("Failed to parse credit: " + lastThreeDigit);
+	                            }
+	                        }
+	                    } else {
+	                        WbidBasepage.logger.fail("Trip date not found in trip sequence text.");
+	                    }
+	                 // Log the extracted data
+	              //  WbidBasepage.logger.info("Individual Cred Data for Comparison: " + tripDataMap);
+
+	                // Compare extracted values with 600
+	                boolean isComparisonSuccessful1 = true;
+	                for (Map<String, List<Integer>> dateMap : tripDataMap.values()) {
+	                    for (List<Integer> values : dateMap.values()) {
+	                    	WbidBasepage.logger.info("Individual Cred Data for Comparison: " + tripDataMap);
+	                    	 
+	                        if (!values.contains(600)) {
+	                            isComparisonSuccessful1 = false; // If any value is not 600, mark as failure
+	                            WbidBasepage.logger.fail("Individual Cred Data for Comparison: " + tripDataMap);
+	                        }
+	                    }
+	                }
+
+	                if (!isComparisonSuccessful1) {
+	                    isComparisonSuccessful = false; // If any comparison fails, mark the entire function as unsuccessful
+	                    WbidBasepage.logger.fail("Individual Cred Data for Comparison: " + tripDataMap);
+	                }
+	                }
+	            }
+
+	            // Close modal popup if present
+	            try {
+	                new Actions(driver).sendKeys(Keys.ESCAPE).perform();
+	            } catch (Exception e) {
+	                WbidBasepage.logger.info("Modal close action failed, continuing.");
+	            }
+
+	        } catch (Exception e) {
+	            WbidBasepage.logger.fail("Error processing trip element: " + e.getMessage());
+	            isComparisonSuccessful = false; // Mark as unsuccessful if an error occurs
+	        }
+	    }
+	    
+	    return isComparisonSuccessful;
+	}
+	public boolean ReserveLinesAMCred() {
+	    boolean isComparisonSuccessful = true; // Assume success unless proven otherwise
+	    // int i = 0;
+	    for (WebElement tripElement : reserveAMTripsCP) {
+	        Map<String, Map<String, List<Integer>>> tripDataMap = new LinkedHashMap<>();
+	   
+	        try {
+	        //	 if (i >= 5) break; // Limit to 3 iterations if required
+			//	 i++;
+	            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+	            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+	            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+
+	            try {
+	                tripElement.click();
+	            } catch (Exception e) {
+	                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+	            }
+
+	            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+	            String tripSequenceText = objaction.gettext(tripSequence).trim().replaceAll("\\s+", " ");
+
+	            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+	            Matcher matcher = pattern.matcher(tripSequenceText);
+
+	            if (matcher.find()) {
+	                String tripCode = matcher.group(1).trim();
+
+	                for (WebElement tripEle : tripdata) {
+	                    String tripDataText = objaction.gettext(tripEle).trim().replaceAll("\\s+", " ");
+
+	                    if (tripDataText.startsWith("Rpt") || tripDataText.startsWith("TAFB")) {
+	                        continue;
+	                    }
+	                    // Extract date (e.g., "01Apr", "15May")
+	                    Pattern patternD = Pattern.compile("^(\\d{2}[A-Za-z]{3})\\b");
+	                    Matcher matcherD = patternD.matcher(tripDataText);
+
+	                    if (matcherD.find()) {
+	                        String tripDate = matcherD.group(1).trim();
+
+	                        // Extract only the last three-digit number for credit values
+	                        Pattern threeDigitPattern = Pattern.compile("\\b(\\d{3})\\b");
+	                        Matcher numberMatcher = threeDigitPattern.matcher(tripDataText);
+
+	                        String lastThreeDigit = null;
+	                        while (numberMatcher.find()) {
+	                            lastThreeDigit = numberMatcher.group(1); // Keep last occurrence
+	                        }
+	                        if (lastThreeDigit != null) {
+	                            try {
+	                                int extractedValue = Integer.parseInt(lastThreeDigit);
+	                               // WbidBasepage.logger.info("Individual credit: " + extractedValue);
+	                                
+	                                // Store only the last credit value
+	                                tripDataMap.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
+	                                           .computeIfAbsent(tripDate, k -> new ArrayList<>()).add(extractedValue);
+
+	                            } catch (NumberFormatException e) {
+	                                WbidBasepage.logger.fail("Failed to parse credit: " + lastThreeDigit);
+	                            }
+	                        }
+	                    } else {
+	                        WbidBasepage.logger.fail("Trip date not found in trip sequence text.");
+	                    }
+	                 // Log the extracted data
+	              //  WbidBasepage.logger.info("Individual Cred Data for Comparison: " + tripDataMap);
+
+	                // Compare extracted values with 600
+	                boolean isComparisonSuccessful1 = true;
+	                for (Map<String, List<Integer>> dateMap : tripDataMap.values()) {
+	                    for (List<Integer> values : dateMap.values()) {
+	                    	WbidBasepage.logger.info("AM color-greenish-cyan Individual Cred: " + tripDataMap);
+	                    	 
+	                        if (!values.contains(600)) {
+	                            isComparisonSuccessful1 = false; // If any value is not 600, mark as failure
+	                            WbidBasepage.logger.fail("Individual Cred Data for Comparison: " + tripDataMap);
+	                        }
+	                    }
+	                }
+
+	                if (!isComparisonSuccessful1) {
+	                    isComparisonSuccessful = false; // If any comparison fails, mark the entire function as unsuccessful
+	                    WbidBasepage.logger.fail("Individual Cred Data for Comparison: " + tripDataMap);
+	                }
+	                }
+	            }
+
+	            // Close modal popup if present
+	            try {
+	                new Actions(driver).sendKeys(Keys.ESCAPE).perform();
+	            } catch (Exception e) {
+	                WbidBasepage.logger.info("Modal close action failed, continuing.");
+	            }
+
+	        } catch (Exception e) {
+	            WbidBasepage.logger.fail("Error processing trip element: " + e.getMessage());
+	            isComparisonSuccessful = false; // Mark as unsuccessful if an error occurs
+	        }
+	    }
+	    
+	    return isComparisonSuccessful;
+	}
+	public boolean ReserveLinesPMCred() {
+	    boolean isComparisonSuccessful = true; // Assume success unless proven otherwise
+	    // int i = 0;
+	    for (WebElement tripElement : reservePMTripsCP) {
+	        Map<String, Map<String, List<Integer>>> tripDataMap = new LinkedHashMap<>();
+	   
+	        try {
+	        //	 if (i >= 5) break; // Limit to 3 iterations if required
+			//	 i++;
+	            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+	            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+	            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+
+	            try {
+	                tripElement.click();
+	            } catch (Exception e) {
+	                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+	            }
+
+	            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+	            String tripSequenceText = objaction.gettext(tripSequence).trim().replaceAll("\\s+", " ");
+
+	            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+	            Matcher matcher = pattern.matcher(tripSequenceText);
+
+	            if (matcher.find()) {
+	                String tripCode = matcher.group(1).trim();
+
+	                for (WebElement tripEle : tripdata) {
+	                    String tripDataText = objaction.gettext(tripEle).trim().replaceAll("\\s+", " ");
+
+	                    if (tripDataText.startsWith("Rpt") || tripDataText.startsWith("TAFB")) {
+	                        continue;
+	                    }
+	                    // Extract date (e.g., "01Apr", "15May")
+	                    Pattern patternD = Pattern.compile("^(\\d{2}[A-Za-z]{3})\\b");
+	                    Matcher matcherD = patternD.matcher(tripDataText);
+
+	                    if (matcherD.find()) {
+	                        String tripDate = matcherD.group(1).trim();
+
+	                        // Extract only the last three-digit number for credit values
+	                        Pattern threeDigitPattern = Pattern.compile("\\b(\\d{3})\\b");
+	                        Matcher numberMatcher = threeDigitPattern.matcher(tripDataText);
+
+	                        String lastThreeDigit = null;
+	                        while (numberMatcher.find()) {
+	                            lastThreeDigit = numberMatcher.group(1); // Keep last occurrence
+	                        }
+	                        if (lastThreeDigit != null) {
+	                            try {
+	                                int extractedValue = Integer.parseInt(lastThreeDigit);
+	                               // WbidBasepage.logger.info("Individual credit: " + extractedValue);
+	                                
+	                                // Store only the last credit value
+	                                tripDataMap.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
+	                                           .computeIfAbsent(tripDate, k -> new ArrayList<>()).add(extractedValue);
+
+	                            } catch (NumberFormatException e) {
+	                                WbidBasepage.logger.fail("Failed to parse credit: " + lastThreeDigit);
+	                            }
+	                        }
+	                    } else {
+	                        WbidBasepage.logger.fail("Trip date not found in trip sequence text.");
+	                    }
+	                 // Log the extracted data
+	              //  WbidBasepage.logger.info("Individual Cred Data for Comparison: " + tripDataMap);
+
+	                // Compare extracted values with 600
+	                boolean isComparisonSuccessful1 = true;
+	                for (Map<String, List<Integer>> dateMap : tripDataMap.values()) {
+	                    for (List<Integer> values : dateMap.values()) {
+	                    	WbidBasepage.logger.info("Individual Cred Data for Comparison: " + tripDataMap);
+	                    	 
+	                        if (!values.contains(600)) {
+	                            isComparisonSuccessful1 = false; // If any value is not 600, mark as failure
+	                            WbidBasepage.logger.fail("PM lines(color-->dark orange-red)Individual Cred:" + tripDataMap);
+	                        }
+	                    }
+	                }
+
+	                if (!isComparisonSuccessful1) {
+	                    isComparisonSuccessful = false; // If any comparison fails, mark the entire function as unsuccessful
+	                    WbidBasepage.logger.fail("Individual Cred Data for Comparison: " + tripDataMap);
+	                }
+	                }
+	            }
+
+	            // Close modal popup if present
+	            try {
+	                new Actions(driver).sendKeys(Keys.ESCAPE).perform();
+	            } catch (Exception e) {
+	                WbidBasepage.logger.info("Modal close action failed, continuing.");
+	            }
+
+	        } catch (Exception e) {
+	            WbidBasepage.logger.fail("Error processing trip element: " + e.getMessage());
+	            isComparisonSuccessful = false; // Mark as unsuccessful if an error occurs
+	        }
+	    }
+	    
+	    return isComparisonSuccessful;
+	}	
 }

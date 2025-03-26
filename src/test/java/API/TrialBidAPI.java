@@ -63,7 +63,7 @@ public class TrialBidAPI  {
 				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n" + "    \"Password\": \"Vofox2025@2$\",\n"
 				+ "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
-				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.3\"\n"
+				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.4\"\n"
 				+ "}";
 		Response response = given().header("Content-Type", "application/json").body(requestBody1).when().post(endpoint)
 				.then().extract().response();
@@ -95,7 +95,7 @@ public class TrialBidAPI  {
 		        + "\"Position\": \"" + expectedPosition + "\","
 		        + "\"Round\": " + expectedRound + ","
 		        + "\"secretEmpNum\": \"21221\","
-		        + "\"Version\": \"10.4.16.3\","
+		        + "\"Version\": \"10.4.16.4\","
 		        + "\"Year\": 2025,"
 		        + "\"isSecretUser\": true"
 		        + "}";// Replace with
@@ -228,14 +228,16 @@ public class TrialBidAPI  {
 					// tripOutput.append("DutySeqNum" + DutSeqNum + "
 					// TOTALtfp").append(":").append(TOTALtfp).append(" ");
 					double RigAdg = dutyPeriod.getDouble("RigAdg");
+					double RigThr = dutyPeriod.getDouble("RigThr");
+					
 
-					tripOutput.append("DutySeqNum" + DutSeqNum + " TOTALfp").append(":").append(TOTALtfp + RigAdg)
+					tripOutput.append("DutySeqNum" + DutSeqNum + " TOTALfp").append(":").append(TOTALtfp + RigAdg+RigThr)
 							.append(" ").append(" Dutyhrs " + timeAsDouble + " ");
  //Comapre individual cred with UI						
 					 List<Integer> credList = new ArrayList<>(); // Store all cred values
  					tripCompare.append(  "DutSeqNum: "+DutSeqNum);
  //Comapre total cred with UI					
- 					double totalTFP = (double) (TOTALtfp + RigAdg);
+ 					double totalTFP = (double) (TOTALtfp + RigAdg+RigThr);
  					WbidBasepage.logger.info("Total TFP in integer:" + totalTFP);
  					int totalCred = BigDecimal.valueOf(totalTFP * 100)
                             .setScale(0, RoundingMode.HALF_UP)

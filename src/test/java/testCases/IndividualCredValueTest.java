@@ -246,12 +246,14 @@ public class IndividualCredValueTest extends WbidBasepage {
 	  logger.info("Assert: Inside the trip details , the dates are shown same as the dates of the trips and should be same as its in the wbl file");
 	  logger.info("Get  trip Details from UI- Trip Code and Trip date and compare with API Trip code and dates");
 	  FetchDates.fetchApiData(domicile, APIRound, position, APIMonth); 
-	  //Assert.assertTrue(objCommon.getAllTripDataAndCompare(FetchDates.tripData));	
+	  Assert.assertTrue(objCommon.getAllTripDataAndCompare(FetchDates.tripData));	
 }
   @Test(priority = 23, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000023 ()  {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000023").assignAuthor("VS/483");
 	  logger.info("Assert the 'cred' inside the trip detials ");
+	  driver.navigate().refresh();
+	  objwait.waitS(7000);
 	  Assert.assertTrue(objInCred.CredHeadVisible(),"cred not visible inside the trip detials " );	
   }
   @Test(priority = 24, dependsOnMethods = {"CBW0100030000011"})
@@ -261,7 +263,7 @@ public class IndividualCredValueTest extends WbidBasepage {
 		//objInCred.getAllIndivdualCred();
 		//objInCred.getIndividualCred();
 		logger.info("Get individual cred of Each Trip from UI and compare with API Data ");
-		//Assert.assertTrue(objInCred.IndividualCredCompareAPI());
+		Assert.assertTrue(objInCred.IndividualCredCompareAPI(),"cred not same as API cred ");
 		}
   @Test(priority = 25, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000025 () {
@@ -270,27 +272,28 @@ public class IndividualCredValueTest extends WbidBasepage {
 		driver.navigate().refresh();
 		objwait.waitS(7000);
 		logger.info("Get Total cred of Each Trip from UI and compare with API Data ");
-		Assert.assertTrue(objInCred.totalCredCompareAPI());
+		Assert.assertTrue(objInCred.totalCredCompareAPI(),"cred not same as API cred");
   }
   @Test(priority = 26, dependsOnMethods = {"CBW0100030000011"})
   public void CBW0100030000026 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000026").assignAuthor("VS/483");
-		logger.info("");
-			
-	
-  }
+	  driver.navigate().refresh();
+	  objwait.waitS(7000);
+	  logger.info("AM:-Verify in cp and fo bid ,in reserve line  the Individual cred value in the trip details  is 6 and should be  same as its in the wbp file ");
+		Assert.assertTrue(objInCred.ReserveLinesAMCred(),"cred not same as 600 for CP and FO");
+		}
   @Test(priority = 27, enabled = true)
   public void CBW0100030000027 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000027").assignAuthor("VS/483");
-		logger.info("");
-			
-	
+		logger.info("PM:-Verify in cp and fo bid ,in reserve line  the Individual cred value in the trip details  is 6 and should be  same as its in the wbp file ");
+		Assert.assertTrue(objInCred.ReserveLinesPMCred(),"cred not same as 600 for CP and FO");
+		
   }
   @Test(priority = 28, enabled = true)
   public void CBW0100030000028 () {
 	  logger = WbidBasepage.extent.createTest("Individual Cred Value Page - CBW0100030000028").assignAuthor("VS/483");
-		logger.info("");
-			
+		logger.info("Summary report of theIndividual cred value and total cred value  of each domicile with Position, round , date and time");
+		logger.info("Implementation and Execution done seperately for each Domicile, position and Round ");
 	
   }
   
