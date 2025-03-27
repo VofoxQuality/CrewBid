@@ -26,7 +26,7 @@ import utilities.WbidBasepage;
 
 
 
-public class NewTestTAFB extends WbidBasepage  {
+public class NewTestTAFB_FA extends WbidBasepage  {
 	public static Map<String, Integer> calculatedTafbMap = new HashMap<>();
 	public static Map<String, Integer> tafbMap = new HashMap<>();
 	 public static Map<String, List<List<Double>>> tripTimeMap = new HashMap<>();
