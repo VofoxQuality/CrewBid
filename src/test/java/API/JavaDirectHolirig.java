@@ -33,7 +33,7 @@ public class JavaDirectHolirig {
 					+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 					+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n"
 					+ "    \"Password\": \"Vofox2025@2$\",\n" + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
-					+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.3\"\n"
+					+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.5\"\n"
 					+ "}";
 			Response response = given().header("Content-Type", "application/json").body(requestBody1).when().post(endpoint)
 					.then().extract().response();
@@ -56,7 +56,7 @@ public class JavaDirectHolirig {
 			        + "\"Position\": \"" + expectedPosition + "\","
 			        + "\"Round\": " + expectedRound + ","
 			        + "\"secretEmpNum\": \"21221\","
-			        + "\"Version\": \"10.4.16.3\","
+			        + "\"Version\": \"10.4.16.5\","
 			        + "\"Year\": 2025,"
 			        + "\"isSecretUser\": true"
 			        + "}";// Replace with
