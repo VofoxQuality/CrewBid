@@ -1415,4 +1415,6 @@ public class IndividualCredValuePage {
 	    
 	    return isComparisonSuccessful;
 	}	
+////FA Round 2 Reserve lines
+	//td[contains(@class,'left-side-radius') and contains(@style,'background-color: rgb(17, 166, 124)')]   
 }
