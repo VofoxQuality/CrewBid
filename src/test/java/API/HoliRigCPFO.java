@@ -51,6 +51,8 @@ public class HoliRigCPFO extends WbidBasepage {
 	public List<String> acftChanges;
 	public static Map<String, Double> tafbMap = new HashMap<>();
 	public static Map<String, Double> totRigAdgMap = new HashMap<>();
+	public static HashMap<String, String> testDataMap = testData("qa environment");
+	public static String expectedVersion = testDataMap.get("Version");
 	// public static int i=0;
 	public static List<String> dynamicArray = new ArrayList<>();
 	public static List<Double> tfpSums = new ArrayList<>();
@@ -63,19 +65,25 @@ public class HoliRigCPFO extends WbidBasepage {
 	//SHashMap<String, String> testDataMap = testData("holidayList");
 
 	@Test(priority = 1)
-	public static void fetchApiData(String domicile, String expectedRound, String expectedPosition,
+	public static List<Map<String, Object>> fetchApiData(String domicile, String expectedRound, String expectedPosition,
 			String expectedMonth) throws ParseException, NumberFormatException, IOException {
 		WbidBasepage.logger = extent.createTest("Bid Download API").assignAuthor("VS/445");
 
-		logger.info("Cred Values in an array");
+		//logger.info("Cred Values in an array");
 		RestAssured.baseURI = "https://www.auth.wbidmax.com/WBidCoreService/api";
 		String endpoint = "/user/GetSWAAndWBidAuthenticationDetails/";
 		String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
 				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n"
 				+ "    \"Password\": \"Vofox2025@2$\",\n" + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
-				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.3\"\n"
+				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \""+expectedVersion+"\"\n"
 				+ "}";
+	/*	String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
+				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
+				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n"
+				+ "    \"Password\": \"Vofox2025@2$\",\n" + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
+				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.5\"\n"
+				+ "}";*/
 		Response response = given().header("Content-Type", "application/json").body(requestBody1).when().post(endpoint)
 				.then().extract().response();
 		System.out.println("Response is " + response.getStatusCode());
@@ -98,8 +106,24 @@ public class HoliRigCPFO extends WbidBasepage {
 		String requestBody2 = "{" + "\"Domicile\": \"" + domicile + "\"," + "\"EmpNum\": \"21221\","
 				+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
 				+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
-				+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," + "\"Version\": \"10.4.16.3\","
+				+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," + "\"Version\": \""+expectedVersion+"\","
 				+ "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
+		
+		/*String requestBody2 = "{"
+		        + "\"Domicile\": \"" + domicile + "\","
+		        + "\"EmpNum\": \"21221\","
+		        + "\"FromAppNumber\": \"12\","
+		        + "\"IsQATest\": false,"
+		        + "\"IsRetrieveNewBid\": true,"
+		        + "\"Month\": " + expectedMonth + ","
+		        + "\"Platform\": \"Web\","
+		        + "\"Position\": \"" + expectedPosition + "\","
+		        + "\"Round\": " + expectedRound + ","
+		        + "\"secretEmpNum\": \"21221\","
+		        + "\"Version\": \"10.4.16.5\","
+		        + "\"Year\": 2025,"
+		        + "\"isSecretUser\": true"
+		        + "}";// Replace with*/
 // Replace with
 		// your next API
 		// endpoint
@@ -168,15 +192,18 @@ public class HoliRigCPFO extends WbidBasepage {
 
 		// List to store tripName, date, and line number
 		List<TripEntry> tripData = new ArrayList<>();
+		
 		// Date formatter
 		SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM");
+		
 
 		// Iterate over all lines
 		for (String lineKey : linesObject.keySet()) {
 			JSONObject line = linesObject.getJSONObject(lineKey);
 			JSONArray bidLineTemplates = line.getJSONArray("BidLineTemplates");
-
+			
+			
 			// Iterate over each BidLineTemplate
 			for (int i = 0; i < bidLineTemplates.length(); i++) {
 				JSONObject bidLine = bidLineTemplates.getJSONObject(i);
@@ -194,14 +221,14 @@ public class HoliRigCPFO extends WbidBasepage {
 							String formattedDate = outputFormat.format(sqlDate);
 							tripData.add(new TripEntry(tripName, formattedDate, Integer.parseInt(lineKey))); // Store
 																												// line
-																												// number
+		
+																										// number
 							break; // No need to check other prefixes once matched
 						}
 					}
 				}
 			}
 		}
-		
 		
 		List<String> targetDates = getTargetDatesFromExcel(Integer.parseInt(expectedMonth));
 		Map<Integer, Double> resultMap = new LinkedHashMap<>();
@@ -228,6 +255,7 @@ public class HoliRigCPFO extends WbidBasepage {
 		        resultMap.put(entry.lineNumber, 0.0);
 		    }*/
 		}
+		System.out.println("Result Map size"+ resultMap.size());
 
 		for (Map.Entry<Integer, Double> entry : resultMap.entrySet()) {
 			Map<String, Object> map = new LinkedHashMap<>();
@@ -237,6 +265,7 @@ public class HoliRigCPFO extends WbidBasepage {
 		}
 		holirigResult.sort(Comparator.comparingInt(o -> (int) o.get("Lines")));
 		logger.info("Holirig Final result: " + holirigResult);
+		return holirigResult;
 	}
 
 	public static List<String> getTargetDatesFromExcel(int month) throws IOException {
