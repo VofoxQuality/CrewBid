@@ -1414,7 +1414,7 @@ public class IndividualCredValuePage {
 	public List<WebElement> jpReserveTripsFA;// Trip detail visible for Reserve line
 
 ////FA Round-2 Reserve lines--jl--brown	
-	@FindBy(xpath = "//td[contains(@class,'left-side-radius') and contains(@style,'background-color: rgb(201, 118, 97)')]")
+	@FindBy(xpath = "//td[contains(@class,'left-side-radius') and contains(@style,'background-color: rgb(122, 92, 49)')]")
 	public List<WebElement> jlReserveTripsFA;// Trip detail visible for Reserve line
 
 	public boolean ReserveLinesFACred(List<WebElement> ReserveTripsFA) {
