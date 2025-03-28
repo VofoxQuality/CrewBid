@@ -4,8 +4,10 @@ import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import API.ScratchPadBlankReservedLines;
 import pages.BidDownloadPage;
+import pages.CommonPage;
 import pages.LoginPage;
 import utilities.ActionUtilities;
 import utilities.WaitCondition;
@@ -17,8 +19,13 @@ public class BidDownloadTest extends WbidBasepage {
 	WaitCondition objwait = new WaitCondition();
 	ActionUtilities objaction = new ActionUtilities(driver);
 	BidDownloadPage objdownload = new BidDownloadPage(driver);
+	CommonPage objCommon = new CommonPage(driver);
 	protected String actualtitle;
 	protected String expectedtitle;
+	public String domicile = "ATL";
+	public String position = "CP";
+	public String round = "1st Round";
+	public String APIMonth = String.valueOf(objCommon.getNextMonth());
 
 	@Test(priority = 1, enabled = true)
 	public void CBW003001000001() {
@@ -162,7 +169,7 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("Verify the all the base is enabled");
 		objdownload.forclickokbtn();
 		objwait.waitS(3000);
-		// Assert.assertTrue(objdownload.checkcities_isenable(), "❌ Base not enable");
+		Assert.assertTrue(objdownload.checkcities_isenable(), "❌ Base not enable");
 		logger.info("✅ Assert : All the base cities");
 	}
 
@@ -350,6 +357,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000037() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000037)").assignAuthor("VS/482");
 		logger.info("Verify the cover letter Close button");
+		objdownload.checklinenumber();
 		objwait.waitS(3000);
 		objdownload.click_close_coverletter();
 		objwait.waitS(3000);
@@ -475,10 +483,9 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000052() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000052)").assignAuthor("VS/482");
 		logger.info("Check line Number");
-		objdownload.checklinenumber();
 		objdownload.startOver();
 		objwait.waitS(4000);
-		Assert.assertTrue(objdownload.checkLineNumberFromScratchpad());
+		Assert.assertTrue(objdownload.checkLineNumberFromScratchpad(), "❌ Scratch pad combination not matches");
 		logger.info("✅Scratch pad combination matches");
 	}
 
@@ -491,10 +498,11 @@ public class BidDownloadTest extends WbidBasepage {
 	}
 
 	@Test(priority = 54, enabled = true)
-	public void CBW003001000054() {
+	public void CBW003001000054() throws JsonProcessingException {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000054)").assignAuthor("VS/482");
 		logger.info("Check Blank lines count");
-		Assert.assertTrue(objdownload.checkblankline(), "❌ No Blank Lines Found.");
+		ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "CP", "4");
+		Assert.assertTrue(objdownload.checkblankAPIline(), "❌ No Blank Lines Found.");
 		logger.info("✅ Blank line count matches ");
 	}
 
@@ -502,15 +510,16 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000055() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000055)").assignAuthor("VS/482");
 		logger.info("");
-		objdownload.linecount();
+		// objdownload.linecount();
 		logger.info("✅");
 	}
 
 	@Test(priority = 56, enabled = true)
 	public void CBW003001000056() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000056)").assignAuthor("VS/482");
-		logger.info("");
-		logger.info("✅");
+		logger.info("Check Reserve lines count");
+		Assert.assertTrue(objdownload.checkreserveAPIlines(), "❌ No Reserve Lines Found.");
+		logger.info("✅ Reserve line count matches ");
 	}
 
 }
