@@ -17,8 +17,8 @@ public class ParameterCall extends WbidBasepage{
 
 		logger.info("Cred Values in an array");
 	  //WbidBasepage.logger = WbidBasepage.extent.createTest("Bid Download API").assignAuthor("VS/445");
-	 // ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "CP", "3");
-	  JavaDirectHolirig.fetchParam("ATL", "1", "CP", "4");
+	  ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "CP", "4");
+	//  JavaDirectHolirig.fetchParam("ATL", "1", "CP", "4");
 	 // logger.info("Success");
 	//  HoliRig.fetchApiData("ATL", "1", "CP", "4");
   }

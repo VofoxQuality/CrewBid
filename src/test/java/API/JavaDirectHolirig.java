@@ -5,6 +5,7 @@ import static io.restassured.RestAssured.given;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,15 +22,17 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import utilities.WbidBasepage;
 
-public class JavaDirectHolirig {
+public class JavaDirectHolirig{
 	
 	public static List<Map<String, Object>> result = new ArrayList<>();
+	public static HashMap<String, String> testDataMap = WbidBasepage.testData("qa environment");
+	public static String expectedVersion = testDataMap.get("Version");
 	
-	 public static void fetchParam(String domicile,String expectedRound, String expectedPosition, String expectedMonth) throws JsonProcessingException{
+	 public static List<Map<String, Object>> fetchParam(String domicile,String expectedRound, String expectedPosition, String expectedMonth) throws JsonProcessingException{
 		
 			RestAssured.baseURI = "https://www.auth.wbidmax.com/WBidCoreService/api";
 			String endpoint = "/user/GetSWAAndWBidAuthenticationDetails/";
-			String requestBody1 ="{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
+			String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
 					+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 					+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n"
 					+ "    \"Password\": \"Vofox2025@2$\",\n" + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
@@ -45,21 +48,11 @@ public class JavaDirectHolirig {
 
 	//Step 2: Use the Token as Authorization in the Next API Call
 			String nextEndpoint = "/BidData/GetMonthlyBidFiles/";
-			String requestBody2 = "{"
-			        + "\"Domicile\": \"" + domicile + "\","
-			        + "\"EmpNum\": \"21221\","
-			        + "\"FromAppNumber\": \"12\","
-			        + "\"IsQATest\": false,"
-			        + "\"IsRetrieveNewBid\": true,"
-			        + "\"Month\": " + expectedMonth + ","
-			        + "\"Platform\": \"Web\","
-			        + "\"Position\": \"" + expectedPosition + "\","
-			        + "\"Round\": " + expectedRound + ","
-			        + "\"secretEmpNum\": \"21221\","
-			        + "\"Version\": \"10.4.16.5\","
-			        + "\"Year\": 2025,"
-			        + "\"isSecretUser\": true"
-			        + "}";// Replace with
+			String requestBody2 = "{" + "\"Domicile\": \"" + domicile + "\"," + "\"EmpNum\": \"21221\","
+					+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
+					+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
+					+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," +  "\"Version\": \"10.4.16.5\","
+					+ "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
 																											// your next API
 																											// endpoint
 			Response nextResponse = given().header("Authorization", "Bearer " + token)
@@ -114,18 +107,23 @@ public class JavaDirectHolirig {
 	            // Create a map to represent the line's data
 	            Map<String, Object> lineResult = new LinkedHashMap<>();
 	           
-	            
+	            JSONArray pairingsArray = lineData.getJSONArray("Pairings");
+	            if(pairingsArray.length()>0)
+	            {
 	            lineResult.put("Lines", lineKey);
 	            lineResult.put("HolRig", holRig);
+	            result.add(lineResult);
+	            }
 	            
 
 	            // Add to the result list
-	            result.add(lineResult);
+	            
 	        }
 
 	        // Print the result
-	        System.out.println(result);
+	        //System.out.println(result);
 	        WbidBasepage.logger.info("Direct Holirig "+result);
+	        return result;
 	    }
 	 
 	// Method to compare the two lists of maps

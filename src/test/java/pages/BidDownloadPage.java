@@ -15,7 +15,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import groovy.transform.Final;
+import API.ScratchPadBlankReservedLines;
 import utilities.ActionUtilities;
 import utilities.WaitCondition;
 import utilities.WbidBasepage;
@@ -24,6 +24,7 @@ public class BidDownloadPage {
 	WebDriver driver;
 	ActionUtilities objaction;
 	WaitCondition objwait = new WaitCondition();
+	// ScratchPadBlankReservedLines objcount=new ScratchPadBlankReservedLines();
 
 	public BidDownloadPage(WebDriver driver) {
 		this.driver = driver;
@@ -641,10 +642,10 @@ public class BidDownloadPage {
 		return objaction.gettext(sen_header);
 	}
 
-	String Atl;
-	String Cp;
-	String selectedBase;
-	String selectedPosition;
+	public String Atl;
+	public String Cp;
+	public String selectedBase;
+	public String selectedPosition;
 	@FindBy(xpath = "//button[text()=\"Ok\"]")
 	public WebElement popupokbtn;
 	@FindBy(xpath = "//button[text()=\"OK\"]")
@@ -674,11 +675,9 @@ public class BidDownloadPage {
 		return isAnyDownloadAttempted;
 	}
 
-	private boolean processDownload(String pos1, String pos2, WebElement round) {
+	public boolean processDownload(String pos1, String pos2, WebElement round) {
 		boolean isDownloadAttempted = false;
 		boolean exitLoop = false; // Flag to break the outer loop
-		selectedBase = "";
-		selectedPosition = "";
 
 		WbidBasepage.logger.info("✅ Checking download attempt for " + pos1 + " and " + pos2);
 
@@ -686,7 +685,7 @@ public class BidDownloadPage {
 			if (exitLoop)
 				break; // Break outer loop if needed
 
-			String cityName = city.getText().trim();
+			String cityName = city.getText();
 
 			// Skip AUS and FLL for Pilot
 			if ((pos1.equals("CP") || pos1.equals("FO"))
@@ -703,7 +702,7 @@ public class BidDownloadPage {
 				if (exitLoop)
 					break; // Break inner loop if needed
 
-				String pos = position.getText().trim();
+				String pos = position.getText();
 
 				if (pos.equalsIgnoreCase(pos1) || pos.equalsIgnoreCase(pos2)) {
 					WbidBasepage.logger.info("✨ Position Selected: " + pos);
@@ -831,7 +830,11 @@ public class BidDownloadPage {
 	public void click_close_sen_btn() {
 		objaction.click(sen_close_btn);
 	}
-
+	@FindBy(xpath="( //button[text()=\" Cancel \"])[3]")
+	public WebElement cancel_sen_btn;
+	public void click_cancel_sen_btn() {
+		objaction.click(cancel_sen_btn);
+	}
 	public String checklatestnew_header() {
 		objwait.waitForElementTobeVisible(driver, latestnews_head, 10);
 		String news = objaction.gettext(latestnews_head);
@@ -980,86 +983,113 @@ public class BidDownloadPage {
 	}
 
 	// For line number from cover letter
-	String total;
-	String hard;
-	String reserve;
-	String blank;
+	public String total;
+	public String hard;
+	public String reserve;
+	public String blank;
 
 	public void checklinenumber() {
+	    // Log selected values before proceeding
+	    WbidBasepage.logger.info("Selected Position: " + selectedPosition);
+	    WbidBasepage.logger.info("Selected Base: " + selectedBase);
 
-		// Trim and normalize input values
+	    // Ensure selectedBase and selectedPosition are initialized
+	    if (selectedBase == null || selectedBase.trim().isEmpty() || 
+	        selectedPosition == null || selectedPosition.trim().isEmpty()) {
+	        System.out.println("⚠️ Error: Base or Position is empty. Please check inputs.");
+	        WbidBasepage.logger.fail("Base or Position is empty.");
+	        return;
+	    }
 
-		selectedBase = selectedBase.toUpperCase();
-		if (selectedPosition.equalsIgnoreCase("Cp")) {
-			selectedPosition = "ca".toUpperCase();
-		}
+	    // Convert to uppercase and normalize spaces
+	    selectedBase = selectedBase.trim().toUpperCase();
+	    selectedPosition = selectedPosition.trim().toUpperCase();
 
-		if (selectedBase.isEmpty() || selectedPosition.isEmpty()) {
-			System.out.println("Base or Position is empty. Please check inputs.");
-			WbidBasepage.logger.fail("Base or Position is empty.");
-			return;
-		}
+	    // Special handling for "CP" -> "CA"
+	    if (selectedPosition.equalsIgnoreCase("CP")) {
+	        selectedPosition = "CA";
+	    }
 
-		// Normalize spaces and convert content to uppercase
-		content = content.replaceAll("\\s+", " ").toUpperCase();
-		// Regex: Extracts 271, 176, 34, and 61
-		String regex = "\\b" + selectedBase + "\\s+" + selectedPosition
-				+ "\\s+(\\d+)\\s+(?:\\d+[-])?(\\d+)\\s+\\d+-\\d+\\s+\\((\\d+)\\)\\s+\\d+-\\d+\\s+\\((\\d+)\\)";
+	    // Ensure content is available
+	    if (content == null || content.trim().isEmpty()) {
+	        System.out.println("⚠️ Error: Content is empty or null.");
+	        WbidBasepage.logger.fail("Content is empty or null.");
+	        return;
+	    }
 
-		System.out.println("Regex: " + regex);
+	    // Normalize content
+	    content = content.replaceAll("\\s+", " ").toUpperCase();
 
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(content);
-		// Check and extract the numbers
-		if (matcher.find()) {
-			total = matcher.group(1);
-			hard = matcher.group(2);
-			reserve = matcher.group(3);
-			blank = matcher.group(4);
+	    // Regex to extract relevant numbers
+	    String regex = "\\b" + selectedBase + "\\s+" + selectedPosition
+	            + "\\s+(\\d+)\\s+(?:\\d+[-])?(\\d+)\\s+\\d+-\\d+\\s+\\((\\d+)\\)\\s+\\d+-\\d+\\s+\\((\\d+)\\)";
 
-			String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n" + " 🔥 Total  : "
-					+ total + "\n" + " 🔥 Hard   : " + hard + "\n" + " 🔥 Reserve: " + reserve + "\n" + " 🔥 Blank  : "
-					+ blank;
+	    System.out.println("Regex: " + regex);
+	    WbidBasepage.logger.info("Regex: " + regex);
 
-			System.out.println(output);
-			WbidBasepage.logger.pass(output);
-		} else {
-			System.out.println("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
-			WbidBasepage.logger.fail("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
-		}
+	    Pattern pattern = Pattern.compile(regex);
+	    Matcher matcher = pattern.matcher(content);
+
+	    // Extract and log values
+	    if (matcher.find()) {
+	        total = matcher.group(1);
+	        hard = matcher.group(2);
+	        reserve = matcher.group(3);
+	        blank = matcher.group(4);
+
+	        String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n" 
+	                + " 🔥 Total  : " + total + "\n" 
+	                + " 🔥 Hard   : " + hard + "\n" 
+	                + " 🔥 Reserve: " + reserve + "\n" 
+	                + " 🔥 Blank  : " + blank;
+
+	        System.out.println(output);
+	        WbidBasepage.logger.pass(output);
+	    } else {
+	        System.out.println("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
+	        WbidBasepage.logger.fail("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
+	    }
 	}
+
 
 	@FindBy(xpath = "//h6[@class=\"scr-head\"]")
 	public WebElement scratchpadlinenumber;
-	int extractedNumber;
-	int totalNumber;
+	public int extractedNumber;
+	public int totalNumber;
 
 	public boolean checkLineNumberFromScratchpad() {
-		String text = objaction.gettext(scratchpadlinenumber);
+	    String text = objaction.gettext(scratchpadlinenumber);
 
-		// Regex to find a number in the given text
-		Pattern pattern = Pattern.compile("\\b(\\d+)\\b");
-		Matcher matcher = pattern.matcher(text);
+	    // Regex to find a number in the given text
+	    Pattern pattern = Pattern.compile("\\b(\\d+)\\b");
+	    Matcher matcher = pattern.matcher(text);
 
-		if (matcher.find()) {
-			extractedNumber = Integer.parseInt(matcher.group(1)); // Convert extracted number to int
-			totalNumber = Integer.parseInt(total.trim()); // Convert total to int after trimming spaces
+	    if (matcher.find()) {
+	        extractedNumber = Integer.parseInt(matcher.group(1)); // Convert extracted number to int
+	        
+	        // Ensure `total` is not null before parsing
+	        if (total == null || total.trim().isEmpty()) {
+	            System.out.println("⚠️ Warning: `total` is null or empty. Skipping comparison.");
+	            return false;
+	        }
 
-			System.out.println("Extracted Number: " + extractedNumber);
-			System.out.println("Total: " + totalNumber);
+	        totalNumber = Integer.parseInt(total.trim()); // Convert total to int
 
-			// Compare extracted number with totalNumber
-			if (extractedNumber == totalNumber) {
-				System.out.println("✅ Extracted number matches the total.");
-				return true; // Return true if numbers match
-			} else {
-				System.out.println("❌ Extracted number does NOT match the total.");
-				return false; // Return false if numbers do not match
-			}
-		} else {
-			System.out.println("No number found.");
-			return false; // Return false if no number is found
-		}
+	        System.out.println("Extracted Number: " + extractedNumber);
+	        System.out.println("Total: " + totalNumber);
+
+	        // Compare extracted number with totalNumber
+	        if (extractedNumber == totalNumber) {
+	            System.out.println("✅ Extracted number matches the total.");
+	            return true; // Return true if numbers match
+	        } else {
+	            System.out.println("❌ Extracted number does NOT match the total.");
+	            return false; // Return false if numbers do not match
+	        }
+	    } else {
+	        System.out.println("No number found.");
+	        return false; // Return false if no number is found
+	    }
 	}
 
 	////////// Check only FA condition
@@ -1099,7 +1129,7 @@ public class BidDownloadPage {
 			if (exitLoop)
 				break; // Break outer loop if needed
 
-			String cityName = city.getText().trim();
+			String cityName = city.getText();
 
 			WbidBasepage.logger.info("✨ Domicile Selected: " + cityName);
 			objwait.waitForElemntTobeClickable(driver, city, 5);
@@ -1109,7 +1139,7 @@ public class BidDownloadPage {
 				if (exitLoop)
 					break; // Break inner loop if needed
 
-				String pos = position.getText().trim();
+				String pos = position.getText();
 
 				if (pos.equalsIgnoreCase(pos1) || pos.equalsIgnoreCase(pos2)) {
 					WbidBasepage.logger.info("✨ Position Selected: " + pos);
@@ -1193,7 +1223,7 @@ public class BidDownloadPage {
 
 	// Checking Reserve Lines
 	@FindBy(xpath = "//div/span/small[text()=\"R\"]")
-	List<WebElement> reservelines;
+	public List<WebElement> reservelines;
 
 	public boolean checkreservelines() {
 		String count = String.valueOf(reservelines.size());
@@ -1213,11 +1243,11 @@ public class BidDownloadPage {
 	@FindBy(xpath = "//span/small[text()=\"\"]")
 	List<WebElement> blanklines;
 
-	public boolean checkblankline() {
-		String count = String.valueOf(blanklines.size());
+	public boolean checkblankAPIline() {
+		String count = String.valueOf(ScratchPadBlankReservedLines.blankcount);
 		WbidBasepage.logger.info("💡Blank lines: " + count);
 
-		if (count.equals(blank.trim())) {
+		if (count.equals(blank)) {
 			System.out.println("Total Blank Lines: " + count);
 			WbidBasepage.logger.pass("✅ Total Blank Lines: " + count);
 			return true;
@@ -1232,45 +1262,63 @@ public class BidDownloadPage {
 	List<WebElement> linecount;
 	@FindBy(xpath = "//td[contains(@class,\"ul-date seven-cols trip\")]")
 	List<WebElement> tripday;
-	@FindBy(xpath="//div[@class=\"cala-view ng-star-inserted\"]")
+	@FindBy(xpath = "//div[@class=\"cala-view ng-star-inserted\"]")
 	List<WebElement> calendar;
+
 	public void linecount() {
-	    int count = linecount.size(); // Assuming 'linecount' is a list of WebElements
-	    WbidBasepage.logger.info("💡 Lines Count: " + count);
+		int count = linecount.size(); // Assuming 'linecount' is a list of WebElements
+		WbidBasepage.logger.info("💡 Lines Count: " + count);
 
-	    for (int i = 1; i <= count; i++) {
-	        WbidBasepage.logger.info("💡 Value: " + i);
+		for (int i = 1; i <= count; i++) {
+			WbidBasepage.logger.info("💡 Value: " + i);
 
-	        boolean tripFound = false; // Flag to track if a trip is found
-	        int iterationCount = 0;
-	        for (WebElement option : tripday) {
-	        	 if (iterationCount >= 35) {
-	                 WbidBasepage.logger.info("⏳ Skipping remaining days after 35 checks.");
-	                 break; // Stop checking after 35 iterations
-	             }
-	            String att = objaction.getAttribute(option, "style");
+			boolean tripFound = false; // Flag to track if a trip is found
+			int iterationCount = 0;
+			for (WebElement option : tripday) {
+				if (iterationCount >= 35) {
+					WbidBasepage.logger.info("⏳ Skipping remaining days after 35 checks.");
+					break; // Stop checking after 35 iterations
+				}
+				String att = objaction.getAttribute(option, "style");
 
-	            // Debug log to check what value is being retrieved
-	            WbidBasepage.logger.info("🔍 Retrieved 'style' attribute: " + (att.isEmpty() ? "EMPTY" : att));
+				// Debug log to check what value is being retrieved
+				WbidBasepage.logger.info("🔍 Retrieved 'style' attribute: " + (att.isEmpty() ? "EMPTY" : att));
 
-	            if (att != null && !att.isEmpty() && (
-	                att.contains("background-color: rgb(220, 100, 5);")  ||
-	                att.contains("background-color: rgb(255, 0, 0);") ||
-	                att.contains("background-color: rgb(185, 54, 16);") ||
-	                att.contains("background-color: rgb(17, 166, 124);"))) {
-	                
-	                WbidBasepage.logger.info("✅ This day contains the trip");
-	                tripFound = true;
-	                break; // Exit inner loop once a trip is found
-	            }
-	        }
+				if (att != null && !att.isEmpty()
+						&& (att.contains("background-color: rgb(220, 100, 5);")
+								|| att.contains("background-color: rgb(255, 0, 0);")
+								|| att.contains("background-color: rgb(185, 54, 16);")
+								|| att.contains("background-color: rgb(17, 166, 124);"))) {
 
-	        if (!tripFound) {
-	            WbidBasepage.logger.info("❌ This day does not have a trip");
-	        }
-	    }
+					WbidBasepage.logger.info("✅ This day contains the trip");
+					tripFound = true;
+					break; // Exit inner loop once a trip is found
+				}
+			}
+
+			if (!tripFound) {
+				WbidBasepage.logger.info("❌ This day does not have a trip");
+			}
+		}
 	}
-	//LIne parameters
+
+	// API Checking
+	public boolean checkreserveAPIlines() {
+		String count = String.valueOf(ScratchPadBlankReservedLines.reservecount);
+		WbidBasepage.logger.info("💡Reserve lines: " + count);
+
+		if (count.equals(reserve)) {
+			System.out.println("Total Reserve Lines: " + count);
+			WbidBasepage.logger.pass("✅ Total Reserve Lines: " + count);
+			return true;
+		} else {
+			System.out.println("No Reserve Lines Found.");
+			WbidBasepage.logger.fail("❌ No Reserve Lines Found.");
+			return false;
+		}
+	}
+
+	// LIne parameters
 	@FindBy(xpath = "(//div[@class=\"cala-right\"])[1]")
 	public WebElement lineparam;
 }
