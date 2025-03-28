@@ -84,7 +84,7 @@ public class HoliRigATCPage {
 		clickResetLinevalues();// Reset line values so by default 5 default lines selected
 		clickAirCrftLineBtn();// uncheck Air Craft changes line
 		clickHolirigLineBtn();// check HoliRig
-		// Close modal properly
+		
 		try {
 			Actions actions = new Actions(driver);
 			actions.sendKeys(Keys.ESCAPE).perform();

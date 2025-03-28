@@ -263,9 +263,5 @@ public class HoliRigATCTest extends WbidBasepage {
 				"✅ Assert : the  Holirig parameter shows correct value  for CP and FO bids after calculation  and same from the WBP file ");
 	}
  
-	@Test(priority = 24, enabled = true)
-	public void CBW010005000024() {
-		logger = WbidBasepage.extent.createTest("HOLI RIG (CBW010005000024)").assignAuthor("VS/482");
-		logger.info("");
-	}
+	
 }
