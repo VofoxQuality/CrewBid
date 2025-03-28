@@ -24,6 +24,7 @@ import utilities.WbidBasepage;
 
 public class JavaDirectHolirig{
 	
+	public static List<Map<String, Object>> resultAPI = new ArrayList<>();
 	public static List<Map<String, Object>> result = new ArrayList<>();
 	public static HashMap<String, String> testDataMap = WbidBasepage.testData("qa environment");
 	public static String expectedVersion = testDataMap.get("Version");
@@ -117,13 +118,17 @@ public class JavaDirectHolirig{
 
 	            // Create a map to represent the line's data
 	            Map<String, Object> lineResult = new LinkedHashMap<>();
+	            Map<String, Object> lineResult1 = new LinkedHashMap<>();
+	            lineResult1.put("Lines", lineKey);
+	            lineResult1.put("HolRig", holRig);
+	            result.add(lineResult1);
 	           
 	            JSONArray pairingsArray = lineData.getJSONArray("Pairings");
 	            if(pairingsArray.length()>0)
 	            {
 	            lineResult.put("Lines", lineKey);
 	            lineResult.put("HolRig", holRig);
-	            result.add(lineResult);
+	            resultAPI.add(lineResult);
 	            }
 	            
 
@@ -133,8 +138,8 @@ public class JavaDirectHolirig{
 
 	        // Print the result
 	        //System.out.println(result);
-	        WbidBasepage.logger.info("Direct Holirig "+result);
-	        return result;
+	        WbidBasepage.logger.info("Direct Holirig "+resultAPI);
+	        return resultAPI;
 	    }
 	 
 	// Method to compare the two lists of maps

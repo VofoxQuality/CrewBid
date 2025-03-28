@@ -31,11 +31,11 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import utilities.WbidBasepage;
 
-public class TrialBidAPI  {
-	 public static Map<String, Map<String, List<Integer>>> apiCredData = new LinkedHashMap<>();
-	 public static Map<String, Map<String,Integer>> apiTotalCredData = new LinkedHashMap<>();
-	 public static HashMap<String, String> testDataMap = WbidBasepage.testData("qa environment");
-		public static String expectedVersion = testDataMap.get("Version");
+public class TrialBidAPI {
+	public static Map<String, Map<String, List<Integer>>> apiCredData = new LinkedHashMap<>();
+	public static Map<String, Map<String, Integer>> apiTotalCredData = new LinkedHashMap<>();
+	public static HashMap<String, String> testDataMap = WbidBasepage.testData("qa environment");
+	public static String expectedVersion = testDataMap.get("Version");
 	public static StringBuilder tripOutput = null;
 	public static StringBuilder totalTFPCompare = null;
 	public static StringBuilder tripCompare = null;
@@ -55,24 +55,28 @@ public class TrialBidAPI  {
 	public static int passCount = 0, errorCount = 0;
 
 	@Test(priority = 1)
-	public static void fetchApiData(String domicile,String expectedRound, String expectedPosition, String expectedMonth) throws JsonProcessingException {
+	public static void fetchApiData(String domicile, String expectedRound, String expectedPosition,
+			String expectedMonth) throws JsonProcessingException {
 		WbidBasepage.logger = WbidBasepage.extent.createTest("Bid Download API").assignAuthor("VS/445");
 
 		WbidBasepage.logger.info("Cred Values in an array");
 		RestAssured.baseURI = "https://www.auth.wbidmax.com/WBidCoreService/api";
 		String endpoint = "/user/GetSWAAndWBidAuthenticationDetails/";
-		/*String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
-				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
-				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n" + "    \"Password\": \"Vofox2025@2$\",\n"
-				+ "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
-				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.5\"\n"
-				+ "}";*/
+		/*
+		 * String requestBody1 = "{\n" + "    \"Base\": null,\n" +
+		 * "    \"BidRound\": 0,\n" + "    \"EmployeeNumber\": \"x21221\",\n" +
+		 * "    \"FromAppNumber\": \"12\",\n" + "    \"Month\": null,\n" +
+		 * "    \"OperatingSystem\": null,\n" + "    \"Password\": \"Vofox2025@2$\",\n"
+		 * + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n" +
+		 * "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" +
+		 * "    \"Version\": \"10.4.16.5\"\n" + "}";
+		 */
 		String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
 				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n"
 				+ "    \"Password\": \"Vofox2025@2$\",\n" + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
-				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \""+expectedVersion+"\"\n"
-				+ "}";
+				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"" + expectedVersion
+				+ "\"\n" + "}";
 		Response response = given().header("Content-Type", "application/json").body(requestBody1).when().post(endpoint)
 				.then().extract().response();
 		System.out.println("Response is " + response.getStatusCode());
@@ -92,28 +96,22 @@ public class TrialBidAPI  {
 
 // Step 2: Use the Token as Authorization in the Next API Call
 		String nextEndpoint = "/BidData/GetMonthlyBidFiles/";
-		/*String requestBody2 = "{"
-		        + "\"Domicile\": \"" + domicile + "\","
-		        + "\"EmpNum\": \"21221\","
-		        + "\"FromAppNumber\": \"12\","
-		        + "\"IsQATest\": false,"
-		        + "\"IsRetrieveNewBid\": true,"
-		        + "\"Month\": " + expectedMonth + ","
-		        + "\"Platform\": \"Web\","
-		        + "\"Position\": \"" + expectedPosition + "\","
-		        + "\"Round\": " + expectedRound + ","
-		        + "\"secretEmpNum\": \"21221\","
-		        + "\"Version\": \"10.4.16.5\","
-		        + "\"Year\": 2025,"
-		        + "\"isSecretUser\": true"
-		        + "}";// Replace with*/
+		/*
+		 * String requestBody2 = "{" + "\"Domicile\": \"" + domicile + "\"," +
+		 * "\"EmpNum\": \"21221\"," + "\"FromAppNumber\": \"12\"," +
+		 * "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": " +
+		 * expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" +
+		 * expectedPosition + "\"," + "\"Round\": " + expectedRound + "," +
+		 * "\"secretEmpNum\": \"21221\"," + "\"Version\": \"10.4.16.5\"," +
+		 * "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
+		 */
 		String requestBody2 = "{" + "\"Domicile\": \"" + domicile + "\"," + "\"EmpNum\": \"21221\","
 				+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
 				+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
-				+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," + "\"Version\": \""+expectedVersion+"\","
-				+ "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
-																										// your next API
-																										// endpoint
+				+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," + "\"Version\": \""
+				+ expectedVersion + "\"," + "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
+																								// your next API
+																								// endpoint
 		Response nextResponse = given().header("Authorization", "Bearer " + token)
 				.header("Content-Type", "application/json").body(requestBody2).when().post(nextEndpoint) // Replace with
 																											// POST/GET/PUT
@@ -218,11 +216,9 @@ public class TrialBidAPI  {
 
 				// Start building the output for this trip
 				tripOutput = new StringBuilder(tripCode + "  ");
-				tripCompare = new StringBuilder("API Trip code and Individual Cred:"+tripCode);
-				totalTFPCompare= new StringBuilder("API Trip code and Total Cred:"+tripCode);
-				
-				
-				
+				tripCompare = new StringBuilder("API Trip code and Individual Cred:" + tripCode);
+				totalTFPCompare = new StringBuilder("API Trip code and Total Cred:" + tripCode);
+
 				// Extract the DutyPeriods array
 				JSONArray dutyPeriods = tripDetails.getJSONArray("DutyPeriods");
 				for (int i = 0; i < dutyPeriods.length(); i++) {
@@ -230,7 +226,7 @@ public class TrialBidAPI  {
 					// Extract FlightSeqNum and Tfp
 					int DutSeqNum = dutyPeriod.getInt("DutPerSeqNum");
 					// Convert to String
-					String dutSeqNumStr = String.valueOf(DutSeqNum);  
+					String dutSeqNumStr = String.valueOf(DutSeqNum);
 					double TOTALtfp = dutyPeriod.getDouble("Tfp");
 					double Dutyhrs = dutyPeriod.getDouble("DutyTime");
 
@@ -242,29 +238,27 @@ public class TrialBidAPI  {
 					// TOTALtfp").append(":").append(TOTALtfp).append(" ");
 					double RigAdg = dutyPeriod.getDouble("RigAdg");
 					double RigThr = dutyPeriod.getDouble("RigThr");
-					
 
-					tripOutput.append("DutySeqNum" + DutSeqNum + " TOTALfp").append(":").append(TOTALtfp + RigAdg+RigThr)
-							.append(" ").append(" Dutyhrs " + timeAsDouble + " ");
- //Comapre individual cred with UI						
-					 List<Integer> credList = new ArrayList<>(); // Store all cred values
- 					tripCompare.append(  "DutSeqNum: "+DutSeqNum);
- //Comapre total cred with UI					
- 					double totalTFP = (double) (TOTALtfp + RigAdg+RigThr);
- 					WbidBasepage.logger.info("Total TFP in integer:" + totalTFP);
- 					int totalCred = BigDecimal.valueOf(totalTFP * 100)
-                            .setScale(0, RoundingMode.HALF_UP)
-                            .intValue();
- 					
- 					totalTFPCompare.append("DutSeqNum: "+DutSeqNum).append("total Cred: "+totalCred);
- 					WbidBasepage.logger.info("API:" + totalTFPCompare);
- 					
- 				// Store totalTFP in the map
- 					 apiTotalCredData.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
- 	                .put(dutSeqNumStr, totalCred); // Store calculated sum
- 					WbidBasepage.logger.info("API:" + apiTotalCredData);	
- 					
- 					// Extract the Flights array
+					tripOutput.append("DutySeqNum" + DutSeqNum + " TOTALfp").append(":")
+							.append(TOTALtfp + RigAdg + RigThr).append(" ").append(" Dutyhrs " + timeAsDouble + " ");
+					// Comapre individual cred with UI
+					List<Integer> credList = new ArrayList<>(); // Store all cred values
+					tripCompare.append("DutSeqNum: " + DutSeqNum);
+					// Comapre total cred with UI
+					double totalTFP = (double) (TOTALtfp + RigAdg + RigThr);
+					WbidBasepage.logger.info("Total TFP in integer:" + totalTFP);
+					int totalCred = BigDecimal.valueOf(totalTFP * 100).setScale(0, RoundingMode.HALF_UP).intValue();
+
+					totalTFPCompare.append("DutSeqNum: " + DutSeqNum).append("total Cred: " + totalCred);
+					WbidBasepage.logger.info("API:" + totalTFPCompare);
+
+					// Store totalTFP in the map
+					apiTotalCredData.computeIfAbsent(tripCode, k -> new LinkedHashMap<>()).put(dutSeqNumStr, totalCred); // Store
+																															// calculated
+																															// sum
+					WbidBasepage.logger.info("API:" + apiTotalCredData);
+
+					// Extract the Flights array
 					JSONArray flights = dutyPeriod.getJSONArray("Flights");
 					for (int j = 0; j < flights.length(); j++) {
 						JSONObject flight = flights.getJSONObject(j);
@@ -272,25 +266,21 @@ public class TrialBidAPI  {
 						// Extract FlightSeqNum and Tfp
 						int flightSeqNum = flight.getInt("FlightSeqNum");
 						double tfp = flight.getDouble("Tfp");
-						                        
-                        double comparetfp = flight.getDouble("Tfp");
-                        int cred = BigDecimal.valueOf(comparetfp * 100)
-                                             .setScale(0, RoundingMode.HALF_UP)
-                                             .intValue();
-                        // Store the cred value
-                        credList.add(cred);
+
+						double comparetfp = flight.getDouble("Tfp");
+						int cred = BigDecimal.valueOf(comparetfp * 100).setScale(0, RoundingMode.HALF_UP).intValue();
+						// Store the cred value
+						credList.add(cred);
 						// Append to the trip output
 						tripOutput.append("FlightSeqNum " + flightSeqNum).append(" ").append("Tfp:" + tfp)
-								.append("   ");				
-						tripCompare.append(cred+",");	
-						
-						apiCredData
-						.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
-	 	                .computeIfAbsent(dutSeqNumStr, k -> new ArrayList<>())
-	 	                .add(cred);
+								.append("   ");
+						tripCompare.append(cred + ",");
+
+						apiCredData.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
+								.computeIfAbsent(dutSeqNumStr, k -> new ArrayList<>()).add(cred);
 					}
 					WbidBasepage.logger.info("API:" + tripCompare);
-					
+
 				}
 
 				// Print the result for this trip
@@ -299,7 +289,7 @@ public class TrialBidAPI  {
 
 				String strOutput = tripOutput.toString();
 				// Save the string to an array
-								
+
 				dynamicArray.add(strOutput);
 				// System.out.println("Stored Tafb Data:");
 				// tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ",
@@ -475,7 +465,7 @@ public class TrialBidAPI  {
 		int tafbhours = (int) (tafb / 60);
 		int tafbminutes = (int) (tafb % 60);
 		double tafbtimeAsDouble = (tafbhours + (tafbminutes / 100.0));
-		double tafbUI = tafbtimeAsDouble* 100.0;
+		double tafbUI = tafbtimeAsDouble * 100.0;
 		tafbMapNew.put(tripCode, tafbUI);
 
 // Step 6: Determine final cred
@@ -522,7 +512,7 @@ public class TrialBidAPI  {
 
 		// Perform soft assertion (this will NOT throw an exception immediately)
 
-		softAssert.assertEquals(RigAdg, TotalRigAdg,.05, "RigAdgs are not equal");
+		softAssert.assertEquals(RigAdg, TotalRigAdg, .05, "RigAdgs are not equal");
 
 		// Validate soft assertions at the end
 		try {
