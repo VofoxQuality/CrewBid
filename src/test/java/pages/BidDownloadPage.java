@@ -1321,4 +1321,12 @@ public class BidDownloadPage {
 	// LIne parameters
 	@FindBy(xpath = "(//div[@class=\"cala-right\"])[1]")
 	public WebElement lineparam;
+	
+	//TC 57
+	@FindBy(xpath="(//button[text()=\"No\"])[2]")
+	public WebElement no_btn;
+	public boolean checksavepopup() {
+		objaction.click(home_icon);
+		return objaction.fordisplay(no_btn);
+	}
 }

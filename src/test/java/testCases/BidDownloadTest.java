@@ -1,5 +1,8 @@
 package testCases;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -26,6 +29,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public String position = "CP";
 	public String round = "1st Round";
 	public String APIMonth = String.valueOf(objCommon.getNextMonth());
+	public static List<String> TripCodes = new ArrayList<>();
 
 	@Test(priority = 1, enabled = true)
 	public void CBW003001000001() {
@@ -509,17 +513,30 @@ public class BidDownloadTest extends WbidBasepage {
 	@Test(priority = 55, enabled = true)
 	public void CBW003001000055() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000055)").assignAuthor("VS/482");
-		logger.info("");
-		// objdownload.linecount();
-		logger.info("✅");
-	}
-
-	@Test(priority = 56, enabled = true)
-	public void CBW003001000056() {
-		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000056)").assignAuthor("VS/482");
 		logger.info("Check Reserve lines count");
 		Assert.assertTrue(objdownload.checkreserveAPIlines(), "❌ No Reserve Lines Found.");
 		logger.info("✅ Reserve line count matches ");
 	}
 
+	@Test(priority = 56, enabled = true)
+	public void CBW003001000056() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000056)").assignAuthor("VS/482");
+		logger.info("Get  All the trip Codes from UI ");
+		TripCodes = objCommon.getAllTripCodes();
+		logger.info("Fetching UI data" + TripCodes);
+		logger.info("Compare All the trip Codes from UI with trip code fetched from API and get trip details ");
+		Assert.assertTrue(objCommon.compareTripCodesAndFetchData(TripCodes));
+	}
+	@Test(priority = 57, enabled = true)
+	public void CBW003001000057() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000057)").assignAuthor("VS/482");
+		logger.info("Check Save Popup");
+		Assert.assertTrue(objdownload.checksavepopup(),"❌ Popup not displayed");
+		logger.info("✅ Assert : A popup save state file should be displayed");
+		}
+	@Test(priority = 58, enabled = true)
+	public void CBW003001000058() {
+		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000058)").assignAuthor("VS/482");
+		logger.info("");
+	}
 }

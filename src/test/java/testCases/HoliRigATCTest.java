@@ -116,7 +116,7 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("✅ Assert : All the base cities");
 	}
 
-	@Test(priority = 9, enabled = false)
+	@Test(priority = 9, enabled = true)
 	public void CBW010005000009() {
 		logger = extent.createTest("HOLI RIG(CBW010005000009)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -126,7 +126,7 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("✅Assert: Download button is enabled ");
 	}
 
-	@Test(priority = 10, enabled = false)
+	@Test(priority = 10, enabled = true)
 	public void CBW010005000010() {
 		logger = extent.createTest("HOLI RIG(CBW010005000010)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -135,7 +135,7 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("✅Assert: Download button is enabled ");
 	}
 
-	@Test(priority = 11, enabled = false)
+	@Test(priority = 11, enabled = true)
 	public void CBW010005000011() {
 		logger = extent.createTest("HOLI RIG(CBW010005000011)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -145,7 +145,7 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("✅Assert: Download button is enabled ");
 	}
 
-	@Test(priority = 12, enabled = false)
+	@Test(priority = 12, enabled = true)
 	public void CBW010005000012() {
 		logger = extent.createTest("HOLI RIG(CBW010005000012)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -224,7 +224,7 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("✅Scratch pad combination matches");
 	}
 
-	@Test(priority = 20, enabled = false)
+	@Test(priority = 20, enabled = true)
 	public void CBW010005000020() throws JsonProcessingException, ParseException {
 		logger = WbidBasepage.extent.createTest("HOLI RIG (CBW010005000020)").assignAuthor("VS/482");
 		logger.info(
