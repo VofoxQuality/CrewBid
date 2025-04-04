@@ -4,6 +4,8 @@ import static io.restassured.RestAssured.given;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -64,7 +66,7 @@ public class JavaDirectHolirig{
 					+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
 					+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
 					+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," + "\"Version\": \""+expectedVersion+"\","
-					+ "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
+					+ "\"Year\": 2024," + "\"isSecretUser\": true" + "}";// Replace with
 																											// your next API
 																											// endpoint
 			Response nextResponse = given().header("Authorization", "Bearer " + token)
@@ -170,17 +172,74 @@ public class JavaDirectHolirig{
 	    	        // Now print result based on match
 	    	        if (isMatch) {
 	    	            //System.out.println("✅ Match found at index: " + i);
-	    	            WbidBasepage.logger.info("Direct Map: " + holirigMap);
-	    	            WbidBasepage.logger.info("Calculated Map: " + resultMap);
+	    	            WbidBasepage.logger.info("Direct Map: " + resultMap);
+	    	            WbidBasepage.logger.info("Calculated Map: " + holirigMap);
 	    	        } else {
 	    	            //System.out.println("❌ No match at index: " + i);
-	    	            WbidBasepage.logger.info("Direct Map: " + holirigMap);
-	    	            WbidBasepage.logger.info("Calculated Map: " + resultMap);
+	    	            WbidBasepage.logger.info("Direct Map: " + resultMap);
+	    	            WbidBasepage.logger.info("Calculated Map: " + holirigMap);
 	    	        }
 	    	    }
 	    	}
 			return ismatching;
 
+	    }
+	    
+	    
+	    
+	 // Method to compare the two lists of maps in HolirigFA
+	    public static boolean compareListsFA(List<Map<String, Object>> list1, List<Map<String, Object>> list2) {
+	    	boolean ismatch = true;
+	    	double TOLERANCE = 0.1;
+
+	        if (list1.size() != list2.size()) {
+	            System.out.println("❌ Lists have different sizes! Cannot compare.");
+	            return false;
+	        }
+
+	        for (int i = 0; i < list1.size(); i++) {
+	            if (i < list2.size()) {
+	                double holRig1 = parseAndRoundHolRig(list1.get(i).get("HolRig"));
+	                double holRig2 = parseAndRoundHolRig(list2.get(i).get("HolRig"));
+
+	                // ✅ Print HolRig values for both lists
+	                System.out.println("Index " + i + " -> Calculated HolRig: " + holRig1 + " | Direct Holrig: " + holRig2);
+
+	                // ✅ Fix: Use BigDecimal for precise comparison
+	                if (Math.abs(holRig1 - holRig2) > TOLERANCE) {
+	                    ismatch = false;
+	                    System.out.println("❌ MISMATCH at index: " + i);
+	                } else {
+	                    System.out.println("✅ MATCH at index: " + i);
+	                }
+	            }
+	        }
+
+	        if (ismatch) {
+	            System.out.println("🎉 All values matched successfully!");
+	        } else {
+	            System.out.println("⚠️ There were mismatches in the lists.");
+	        }
+
+	        return ismatch;
+	    }
+
+	    private static double parseAndRoundHolRig(Object value) {
+	        double numericValue;
+
+	        if (value instanceof Double) {
+	            numericValue = (double) value;
+	        } else if (value instanceof String) {
+	            numericValue = Double.parseDouble((String) value);
+	        } else {
+	            throw new IllegalArgumentException("Invalid type for HolRig: " + value);
+	        }
+
+	        return roundToTwoDecimals(numericValue);
+	    }
+
+	    private static double roundToTwoDecimals(double value) {
+	        return new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
 	    }
 
 }
