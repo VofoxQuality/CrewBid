@@ -4,6 +4,10 @@ import static io.restassured.RestAssured.given;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,11 +24,12 @@ public class BlockTest extends WbidBasepage {
 	public static int passCount;
 	public static int errorCount;
 	public static double block;
+	public static Map<String, Map<Integer, List<String>>> apiBlk = new LinkedHashMap<>();
 
 	@Test
 	public static void fetchBlock(String domicile, String expectedRound, String expectedPosition, String expectedMonth)
 			throws Throwable {
-		WbidBasepage.logger = WbidBasepage.extent.createTest("Ground from API").assignAuthor("VS/445");
+		WbidBasepage.logger = WbidBasepage.extent.createTest("Block from API").assignAuthor("VS/445");
 
 		WbidBasepage.logger.info("Cred Values in an array");
 		RestAssured.baseURI = "https://www.auth.wbidmax.com/WBidCoreService/api";
@@ -40,7 +45,7 @@ public class BlockTest extends WbidBasepage {
 		System.out.println("Response is " + response.getStatusCode());
 		try {
 			// Simulate a failure
-			Assert.assertEquals(response.getStatusCode(), 400, "Status Code does not match");
+			Assert.assertEquals(response.getStatusCode(), 200, "Status Code does not match");
 		} catch (AssertionError e) {
 
 			// Log the error and screenshot in the report
@@ -58,7 +63,7 @@ public class BlockTest extends WbidBasepage {
 				+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
 				+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
 				+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," + "\"Version\": \"10.4.16.5\","
-				+ "\"Year\": 2024," + "\"isSecretUser\": true" + "}";// Replace with
+				+ "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
 																		// your next API
 																		// endpoint
 		Response nextResponse = given().header("Authorization", "Bearer " + token)
@@ -111,13 +116,16 @@ public class BlockTest extends WbidBasepage {
 				for (int i = 0; i < dutyPeriods.length(); i++) {
 					JSONObject dutyPeriod = dutyPeriods.getJSONObject(i);
 					logger.info("Duty Seq " + (i + 1));
-
+					int DutSeqNum = dutyPeriod.getInt("DutPerSeqNum");
+		    	
 					if (dutyPeriod.has("Flights")) {
 						JSONArray flights = dutyPeriod.getJSONArray("Flights");
-
+						
 						for (int j = 0; j < flights.length(); j++) {
 							JSONObject flight = flights.getJSONObject(j);
 
+							int flightNum = flight.optInt("FltNum", -1);  // Safe fallback
+							if(flightNum!=0) {
 							// Get actual Block value from JSON
 							double actualBlock = flight.optDouble("Block", 0.0);
 
@@ -141,7 +149,7 @@ public class BlockTest extends WbidBasepage {
 							}
 
 							String blockTimeFormatted = String.format("%02d:%02d", blockHours, blockMinutes);
-							logger.info("Flight Seq " + (j + 1) + ": Block Time = " + blockTimeFormatted);
+							//logger.info("Flight Seq " + (j + 1) + ": Block Time = " + blockTimeFormatted);
 
 							int actualHours = (int) actualBlock / 60;
 							int actualMinutes = (int) actualBlock % 60;
@@ -161,9 +169,11 @@ public class BlockTest extends WbidBasepage {
 								errorCount++;
 								// System.out.println("Error count is" + errorCount);
 							}
-
+							apiBlk.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
+							.computeIfAbsent(DutSeqNum, k -> new ArrayList<>()).add(actualBlockFormatted);
+							logger.info("Direct Blk Hour (Block) In API: " + apiBlk);
 						}
-
+						}
 					}
 				}
 			}
@@ -171,6 +181,7 @@ public class BlockTest extends WbidBasepage {
 		});
 		System.out.println("Pass count is" + passCount);
 		System.out.println("Error count is" + errorCount);
+		logger.info("Direct Blk Hour (Block) In API: " + apiBlk);
 	}
 
 }
