@@ -33,6 +33,7 @@ import utilities.WbidBasepage;
 
 public class TrialBidAPI {
 	public static Map<String, Map<String, List<Integer>>> apiCredData = new LinkedHashMap<>();
+	public static Map<String, List<Integer>> apiCred = new LinkedHashMap<>();
 	public static Map<String, Map<String, Integer>> apiTotalCredData = new LinkedHashMap<>();
 	public static HashMap<String, String> testDataMap = WbidBasepage.testData("qa environment");
 	public static String expectedVersion = testDataMap.get("Version");
@@ -278,8 +279,9 @@ public class TrialBidAPI {
 
 						apiCredData.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
 								.computeIfAbsent(dutSeqNumStr, k -> new ArrayList<>()).add(cred);
+						apiCred.computeIfAbsent(tripCode, k -> new ArrayList<>()).add(cred);
 					}
-					WbidBasepage.logger.info("API:" + tripCompare);
+					WbidBasepage.logger.info("API:" + apiCred);
 
 				}
 

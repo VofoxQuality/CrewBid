@@ -25,6 +25,7 @@ public class BlockTest extends WbidBasepage {
 	public static int errorCount;
 	public static double block;
 	public static Map<String, Map<Integer, List<String>>> apiBlk = new LinkedHashMap<>();
+	public static Map<String, List<String>> apiBlkHr = new LinkedHashMap<>();
 
 	@Test
 	public static void fetchBlock(String domicile, String expectedRound, String expectedPosition, String expectedMonth)
@@ -171,7 +172,8 @@ public class BlockTest extends WbidBasepage {
 							}
 							apiBlk.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
 							.computeIfAbsent(DutSeqNum, k -> new ArrayList<>()).add(actualBlockFormatted);
-							logger.info("Direct Blk Hour (Block) In API: " + apiBlk);
+							//logger.info("Direct Blk Hour (Block) In API: " + apiBlk);
+							apiBlkHr.computeIfAbsent(tripCode,k -> new ArrayList<>()).add(actualBlockFormatted);
 						}
 						}
 					}

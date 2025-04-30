@@ -28,7 +28,8 @@ public class GroundTest extends WbidBasepage{
 		public static double ground;
 		
 		public static Map<String, Map<Integer, List<String>>> apiGrnd = new LinkedHashMap<>();
-		//public static Map<String, Map<String, List<String>>> tripGrndMapAPI = new LinkedHashMap<>();
+		public static Map<String, List<String>> apiGrndHr = new LinkedHashMap<>();
+
 		public static Map<Integer, String> calGrnd = new LinkedHashMap<>();
 		public static List<String> calGrndAPI = new ArrayList<>();
 		public static double groundValue;
@@ -164,6 +165,9 @@ public class GroundTest extends WbidBasepage{
 	    		    	   
 	    		    	    apiGrnd.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
 							.computeIfAbsent(DutSeqNum, k -> new ArrayList<>()).add(groundValueTimeFormatted);
+	    		    	    
+	    		    	 // Inside your parsing loop, once you extract: tripCode and groundValueTimeFormatted
+	    		    		apiGrndHr.computeIfAbsent(tripCode,k -> new ArrayList<>()).add(groundValueTimeFormatted);
 	    		    	    
 	    	        }
 	    	    }
