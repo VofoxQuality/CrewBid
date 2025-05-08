@@ -80,7 +80,7 @@ public class FetchDates extends WbidBasepage {
 		System.out.println("Response is " + response.getStatusCode());
 		try {
 			// Simulate a failure
-			Assert.assertEquals(response.getStatusCode(), 400, "Status Code does not match");
+			//Assert.assertEquals(response.getStatusCode(), 400, "Status Code does not match");
 		} catch (AssertionError e) {
 
 			// Log the error and screenshot in the report

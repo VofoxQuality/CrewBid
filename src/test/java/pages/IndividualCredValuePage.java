@@ -254,6 +254,9 @@ public class IndividualCredValuePage {
 
 	@FindBy(xpath = "//button[text()='Yes']")
 	public WebElement yesBtn;
+	
+	@FindBy(xpath = "//i[@class='fas fa-save']")
+	public WebElement saveBtn;
 
 	public void startOver() {
 		objwait.waitForElementTobeVisible(driver, ellipsis, 90);
@@ -264,6 +267,8 @@ public class IndividualCredValuePage {
 		objaction.click(yesBtn);
 		objwait.waitForElementTobeVisible(driver, yesBtn, 90);
 		objaction.click(yesBtn);
+		objwait.waitForElementTobeVisible(driver, saveBtn, 90);
+		objaction.click(saveBtn);
 	}
 
 //TC 23

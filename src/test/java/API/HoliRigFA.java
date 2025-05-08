@@ -31,11 +31,13 @@ public class HoliRigFA extends WbidBasepage {
     public static List<Map<String, Object>> holirigResult = new ArrayList<>();
     public static Map<String, Double> resultMap ;
     public static Map<String, Double> resultsTfp ;
+    public static HashMap<String, String> testDataMap = testData("qa environment");
+	public static String expectedVersion = testDataMap.get("Version");
 
     @Test(priority = 1)
     public static List<Map<String, Object>> fetchApiData(String domicile, String expectedRound, String expectedPosition, String expectedMonth) throws Throwable {
-        logger = extent.createTest("Bid Download API").assignAuthor("VS/445");
-        
+        logger = extent.createTest("HoliRig FA Calculated").assignAuthor("VS/445");
+        logger.info("HoliRig values ");
         String token = authenticateAndGetToken();
         JSONObject responseObject = fetchMonthlyBidData(token, domicile, expectedRound, expectedPosition, expectedMonth);
         JSONObject responseObject1 = fetchMonthlyBidData1(token, domicile, expectedRound, expectedPosition, expectedMonth);
@@ -46,7 +48,11 @@ public class HoliRigFA extends WbidBasepage {
      // ✅ Find Matching TFP Values
       //  Map<String, Map<Integer, Double>> results = findTFPValues(tripData, tfpMap, targetDates);
         resultsTfp = findTFPValues(tripData, tfpMap, targetDates);
-        logger.info("Resulting TFPs"+resultsTfp);
+        
+        ///////////To print the corresponding TFP selected based on the target date///////////////////
+      /*  logger.info("Resulting TFPs"+resultsTfp);*/
+        
+        
         // ✅ Print Results
        /* for (String date : targetDates) {
             System.out.println("Results for Target Date: " + date);
@@ -59,47 +65,8 @@ public class HoliRigFA extends WbidBasepage {
         
         return processHolirig(expectedMonth);
     }
-   /* public static Map<String, Map<Integer, Double>> findTFPValues(List<TripEntry> tripData, Map<String, Double> tfpMap, List<String> targetDates) {
-        Map<String, Map<Integer, Double>> resultsByDate = new LinkedHashMap<>();
-
-        // ✅ Step 1: Group All Trips by (TripCode + LineNumber) and Maintain Order
-        Map<String, List<TripEntry>> tripGroups = new LinkedHashMap<>();
-        for (TripEntry entry : tripData) {
-            String tripKey = entry.tripName.substring(0, 4) + "_" + entry.lineNumber;
-            tripGroups.computeIfAbsent(tripKey, k -> new ArrayList<>()).add(entry);
-        }
-
-        // ✅ Step 2: Track Current Processing Index for Each (TripCode + LineNumber)
-        Map<String, Integer> tripProcessingIndex = new HashMap<>();
-
-        // ✅ Step 3: Find Correct TFP Values
-        for (String targetDate : targetDates) {
-            Map<Integer, Double> resultMap = new LinkedHashMap<>();
-
-            for (TripEntry entry : tripData) {
-                if (targetDate.equals(entry.date)) { // ✅ Process only matching target dates
-                    String tripCode4 = entry.tripName.substring(0, 4);
-                    String tripKey = tripCode4 + "_" + entry.lineNumber;
-
-                    // ✅ Get the occurrence index from pre-grouped map
-                    List<TripEntry> tripList = tripGroups.getOrDefault(tripKey, new ArrayList<>());
-                    int occurrenceIndex = tripList.indexOf(entry) + 1;  // ✅ Get correct sequence position
-                    tripProcessingIndex.put(tripKey, occurrenceIndex);
-
-                    // ✅ Correctly fetch TFP using sequence number
-                    String tfpKey = tripCode4 + "_" + occurrenceIndex;
-                    if (tfpMap.containsKey(tfpKey)) {
-                        resultMap.put(entry.lineNumber, tfpMap.get(tfpKey));
-                    } else {
-                        System.out.println("Warning: No TFP found for key: " + tfpKey);
-                    }
-                }
-            }
-            resultsByDate.put(targetDate, resultMap);
-        }
-        return resultsByDate;
-    }*/
-    public static Map<String, Double> findTFPValues(List<TripEntry> tripData, Map<String, Double> tfpMap, List<String> targetDates) {
+   
+ /*   public static Map<String, Double> findTFPValues(List<TripEntry> tripData, Map<String, Double> tfpMap, List<String> targetDates) {
         Map<String, Map<Integer, Double>> resultsByDate = new LinkedHashMap<>();
 
         // ✅ Step 1: Group All Trips by (TripCode + LineNumber) and Maintain Order
@@ -140,12 +107,133 @@ public class HoliRigFA extends WbidBasepage {
             //resultsByDate.put(targetDate, resultMap);
         }
         return resultMap;
+    }*/
+    
+    
+    
+  /*public static Map<String, Double> findTFPValues(List<TripEntry> tripData, Map<String, Double> tfpMap, List<String> targetDates) {
+        Map<String, Double> resultMap = new LinkedHashMap<>();
+
+        for (String targetDate : targetDates) {
+            // Track occurrences per (TripCode + LineNumber) only for that date
+            Map<String, Integer> occurrenceTracker = new HashMap<>();
+
+            for (TripEntry entry : tripData) {
+                if (targetDate.equals(entry.date)) { // ✅ Only process entries matching target date
+                   String tripCode4 = entry.tripName.substring(0, 4);
+                	//String tripCode4 = entry.tripName;
+                    int lineNumber = entry.lineNumber;
+                    String tripKey = tripCode4 + "_" + lineNumber;
+
+                    // ✅ Count only same trip code AND line number
+                    int occurrence = occurrenceTracker.getOrDefault(tripKey, 0) + 1;
+                    occurrenceTracker.put(tripKey, occurrence);
+
+                    // ✅ TFP lookup key is based on tripCode4 and its occurrence on same line
+                    String tfpKey = tripCode4 + "_" + occurrence;
+
+                    if (tfpMap.containsKey(tfpKey)) {
+                        resultMap.put(entry.tripName, tfpMap.get(tfpKey));
+                    } else {
+                        System.out.println("Warning: No TFP found for key: " + tfpKey);
+                    }
+                }
+            }
+        }
+
+        return resultMap;
+    }*/
+    
+   
+   /* public static Map<String, Double> findTFPValues(List<TripEntry> tripData, Map<String, Double> tfpMap, List<String> targetDates) {
+        Map<String, Double> resultMap = new LinkedHashMap<>();
+
+        // ✅ Step 1: Group All Trips by (TripCode + LineNumber) and Maintain Order
+        Map<String, List<TripEntry>> tripGroups = new LinkedHashMap<>();
+        for (TripEntry entry : tripData) {
+            String tripCode4 = entry.tripName.substring(0, 4);
+            String tripKey = tripCode4 + "_" + entry.lineNumber;
+            tripGroups.computeIfAbsent(tripKey, k -> new ArrayList<>()).add(entry);
+        }
+
+        // ✅ Step 2: Find Correct TFP Values for Target Dates
+        for (String targetDate : targetDates) {
+        	
+            for (Map.Entry<String, List<TripEntry>> groupEntry : tripGroups.entrySet()) {
+                String tripKey = groupEntry.getKey(); // tripCode + "_" + lineNumber
+                List<TripEntry> tripList = groupEntry.getValue();
+
+                for (int i = 0; i < tripList.size(); i++) {
+                    TripEntry entry = tripList.get(i);
+
+                    if (targetDate.equals(entry.date)) { // ✅ Only for matching target date
+                        String tripCode4 = entry.tripName.substring(0, 4);
+                        int occurrenceIndex = i + 1; // ✅ Position in the group (per trip code + line)
+
+                        String tfpKey = tripCode4 + "_" + occurrenceIndex;
+
+                        if (tfpMap.containsKey(tfpKey)) {
+                            resultMap.put(entry.tripName, tfpMap.get(tfpKey));
+                        } else {
+                            System.out.println("Warning: No TFP found for key: " + tfpKey);
+                        }
+                    }
+                }
+            }
+        }
+
+        return resultMap;
+    }*/
+    public static Map<String, Double> findTFPValues(List<TripEntry> tripData, Map<String, Double> tfpMap, List<String> targetDates) {
+        Map<String, Double> resultMap = new LinkedHashMap<>();
+
+        // ✅ Step 1: Group All Trips by (TripCode + LineNumber) and Maintain Order
+        Map<String, List<TripEntry>> tripGroups = new LinkedHashMap<>();
+        for (TripEntry entry : tripData) {
+            //String tripCode4 = entry.tripName.substring(0, 4);
+        	String tripCode4 = entry.tripName;
+            String tripKey = tripCode4 + "_" + entry.lineNumber; // separate group for each line number
+            tripGroups.computeIfAbsent(tripKey, k -> new ArrayList<>()).add(entry);
+        }
+
+        // ✅ Step 2: Process each target date
+        for (String targetDate : targetDates) {
+            for (Map.Entry<String, List<TripEntry>> groupEntry : tripGroups.entrySet()) {
+                String tripKey = groupEntry.getKey(); // format: TripCode_LineNumber
+                List<TripEntry> tripList = groupEntry.getValue();
+
+                // ✅ Step 3: Count occurrences within each group (trip code + line number)
+                for (int i = 0; i < tripList.size(); i++) {
+                    TripEntry entry = tripList.get(i);
+
+                    if (targetDate.equals(entry.date)) {
+                        String tripCode4 = entry.tripName.substring(0, 4);
+                        int occurrenceIndex = i + 1; // ✅ index within the group
+
+                        String tfpKey = tripCode4 + "_" + occurrenceIndex;
+
+                        if (tfpMap.containsKey(tfpKey)) {
+                            resultMap.put(entry.tripName, tfpMap.get(tfpKey));
+                        } else {
+                            System.out.println("Warning: No TFP found for key: " + tfpKey);
+                        }
+                    }
+                }
+            }
+        }
+
+        return resultMap;
     }
+
+
+    
+    
+    
     private static void extractTFP(JSONObject responseObject1) {
         responseObject1.keys().forEachRemaining(tripCode -> {
             if (tripCode.length() < 4) return;
 
-            String tripCode4 = tripCode.substring(0, 4);
+          //  String tripCode4 = tripCode.substring(0, 4);
             JSONObject tripDetails = responseObject1.getJSONObject(tripCode);
 
             if (tripDetails.has("DutyPeriods")) {
@@ -153,24 +241,42 @@ public class HoliRigFA extends WbidBasepage {
                 for (int i = 0; i < dutyPeriods.length(); i++) {
                     JSONObject dutyPeriod = dutyPeriods.getJSONObject(i);
                     if (dutyPeriod.has("Tfp")) {
-                        double tfpValue = dutyPeriod.getDouble("Tfp");
-                        tfpMap.put(tripCode4 + "_" + (i + 1), tfpValue); // Store with Duty Sequence
+                    	double tfpValue=0.0;
+                    	if(dutyPeriod.has("RigAdg")&& dutyPeriod.has("RigThr"))
+                    	{
+                    			
+                        tfpValue = dutyPeriod.getDouble("Tfp")+dutyPeriod.getDouble("RigAdg")+dutyPeriod.getDouble("RigThr");
+                    	}
+                    	else
+                    	{
+                    		tfpValue = dutyPeriod.getDouble("Tfp");
+                    	}
+                        tfpMap.put(tripCode + "_" + (i + 1), tfpValue); // Store with Duty Sequence
                     }
                 }
             }
         });
-        logger.info("TFP MAP: "+tfpMap);
+        
+        ///////////////////////////To print all the TFPs of the trip codes//////////////////////////////////
+     /*   logger.info("TFP MAP: "+tfpMap);*/
         
     }
     private static String authenticateAndGetToken() {
         RestAssured.baseURI = "https://www.auth.wbidmax.com/WBidCoreService/api";
         String endpoint = "/user/GetSWAAndWBidAuthenticationDetails/";
 
-        String requestBody = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
+      /*  String requestBody = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
 				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n" + "    \"Password\": \"Vofox2025@2$\",\n"
 				+ "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
 				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.5\"\n"
+				+ "}";*/
+        
+        String requestBody = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
+				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
+				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n"
+				+ "    \"Password\": \"Vofox2025@2$\",\n" + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
+				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \""+expectedVersion+"\"\n"
 				+ "}";
 
         Response response = given()
@@ -186,7 +292,7 @@ public class HoliRigFA extends WbidBasepage {
 
     private static JSONObject fetchMonthlyBidData(String token, String domicile, String expectedRound, String expectedPosition, String expectedMonth) throws JsonMappingException, JsonProcessingException {
         String nextEndpoint = "/BidData/GetMonthlyBidFiles/";
-        String requestBody = "{"
+      /*  String requestBody = "{"
 		        + "\"Domicile\": \"" + domicile + "\","
 		        + "\"EmpNum\": \"21221\","
 		        + "\"FromAppNumber\": \"12\","
@@ -198,9 +304,15 @@ public class HoliRigFA extends WbidBasepage {
 		        + "\"Round\": " + expectedRound + ","
 		        + "\"secretEmpNum\": \"21221\","
 		        + "\"Version\": \"10.4.16.5\","
-		        + "\"Year\": 2024,"
+		        + "\"Year\": 2025,"
 		        + "\"isSecretUser\": true"
-		        + "}";
+		        + "}";*/
+        
+        String requestBody = "{" + "\"Domicile\": \"" + domicile + "\"," + "\"EmpNum\": \"21221\","
+				+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
+				+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
+				+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," + "\"Version\": \""+expectedVersion+"\","
+				+ "\"Year\": 2025," + "\"isSecretUser\": true" + "}";
 
         Response response = given()
                 .header("Authorization", "Bearer " + token)
@@ -235,7 +347,7 @@ public class HoliRigFA extends WbidBasepage {
     }
     private static JSONObject fetchMonthlyBidData1(String token, String domicile, String expectedRound, String expectedPosition, String expectedMonth) throws JsonMappingException, JsonProcessingException {
         String nextEndpoint = "/BidData/GetMonthlyBidFiles/";
-        String requestBody = "{"
+     /*   String requestBody = "{"
 		        + "\"Domicile\": \"" + domicile + "\","
 		        + "\"EmpNum\": \"21221\","
 		        + "\"FromAppNumber\": \"12\","
@@ -247,9 +359,15 @@ public class HoliRigFA extends WbidBasepage {
 		        + "\"Round\": " + expectedRound + ","
 		        + "\"secretEmpNum\": \"21221\","
 		        + "\"Version\": \"10.4.16.5\","
-		        + "\"Year\": 2024,"
+		        + "\"Year\": 2025,"
 		        + "\"isSecretUser\": true"
-		        + "}";
+		        + "}";*/
+        
+        String requestBody = "{" + "\"Domicile\": \"" + domicile + "\"," + "\"EmpNum\": \"21221\","
+				+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
+				+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
+				+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," + "\"Version\": \""+expectedVersion+"\","
+				+ "\"Year\": 2025," + "\"isSecretUser\": true" + "}";
 
         Response response1 = given()
                 .header("Authorization", "Bearer " + token)
@@ -297,9 +415,11 @@ public class HoliRigFA extends WbidBasepage {
         }
 
         tripData.sort(Comparator.comparingInt(entry -> entry.lineNumber));
-        for (TripEntry entry : tripData) {
+        
+        //////////////// TO print the trip code,date and line number//////////////////////////
+       /* for (TripEntry entry : tripData) {
         logger.info("Trip Data - Name: " + entry.tripName + ", Date: " + entry.date + ", Line Number: " + entry.lineNumber);
-        }
+        }*/
     	
     }
 
@@ -341,7 +461,7 @@ public class HoliRigFA extends WbidBasepage {
         }
 
         holirigResult.sort(Comparator.comparingInt(o -> (int) o.get("Lines")));
-        logger.info("Holirig Final result: " + holirigResult);
+        logger.info("Holirig FA Calculated: " + holirigResult);
         return holirigResult;
     }
 

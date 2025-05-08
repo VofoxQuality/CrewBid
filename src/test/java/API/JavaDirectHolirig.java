@@ -25,9 +25,10 @@ import io.restassured.response.Response;
 import utilities.WbidBasepage;
 
 public class JavaDirectHolirig{
-	
+	/////////////Direct HoliRig and TAFB line parameter////
 	public static List<Map<String, Object>> resultAPI = new ArrayList<>();
-	public static List<Map<String, Object>> result = new ArrayList<>();
+	public static List<Map<String, Object>> result = new ArrayList<>();//direct Holirig
+	public static List<Map<String, Object>> tafbLineAPI = new ArrayList<>();//direct TAFB line parameter
 	public static HashMap<String, String> testDataMap = WbidBasepage.testData("qa environment");
 	public static String expectedVersion = testDataMap.get("Version");
 	
@@ -66,7 +67,7 @@ public class JavaDirectHolirig{
 					+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
 					+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
 					+ "\"Round\": " + expectedRound + "," + "\"secretEmpNum\": \"21221\"," + "\"Version\": \""+expectedVersion+"\","
-					+ "\"Year\": 2024," + "\"isSecretUser\": true" + "}";// Replace with
+					+ "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
 																											// your next API
 																											// endpoint
 			Response nextResponse = given().header("Authorization", "Bearer " + token)
@@ -111,6 +112,15 @@ public class JavaDirectHolirig{
 	            //JSONArray pairingsArray = lineData.getJSONArray("Pairings");
 	            //JSONArray linesArray = lineData.getJSONArray("Lines");
 	            double holRig = lineData.getDouble("HolRig");
+	            // Extract TAFB line parameter
+	            
+	            String tafbLineAPIString = null;
+	            if (lineData.has("TafbInLine") && !lineData.isNull("TafbInLine")) {
+	                tafbLineAPIString = lineData.get("TafbInLine").toString(); // Safe fallback
+	            } else {
+	                tafbLineAPIString = "00:00"; // or whatever default makes sense
+	            }
+
 
 	            // Convert Pairings JSONArray to a List
 	           // List<String> linesHolirig = new ArrayList<>();
@@ -124,6 +134,12 @@ public class JavaDirectHolirig{
 	            lineResult1.put("Lines", lineKey);
 	            lineResult1.put("HolRig", holRig);
 	            result.add(lineResult1);
+	            
+	            // Create a map to represent the line's data and corresponding TAFB line parameter
+	            Map<String, Object> lineTAFB = new LinkedHashMap<>();
+	            lineTAFB.put("Lines", lineKey);
+	            lineTAFB.put("TafbInLine", tafbLineAPIString);
+	            tafbLineAPI.add(lineTAFB);
 	           
 	            JSONArray pairingsArray = lineData.getJSONArray("Pairings");
 	            if(pairingsArray.length()>0)
@@ -140,7 +156,8 @@ public class JavaDirectHolirig{
 
 	        // Print the result
 	        //System.out.println(result);
-	        WbidBasepage.logger.info("Direct Holirig "+resultAPI);
+	       // WbidBasepage.logger.info("Direct Holirig "+resultAPI);
+	        WbidBasepage.logger.info("API TAFB line parameter : "+tafbLineAPI);
 	        return resultAPI;
 	    }
 	 

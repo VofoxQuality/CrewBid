@@ -5,12 +5,14 @@ import static io.restassured.RestAssured.given;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +25,13 @@ public class GroundTest extends WbidBasepage{
 	
 		public static HashMap<String, String> testDataMap = testData("qa environment");
 		public static String expectedVersion = testDataMap.get("Version");
-		public static double ground = 0.0;
+		public static double ground;
+		
+		public static Map<String, Map<Integer, List<String>>> apiGrnd = new LinkedHashMap<>();
+		public static Map<String, List<String>> apiGrndHr = new LinkedHashMap<>();
+
+		public static Map<Integer, String> calGrnd = new LinkedHashMap<>();
+		public static List<String> calGrndAPI = new ArrayList<>();
 		public static double groundValue;
 		public static String groundTimeFormatted;
 		public static String groundValueTimeFormatted;
@@ -48,7 +56,7 @@ public class GroundTest extends WbidBasepage{
 		System.out.println("Response is " + response.getStatusCode());
 		try {
 			// Simulate a failure
-			Assert.assertEquals(response.getStatusCode(), 400, "Status Code does not match");
+			//Assert.assertEquals(response.getStatusCode(), 400, "Status Code does not match");
 		} catch (AssertionError e) {
 
 			// Log the error and screenshot in the report
@@ -74,7 +82,7 @@ public class GroundTest extends WbidBasepage{
 		        + "\"Round\": " + expectedRound + ","
 		        + "\"secretEmpNum\": \"21221\","
 		        + "\"Version\": \"10.4.16.5\","
-		        + "\"Year\": 2024,"
+		        + "\"Year\": 2025,"
 		        + "\"isSecretUser\": true"
 		        + "}";// Replace with
 																										// your next API
@@ -132,24 +140,44 @@ public class GroundTest extends WbidBasepage{
 	    	// Collect all flights in a flat list to calculate cross-duty ground
 	    	for (int i = 0; i < dutyPeriods.length(); i++) {
 	    	    JSONObject dutyPeriod = dutyPeriods.getJSONObject(i);
+	    	    int DutSeqNum = dutyPeriod.getInt("DutPerSeqNum");
+	    	    String dutSeqNumStr = String.valueOf(DutSeqNum);
 	    	    if (dutyPeriod.has("Flights")) {
 	    	        JSONArray flights = dutyPeriod.getJSONArray("Flights");
 	    	        for (int j = 0; j < flights.length(); j++) {
 	    	        	 JSONObject flight = flights.getJSONObject(j);
 	    	        	groundValue=flight.optDouble("TurnTime",0.0);
-	    	        	 int groundValueHoursPart = (int) ground / 60;
-	    		    	    int groundValueMinutesPart = (int) ground % 60;
+	    	        	 int groundValueHoursPart = (int) groundValue / 60;
+	    		    	    int groundValueMinutesPart = (int) groundValue % 60;
 
 	    		    	    if (groundValueMinutesPart >= 60) {
 	    		    	    	groundValueMinutesPart -= 60;
 	    		    	    	groundValueHoursPart++;
 	    		    	    }
 	    		    	    groundValueTimeFormatted = String.format("%02d:%02d", groundValueHoursPart, groundValueMinutesPart);
-	    	            allFlights.add(flights.getJSONObject(j));
+	    		    	    
+	    		    	   // logger.info("Flight Seq " + (j +1) + ": Turn Time(Direct Grnd hr) = " + groundValueTimeFormatted);
+	    		    	    allFlights.add(flights.getJSONObject(j));
+	    	
+	    		    	    calGrnd.put(DutSeqNum, groundValueTimeFormatted);
+	    		    	    
+	    		    	    Collections.addAll(calGrndAPI, tripCode, dutSeqNumStr, groundValueTimeFormatted);
+	    		    	   
+	    		    	    apiGrnd.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
+							.computeIfAbsent(DutSeqNum, k -> new ArrayList<>()).add(groundValueTimeFormatted);
+	    		    	    
+	    		    	 // Inside your parsing loop, once you extract: tripCode and groundValueTimeFormatted
+	    		    		apiGrndHr.computeIfAbsent(tripCode,k -> new ArrayList<>()).add(groundValueTimeFormatted);
+	    		    	    
 	    	        }
 	    	    }
 	    	}
-
+	    	//logger.info("Flight Seq " + apiGrnd);
+	    	
+	    	logger.info("Direct Grnd (turn Time) In API: " + apiGrnd);
+	    	System.out.println("Direct Grnd value Formated(UI) In API: " +calGrndAPI);
+	    	
+	    	
 	    	// Calculate ground time between all flights (including across duty periods)
 	    	for (int i = 0; i < allFlights.size(); i++) {
 	    	    JSONObject currentFlight = allFlights.get(i);
@@ -171,6 +199,9 @@ public class GroundTest extends WbidBasepage{
 
 	    	    groundTimeFormatted = String.format("%02d:%02d", groundHoursPart, groundMinutesPart);
 	    	    logger.info("Flight Seq " + (i + 1) + ": Ground Time = " + groundTimeFormatted);
+	    	    
+	    	  
+	     		
 	    	}
 	    	// Comparison and logging
 			if (Math.round(ground) == Math.round(groundValue)) {
@@ -186,13 +217,7 @@ public class GroundTest extends WbidBasepage{
 				// System.out.println("Error count is" + errorCount);
 			}
 	    }
-		
-
-	
-	
-
-
-	    
-             
-}  );
+           
+} 
+	);
 	}} 
