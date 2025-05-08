@@ -307,7 +307,7 @@ public class IndividualCredValueTest extends WbidBasepage {
 		driver.navigate().refresh();
 		objwait.waitS(7000);
 		logger.info("Get Total cred of Each Trip from UI and compare with API Data ");
-//		Assert.assertTrue(objInCred.totalCredCompareAPI(), "cred not same as API cred");
+		Assert.assertTrue(objInCred.totalCredCompareAPI(), "cred not same as API cred");
 	}
 
 	@Test(priority = 26, dependsOnMethods = { "CBW0100030000011" })
@@ -317,7 +317,7 @@ public class IndividualCredValueTest extends WbidBasepage {
 		objwait.waitS(7000);
 		logger.info(
 				"AM:-Verify in cp and fo bid ,in reserve line  the Individual cred value in the trip details  is 6 and should be  same as its in the wbp file ");
-//		Assert.assertTrue(objInCred.ReserveLinesAMCred(), "cred not same as 600 for CP and FO");
+		Assert.assertTrue(objInCred.ReserveLinesAMCred(), "cred not same as 600 for CP and FO");
 	}
 
 	@Test(priority = 27, enabled = true)
@@ -325,7 +325,9 @@ public class IndividualCredValueTest extends WbidBasepage {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-Individual Cred Value Page - CBW010003000027").assignAuthor("VS/483");
 		logger.info(
 				"PM:-Verify in cp and fo bid ,in reserve line  the Individual cred value in the trip details  is 6 and should be  same as its in the wbp file ");
-//		Assert.assertTrue(objInCred.ReserveLinesPMCred(), "cred not same as 600 for CP and FO");
+		driver.navigate().refresh();
+		objwait.waitS(7000);
+		Assert.assertTrue(objInCred.ReserveLinesPMCred(), "cred not same as 600 for CP and FO");
 
 	}
 
