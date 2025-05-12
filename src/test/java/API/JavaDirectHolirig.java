@@ -31,6 +31,9 @@ public class JavaDirectHolirig{
 	public static List<Map<String, Object>> tafbLineAPI = new ArrayList<>();//direct TAFB line parameter
 	public static HashMap<String, String> testDataMap = WbidBasepage.testData("qa environment");
 	public static String expectedVersion = testDataMap.get("Version");
+	public static int mismatchcount = 0;
+	public static int matchcount = 0;
+
 	
 	 public static List<Map<String, Object>> fetchParam(String domicile,String expectedRound, String expectedPosition, String expectedMonth) throws JsonProcessingException{
 		
@@ -224,13 +227,17 @@ public class JavaDirectHolirig{
 
 	                // ✅ Fix: Use BigDecimal for precise comparison
 	                if (Math.abs(holRig1 - holRig2) > TOLERANCE) {
+	                	mismatchcount++;
 	                    ismatch = false;
 	                    System.out.println("❌ MISMATCH at index: " + i);
 	                } else {
+	                	matchcount++;
 	                    System.out.println("✅ MATCH at index: " + i);
 	                }
 	            }
 	        }
+	        System.out.println("Total mismatches=" + mismatchcount);
+			System.out.println("Total matches=" + matchcount);
 
 	        if (ismatch) {
 	            System.out.println("🎉 All values matched successfully!");
