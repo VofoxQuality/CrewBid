@@ -83,7 +83,7 @@ public class TrialBidAPI {
 		System.out.println("Response is " + response.getStatusCode());
 		try {
 			// Simulate a failure
-			//Assert.assertEquals(response.getStatusCode(), 400, "Status Code does not match");
+			Assert.assertEquals(response.getStatusCode(), 200, "Status Code does not match");
 		} catch (AssertionError e) {
 
 			// Log the error and screenshot in the report
@@ -247,17 +247,17 @@ public class TrialBidAPI {
 					tripCompare.append("DutSeqNum: " + DutSeqNum);
 					// Comapre total cred with UI
 					double totalTFP = (double) (TOTALtfp + RigAdg + RigThr);
-					WbidBasepage.logger.info("Total TFP in integer:" + totalTFP);
+					//WbidBasepage.logger.info("Total TFP in integer:" + totalTFP);
 					int totalCred = BigDecimal.valueOf(totalTFP * 100).setScale(0, RoundingMode.HALF_UP).intValue();
 
 					totalTFPCompare.append("DutSeqNum: " + DutSeqNum).append("total Cred: " + totalCred);
-					WbidBasepage.logger.info("API:" + totalTFPCompare);
+					//WbidBasepage.logger.info("API:" + totalTFPCompare);
 
 					// Store totalTFP in the map
 					apiTotalCredData.computeIfAbsent(tripCode, k -> new LinkedHashMap<>()).put(dutSeqNumStr, totalCred); // Store
 																															// calculated
 																															// sum
-					WbidBasepage.logger.info("API:" + apiTotalCredData);
+					//WbidBasepage.logger.info("API:" + apiTotalCredData);
 
 					// Extract the Flights array
 					JSONArray flights = dutyPeriod.getJSONArray("Flights");
@@ -281,7 +281,7 @@ public class TrialBidAPI {
 								.computeIfAbsent(dutSeqNumStr, k -> new ArrayList<>()).add(cred);
 						apiCred.computeIfAbsent(tripCode, k -> new ArrayList<>()).add(cred);
 					}
-					WbidBasepage.logger.info("API:" + apiCred);
+				//	WbidBasepage.logger.info("API:" + apiCred);
 
 				}
 
@@ -308,7 +308,7 @@ public class TrialBidAPI {
 		for (int i = 0; i < dynamicArray.size(); i++) {
 			// System.out.println("Dynamic Array element " + i + ": " +
 			// dynamicArray.get(i));
-			WbidBasepage.logger.info("Dynamic Array element " + i + " " + dynamicArray.get(i));
+			//WbidBasepage.logger.info("Dynamic Array element " + i + " " + dynamicArray.get(i));
 		}
 		/* Fetching Each Tfp values for the corresponding trip code */
 		/*
@@ -497,7 +497,9 @@ public class TrialBidAPI {
 		}
 
 //Output the results
+		
 		WbidBasepage.logger.info("Trip Code:" + tripCode);
+		/*
 		WbidBasepage.logger.info("New Rig DPM: " + newRigDpm);
 		WbidBasepage.logger.info("New DHR: " + newDhr);
 		WbidBasepage.logger.info("New Cred Values (ar): " + ar);
@@ -506,7 +508,7 @@ public class TrialBidAPI {
 		WbidBasepage.logger.info("Calculated TAFB in hrs: " + newTafbhr);
 		WbidBasepage.logger.info("New TAFB: " + newTafb);
 		WbidBasepage.logger.info("Rig Adg: " + RigAdg);
-		WbidBasepage.logger.info("Rig Thr: " + RigThr);
+		WbidBasepage.logger.info("Rig Thr: " + RigThr);*/
 		SoftAssert softAssert = new SoftAssert();
 		boolean assertionPassed = true;
 

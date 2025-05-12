@@ -340,7 +340,7 @@ public class TAFBPage {
 			return objaction.fordisplay(TAFBTxt);
 		}
 		
-		//Get holirig data  from UI
+		//Get TAFBLine data  from UI
 		public List<Map<String, Object>> TAFBLineValueUI = new ArrayList<>();
 
 		public boolean getTAFBLineVal() {

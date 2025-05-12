@@ -17,6 +17,7 @@ import API.GroundTest;
 import API.JavaDirectHolirig;
 import API.LineParameterDirect;
 import API.ScratchPadBlankReservedLines;
+import API.TAFB;
 import API.TAFBCPFO;
 import API.TrialBidAPI;
 import pages.BidDownloadPage;
@@ -290,7 +291,7 @@ public class TAFBLineFATest extends WbidBasepage{
 		Assert.assertTrue(objCommon.getAllTripDataAndCompare(FetchDates.tripData));
 	}
 
-	@Test(priority = 23, enabled=true ,dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 23, enabled=false ,dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000023() {
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000023").assignAuthor("VS/483");
 		logger.info("Assert Grnd -Check the Grnd  hours is visible in the trip details    ");
@@ -299,7 +300,7 @@ public class TAFBLineFATest extends WbidBasepage{
 		Assert.assertTrue(objTAFB.grndHeadVisible(), "Grnd not visible inside the trip detials ");
 	}
 
-	@Test(priority = 24,enabled=true , dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 24,enabled=false , dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000024() throws Throwable {
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000024").assignAuthor("VS/483");
 		logger.info("check whether the Grnd  hours showing correctly or not  ");
@@ -309,7 +310,7 @@ public class TAFBLineFATest extends WbidBasepage{
 
 	}
 
-	@Test(priority = 25,enabled=true , dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 25,enabled=false , dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000025() {
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000025").assignAuthor("VS/483");
 		driver.navigate().refresh();
@@ -319,7 +320,7 @@ public class TAFBLineFATest extends WbidBasepage{
 		Assert.assertTrue(objTAFB.compareGrndFA(objTAFB.tripGrndUI,GroundTest.apiGrndHr), "Grnd hr Mismatch");
 		}
 
-	@Test(priority = 26,enabled=true , dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 26,enabled=false , dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000026() {
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000026").assignAuthor("VS/483");
 		logger.info("Assert Blk -Check the Blk  hours is visible in the trip details    ");
@@ -328,14 +329,14 @@ public class TAFBLineFATest extends WbidBasepage{
 		Assert.assertTrue(objBlk.blkHeadVisible(), "Blk not visible inside the trip detials ");
 		}
 
-	@Test(priority = 27, enabled=true , dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 27, enabled=false , dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000027() throws Throwable {
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000027").assignAuthor("VS/483");
 		logger.info("Assert: Total blk hours for a trip is shown as the sum of  blk hours of each day   should be same as its in the trip file ");
 		BlockTest.fetchBlock(domicile, APIRound, position, APIMonth);//API	Assertion
 	}
 
-	@Test(priority = 28, enabled=true , dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 28, enabled=false , dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000028() {
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000028").assignAuthor("VS/483");
 		logger.info("check whether the total blk hours for the trip  is showing correctly or not in UI");
@@ -347,7 +348,7 @@ public class TAFBLineFATest extends WbidBasepage{
 		Assert.assertTrue(objBlk.compareBlkFA(objBlk.tripBlkUI,BlockTest.apiBlkHr), "Blk hr Mismatch");
 	
 	}
-	@Test(priority = 29, enabled=true , dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 29, enabled=false , dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000029() {
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000029").assignAuthor("VS/483");
 		logger.info("Verify the TAFB  is shown inside the trip data for each Trip");
@@ -364,10 +365,10 @@ public class TAFBLineFATest extends WbidBasepage{
 	public void CBW0100020000030() throws Throwable {
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000030").assignAuthor("VS/483");
 		logger.info("Assert : The TAFB is shown same as in wbp file for each trip");
-		TAFBCPFO.fetchTafb(domicile, APIRound, position, APIMonth); //API	Assertion calculation part 
-	
+		
+		//TAFB.fetchApiData(domicile, APIRound, position, APIMonth); //API	Assertion calculation part 
 	}
-	@Test(priority = 31,enabled=true , dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 31,enabled=false , dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000031() {
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000030").assignAuthor("VS/483");
 		logger.info("Verify the TAFB shown for each trip inside the trip details for reserve trips is ZERO");

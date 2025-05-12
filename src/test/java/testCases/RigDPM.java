@@ -373,7 +373,7 @@ public class RigDPM extends WbidBasepage{
 	@Test(priority = 34, enabled = true)
 	public void CBW0100040000034() throws JsonProcessingException {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-Rig ADG,DHR,THR,DPM - CBW010004000034").assignAuthor("VS/483");
-		logger.info("Verify the ADG parameter  showing is correct or not ");
+		logger.info("Verify the THR parameter  showing is correct or not ");
 		logger.info("Assert the value shows in the parameter in the UI is  the sum of all the THR  values of each  trip calculated from ourside   and  should be same as its in the file from the server  (WBL File) ");
 		Assert.assertTrue(objTHR.isTHRLineValCompare(LineParameterDirect.thrLineAPI));
 		

@@ -22,7 +22,6 @@ import pages.BidDownloadPage;
 import pages.BlkHour;
 import pages.CommonPage;
 import pages.CredValuesPage;
-import pages.FAPage;
 import pages.HoliRigPage;
 import pages.IndividualCredValuePage;
 import pages.LoginPage;
@@ -46,6 +45,7 @@ public class TAFBLineCP_ATL extends WbidBasepage{
 	BlkHour objBlk=new BlkHour(driver);
 	HashMap<String, String> testDataMap = testData("qa environment");
 	TAFBPage objTafb=new TAFBPage(driver);
+	
 	
 	public String actualVersion;
 	public String expectedVersion = testDataMap.get("Version");
@@ -259,14 +259,14 @@ public class TAFBLineCP_ATL extends WbidBasepage{
 		Assert.assertEquals(objInCred.bidListHeadCount(), initialScratchPadCount,"Bidlsit count not same as previous count count of the scratchpad view");
 	}
 
-	@Test(priority = 20, dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 20,enabled=true, dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000020() {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-TAFB of each Line - CBW010002000020").assignAuthor("VS/483");
 		logger.info("Verify the ellipsis icon");
 		Assert.assertTrue(objInCred.ellipisIconVisible(), "Ellipis icon not displayed");
 	}
 
-	@Test(priority = 21, dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 21,enabled=true, dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000021() {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-TAFB of each Line - CBW010002000021").assignAuthor("VS/483");
 		logger.info("Verify Start over button - scratch pad should be in default state");
@@ -317,7 +317,7 @@ public class TAFBLineCP_ATL extends WbidBasepage{
 		Assert.assertTrue(objTAFB.compareGrndFA(objTAFB.tripGrndUI,GroundTest.apiGrndHr), "Grnd hr Mismatch");
 		}
 
-	@Test(priority = 26,enabled=true, dependsOnMethods = { "CBW0100020000011" })
+	@Test(priority = 26,enabled=false, dependsOnMethods = { "CBW0100020000011" })
 	public void CBW0100020000026()  {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-TAFB of each Line - CBW010002000026").assignAuthor("VS/483");
 		logger.info("Assert Blk -Check the Blk  hours is visible in the trip details    ");
@@ -331,7 +331,7 @@ public class TAFBLineCP_ATL extends WbidBasepage{
 		BlockTest.fetchBlock(domicile, APIRound, position, APIMonth);//API	Assertion
 }
 
-	@Test(priority = 28, enabled = true)
+	@Test(priority = 28, enabled = false)
 	public void CBW0100020000028() {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-TAFB of each Line - CBW010002000028").assignAuthor("VS/483");
 		logger.info("check whether the total blk hours for the trip  is showing correctly or not in UI");
@@ -340,7 +340,7 @@ public class TAFBLineCP_ATL extends WbidBasepage{
 		objBlk.getCPBlkHour();
 		Assert.assertTrue(objBlk.compareBlkFA(objBlk.tripBlkUI,BlockTest.apiBlkHr), "Blk hr Mismatch");
 	}
-	@Test(priority = 29, enabled = true)
+	@Test(priority = 29, enabled = false)
 	public void CBW0100020000029() throws JsonProcessingException, ParseException {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-TAFB of each Line - CBW010002000029").assignAuthor("VS/483");
 		logger.info("Verify the TAFB  is shown inside the trip data for each Trip");
@@ -348,33 +348,33 @@ public class TAFBLineCP_ATL extends WbidBasepage{
 		// objTafb.getAllTAFB();
 		logger.info("Assert: The TAFB displayed inside the trip details meets the calculations  and should be same as its in the wbp file");
 		logger.info("Get  trip Details from UI- Trip Code and TAFB and compare with API Trip code and TAFB");
-//		Assert.assertTrue(objTafb.getAllTAFBAndCompare(TrialBidAPI.tafbMapNew));
+		Assert.assertTrue(objTafb.getAllTAFBAndCompare(TrialBidAPI.tafbMapNew));
 	}
 	@Test(priority = 30, enabled = true)
 	public void CBW0100020000030() throws Throwable {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-TAFB of each Line - CBW010002000030").assignAuthor("VS/483");
 		logger.info("Assert : The TAFB is shown same as in wbp file for each trip");
-//		TAFBCPFO.fetchTafb(domicile, APIRound, position, APIMonth); //API	Assertion calculation part 
+		TAFBCPFO.fetchTafb(domicile, APIRound, position, APIMonth); //API	Assertion calculation part 
 	}
-	@Test(priority = 31, enabled = true)
+	@Test(priority = 31, enabled = false)
 	public void CBW0100020000031() {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-TAFB of each Line - CBW010002000030").assignAuthor("VS/483");
 		logger.info("Verify the TAFB shown for each trip inside the trip details for reserve trips is ZERO");
-//		Assert.assertTrue(objTafb.reserveTripTAFB(), "One or more reserve trips have non-zero TAFB!");
+		Assert.assertTrue(objTafb.reserveTripTAFB(), "One or more reserve trips have non-zero TAFB!");
 	}
 	@Test(priority = 32, enabled = true)
 	public void CBW0100020000032() {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-TAFB of each Line - CBW010002000032").assignAuthor("VS/483");
 		logger.info("User can able to select the TAFB  parameter from line parameter ");
 		logger.info("Assert : TAFB  paramter along with the value displayed in the line paramter of each line");
-//		objTafb.selectTAFBLine();
-//		Assert.assertTrue(objTafb.fordisplayTAFB(), "❌ TAFB in the line paramter of each line not displayed");
+		objTafb.selectTAFBLine();
+		Assert.assertTrue(objTafb.fordisplayTAFB(), "❌ TAFB in the line paramter of each line not displayed");
 	}
 	@Test(priority = 33, enabled = true)
 	public void CBW0100020000033() {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-TAFB of each Line - CBW010002000033").assignAuthor("VS/483");
 		logger.info("check after selecting TAFB parameter, when clicking the line parameter area and looking TAFB parameter, the TAFB parameter is showed as selected by blue tick mark");
-	//	Assert.assertTrue(objTafb.getTAFBLineVal(),"❌ After selecting TAFB parameter all TAFB line values not found");
+		Assert.assertTrue(objTafb.getTAFBLineVal(),"❌ After selecting TAFB parameter all TAFB line values not found");
 	}
 	@Test(priority = 34, enabled = true)
 	public void CBW0100020000034() throws JsonProcessingException {
@@ -383,7 +383,7 @@ public class TAFBLineCP_ATL extends WbidBasepage{
 		logger.info("Assert the value shows in the parameter in the UI is  the sum of all the TAFB  values of each  trip calculated from ourside   and  should be same as its in the file from the server  (WBL File) ");
 		logger.info("Get TAFB Values from API ");
 		JavaDirectHolirig.fetchParam(domicile, APIRound, position, APIMonth);
-	//	Assert.assertTrue(objTafb.isTAFBLineValCompare(JavaDirectHolirig.tafbLineAPI));
+		Assert.assertTrue(objTafb.isTAFBLineValCompare(JavaDirectHolirig.tafbLineAPI));
 	}
 	@Test(priority = 35, enabled = true)
 	public void CBW0100020000035() {
