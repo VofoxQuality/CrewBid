@@ -26,7 +26,8 @@ public class ParameterCall extends WbidBasepage {
 		//logger.info("ScratchPad Blank and Reserved");
 		
 		// ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "CP", "3");
-		TAFBCPFO.fetchTafb("ATL", "1", "CP", "6");
+		//TAFBCPFO.fetchTafb("ATL", "1", "CP", "6");
+		TAFB_FA.fetchTafb("ATL", "1", "FA", "6");
 		
 	}
 
