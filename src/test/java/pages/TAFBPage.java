@@ -1,6 +1,9 @@
 package pages;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -222,59 +225,6 @@ public class TAFBPage {
 		@FindBy(xpath = "//td[contains(@class,'left-side-radius') and (contains(@style,'background-color: rgb(185, 54, 16)') or contains(@style,'background-color: rgb(17, 166, 124)'))]")
 		public List<WebElement> ReserveTrips; // Trip detail visible for Reserve line (Orange or Green)
 	
-/*		public Map<String, Double> reserveTripTAFB() {
-		    Map<String, Double> tafbMapUI = new HashMap<>();
-		    
-		    for (WebElement tripElement : ReserveTrips) {
-		        try {
-		            objwait.waitForElementTobeVisible(driver, tripElement, 90);
-		            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
-		            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
-
-		            try {
-		                tripElement.click();
-		            } catch (Exception e) {
-		                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
-		            }
-		            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
-		            String tripSequenceText = objaction.gettext(tripSequence).trim().replaceAll("\\s+", " ");
-		            Matcher matcher = Pattern.compile("Trip\\s(\\w+)\\sDated").matcher(tripSequenceText);
-
-		            if (matcher.find()) {
-		                String tripCode = matcher.group(1).trim();
-		                String tripDataText = objaction.gettext(tripTAFB).trim().replaceAll("\\s+", " ");
-
-		                Matcher matcherD = Pattern.compile("TAFB\\s+(\\d+)").matcher(tripDataText);
-		                if (matcherD.find()) {
-		                    String tripTAFBValue = matcherD.group(1).trim();
-		                    double tafbValue = Double.parseDouble(tripTAFBValue);
-		                    tafbMapUI.put(tripCode, tafbValue);
-
-		                    if (tafbValue != 0.0) {
-		                        WbidBasepage.logger.fail("TAFB is not zero for trip: " + tripCode + ", found: " + tafbValue);
-		                    } else {
-		                        WbidBasepage.logger.pass("TAFB is zero for trip: " + tripCode + ", found: " + tafbValue);
-		                    }
-		                } else {
-		                    WbidBasepage.logger.fail("TAFB value not found in trip data for trip: " + tripCode);
-		                }
-		            }
-
-		            // Close modal
-		            try {
-		                new Actions(driver).sendKeys(Keys.ESCAPE).perform();
-		            } catch (Exception e) {
-		                WbidBasepage.logger.info("Modal close action failed, continuing.");
-		            }
-
-		        } catch (Exception e) {
-		            WbidBasepage.logger.fail("Failed to interact with trip element: " + e.getMessage());
-		        }
-		    }
-
-		    return tafbMapUI; // Map of tripCode -> TAFB value
-		}
-		*/
 		public boolean reserveTripTAFB() {
 		    boolean allZero = true;
 
@@ -330,6 +280,166 @@ public class TAFBPage {
 
 		    return allZero;
 		}
+////TAFB-line parameter ////
+		
+		@FindBy(xpath = "//*[@class='date-com']")
+		public WebElement linevalueBtn;
 
+		@FindBy(xpath = "//button[text()=' Reset ']")
+		public WebElement resetBtn;
+
+		public void clickLineValue() {
+			objwait.waitForElementTobeVisible(driver, linevalueBtn, 90);
+			objaction.click(linevalueBtn);
+		}
+
+		public void clickResetLinevalues() {
+			objwait.waitForElementTobeVisible(driver, resetBtn, 90);
+			objaction.click(resetBtn);
+		}
+
+		@FindBy(xpath = "//*[@class='checkbox-animated']")
+		public WebElement airCrftLineBtn;
+
+		public void clickAirCrftLineBtn() {
+			objwait.waitForElementTobeVisible(driver, airCrftLineBtn, 90);
+			objaction.click(airCrftLineBtn);
+		}
+
+		@FindBy(xpath = "(//*[@class='checkbox-animated'])[48]")
+		public WebElement TAFBLineBtn;
+
+		public void clickTAFBLineBtn() {
+			objaction.scrollToElement(TAFBLineBtn);
+			objwait.waitForElementTobeVisible(driver, TAFBLineBtn, 90);
+			objaction.click(TAFBLineBtn);
+		}
+
+		public void selectTAFBLine() {
+			clickLineValue();// open lines modal
+			clickResetLinevalues();// Reset line values so by default 5 default lines selected
+			clickAirCrftLineBtn();// uncheck Air Craft changes line
+			clickTAFBLineBtn();// check TAFB
+			// Close modal properly
+			try {
+				Actions actions = new Actions(driver);
+				actions.sendKeys(Keys.ESCAPE).perform();
+			} catch (Exception e) {
+				WbidBasepage.logger.info("Modal close action failed, continuing.");
+			}
+		}
+
+		@FindBy(xpath = "//*[text()='TAFB']")
+		public WebElement TAFBTxt;
+
+		@FindBy(xpath = "//*[text()='TAFB']/following-sibling::span")
+		public List<WebElement> TAFBLineVal;
+		
+		public boolean fordisplayTAFB() {
+			objwait.waitForElementTobeVisible(driver, TAFBTxt, 60);
+			return objaction.fordisplay(TAFBTxt);
+		}
+		
+		//Get holirig data  from UI
+		public List<Map<String, Object>> TAFBLineValueUI = new ArrayList<>();
+
+		public boolean getTAFBLineVal() {
+		    try {
+		        objwait.waitForElementTobeVisible(driver, TAFBTxt, 90);
+
+		        TAFBLineValueUI.clear(); // Clear previous data before populating new
+
+		        if (!TAFBLineVal.isEmpty()) {
+		            for (int i = 0; i < TAFBLineVal.size(); i++) {
+		                String TAFBValue = TAFBLineVal.get(i).getText().trim();
+		                WbidBasepage.logger.info("Lines: " + (i + 1) + " TAFBLine Value: " + TAFBValue);
+
+		                Map<String, Object> map = new LinkedHashMap<>();
+		                map.put("Lines", i + 1);
+		                map.put("TAFB", TAFBValue);
+		                TAFBLineValueUI.add(map);
+		            }
+
+		            WbidBasepage.logger.info("TAFB Line Parameter UI with Lines: " + TAFBLineValueUI);
+		            return true;
+		        } else {
+		            WbidBasepage.logger.fail("No TAFB Line Parameter values found!");
+		            return false;
+		        }
+		    } catch (Exception e) {
+		        WbidBasepage.logger.fail("Exception while retrieving TAFB Line Parameter values: " + e.getMessage());
+		        return false;
+		    }
+		}
+
+		//Compare TAFB data  from UI and API
+		public boolean isTAFBLineValCompare(List<Map<String, Object>> result) {
+		    boolean allMatch = true; // Track overall result
+
+		    if (result.size() != TAFBLineValueUI.size()) {
+		        WbidBasepage.logger.fail("Mismatch in data size! API size: " + result.size() + ", UI size: " + TAFBLineValueUI.size());
+		        allMatch = false;
+		    } else {
+		        WbidBasepage.logger.info("API and UI data sizes match. API size: " + result.size() + " UI size: " + TAFBLineValueUI.size());
+		    }
+
+		    int loopSize = Math.min(result.size(), TAFBLineValueUI.size());
+
+		    for (int i = 0; i < loopSize; i++) {
+		        Map<String, Object> apiData = result.get(i);
+		        Map<String, Object> uiData = TAFBLineValueUI.get(i);
+
+		        int apiLine = convertToInteger(apiData.get("Lines"));
+		        int uiLine = convertToInteger(uiData.get("Lines"));
+
+		        String apiValue = String.valueOf(apiData.get("TafbInLine")).trim();
+		        String uiValue = String.valueOf(uiData.get("TAFB")).trim();
+
+		        apiValue = normalizeTime(apiValue);
+		        uiValue = normalizeTime(uiValue);
+
+		        if (apiLine != uiLine || !apiValue.equals(uiValue)) {
+		            WbidBasepage.logger.fail("Mismatch at Line " + (i + 1) +
+		                " | API -> Line: " + apiLine + ", Value: " + apiValue +
+		                " | UI -> Line: " + uiLine + ", Value: " + uiValue);
+		            allMatch = false;
+		        } else {
+		            WbidBasepage.logger.pass("Match at Line " + (i + 1) +
+		                " | Line: " + apiLine + ", Value: " + apiValue);
+		        }
+		    }
+
+		    if (allMatch) {
+		        WbidBasepage.logger.info("API and UI TAFB InLine data match perfectly!");
+		    } else {
+		        WbidBasepage.logger.fail("One or more mismatches found in TAFB InLine data.");
+		    }
+
+		    return allMatch;
+		}
+
+		private int convertToInteger(Object obj) {
+		    try {
+		        return Integer.parseInt(String.valueOf(obj).trim());
+		    } catch (Exception e) {
+		        return -1;
+		    }
+		}
+
+		private String normalizeTime(String time) {
+		    if (time == null || time.isEmpty() || time.equalsIgnoreCase("null")) {
+		        return "00:00";
+		    }
+
+		    String[] parts = time.split(":");
+		    if (parts.length == 2) {
+		        try {
+		            return String.format("%02d:%02d", Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+		        } catch (NumberFormatException e) {
+		            return time;
+		        }
+		    }
+		    return time;
+		}
 
 }

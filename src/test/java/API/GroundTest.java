@@ -28,7 +28,8 @@ public class GroundTest extends WbidBasepage{
 		public static double ground;
 		
 		public static Map<String, Map<Integer, List<String>>> apiGrnd = new LinkedHashMap<>();
-		//public static Map<String, Map<String, List<String>>> tripGrndMapAPI = new LinkedHashMap<>();
+		public static Map<String, List<String>> apiGrndHr = new LinkedHashMap<>();
+
 		public static Map<Integer, String> calGrnd = new LinkedHashMap<>();
 		public static List<String> calGrndAPI = new ArrayList<>();
 		public static double groundValue;
@@ -48,7 +49,7 @@ public class GroundTest extends WbidBasepage{
 				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n" + "    \"Password\": \"Vofox2025@2$\",\n"
 				+ "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
-				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.5\"\n"
+				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.6\"\n"
 				+ "}";
 		Response response = given().header("Content-Type", "application/json").body(requestBody1).when().post(endpoint)
 				.then().extract().response();
@@ -80,7 +81,7 @@ public class GroundTest extends WbidBasepage{
 		        + "\"Position\": \"" + expectedPosition + "\","
 		        + "\"Round\": " + expectedRound + ","
 		        + "\"secretEmpNum\": \"21221\","
-		        + "\"Version\": \"10.4.16.5\","
+		        + "\"Version\": \"10.4.16.6\","
 		        + "\"Year\": 2025,"
 		        + "\"isSecretUser\": true"
 		        + "}";// Replace with
@@ -164,6 +165,9 @@ public class GroundTest extends WbidBasepage{
 	    		    	   
 	    		    	    apiGrnd.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
 							.computeIfAbsent(DutSeqNum, k -> new ArrayList<>()).add(groundValueTimeFormatted);
+	    		    	    
+	    		    	 // Inside your parsing loop, once you extract: tripCode and groundValueTimeFormatted
+	    		    		apiGrndHr.computeIfAbsent(tripCode,k -> new ArrayList<>()).add(groundValueTimeFormatted);
 	    		    	    
 	    	        }
 	    	    }

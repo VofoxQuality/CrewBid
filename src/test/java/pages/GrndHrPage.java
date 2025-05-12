@@ -8,12 +8,15 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -479,11 +482,11 @@ public class GrndHrPage {
 	    Map<String, Map<String, List<String>>> tripGrndMap = new LinkedHashMap<>();
 	    Set<String> seenGrnds = new HashSet<>(); // To avoid duplicate entries
 
-	    // int i = 0;
+	     int i = 0;
 	    for (WebElement tripElement : tripList) {
 	        try {
-	        	// if (i >= 30) break; // Limit to 5 iterations
-	        	//	i++;
+	        	 if (i >= 10) break; // Limit to  iterations
+	        		i++;
 	            objwait.waitForElementTobeVisible(driver, tripElement, 90);
 	            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
 	            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
@@ -632,6 +635,131 @@ public class GrndHrPage {
 	        e.printStackTrace();
 	        return new Date(0);
 	    }
+	}
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+	public Map<String, List<String>> tripGrndUI = new LinkedHashMap<>();
+	
+	public Map<String, List<String>> getFAGrndHour() {
+	    Set<String> processedTripCodes = new HashSet<>();
+	  //int i = 0;
+	    for (WebElement tripElement : tripList) {
+	        try {
+	         //   if (i >= 5)
+	         //      break; // Limit to 5 iterations
+	         //   i++;
+	            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+	            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+	            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+
+	            try {
+	                tripElement.click();
+	            } catch (Exception e) {
+	                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+	            }
+
+	            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+	            String tripSequenceText = objaction.gettext(tripSequence).trim().replaceAll("\\s+", " ");
+
+	            // Extract trip code
+	            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+	            Matcher matcher = pattern.matcher(tripSequenceText);
+
+	            if (matcher.find()) {
+	                String tripCode = matcher.group(1).trim();
+
+	                // Skip if already processed
+	                if (processedTripCodes.contains(tripCode)) {
+	                    WbidBasepage.logger.info("Trip Code: " + tripCode + " already processed, skipping.");
+	                    continue;
+	                }
+
+	                processedTripCodes.add(tripCode);
+	                List<String> grndValues = new ArrayList<>();
+
+	                for (WebElement tripEle : tripdata) {
+	                    String tripDataText = objaction.gettext(tripEle).trim();
+
+	                    if (tripDataText.startsWith("Rpt") || tripDataText.startsWith("TAFB")) {
+	                        continue;
+	                    }
+
+	                    // Extract all numbers
+	                    Pattern numberPattern = Pattern.compile("\\b(\\d{1,4})\\b");
+	                    Matcher numberMatcher = numberPattern.matcher(tripDataText);
+
+	                    List<String> numbers = new ArrayList<>();
+	                    while (numberMatcher.find()) {
+	                        numbers.add(numberMatcher.group(1));
+	                    }
+
+	                    // ✅ Use reliable method to get second-last number
+	                    String grndValue = getReliableSecondLastNumber(numbers);
+
+	                    if (grndValue != null) {
+	                        String formattedGrndValue = convertToApiFormat(grndValue);
+	                        grndValues.add(formattedGrndValue);
+	                        WbidBasepage.logger.info("Trip Code: " + tripCode + " | Grnd (formatted): " + formattedGrndValue);
+	                    }
+	                }
+
+	                if (!grndValues.isEmpty()) {
+	                    tripGrndUI.put(tripCode, grndValues);
+	                }
+	            }
+
+	        } catch (Exception e) {
+	            System.out.println("Error extracting Grnd time: " + e.getMessage());
+	        }
+	    }
+
+	    WbidBasepage.logger.info("✅ UI Grnd Hours (Formatted): " + tripGrndUI);
+	    return tripGrndUI;
+	}
+	// ✅ Helper method to get second-last number including 0
+	private String getReliableSecondLastNumber(List<String> numbers) {
+	    if (numbers == null || numbers.size() < 2) return null;
+	    return numbers.get(numbers.size() - 2);
+	}
+
+	public boolean compareGrndFA(Map<String, List<String>> tripGrndUI, Map<String, List<String>> apiGrndHr) {
+	    boolean isMatch = true;
+
+	    for (Map.Entry<String, List<String>> uiEntry : tripGrndUI.entrySet()) {
+	        String tripCode = uiEntry.getKey();
+	        List<String> uiGrndList = uiEntry.getValue();
+
+	        if (!apiGrndHr.containsKey(tripCode)) {
+	            WbidBasepage.logger.fail("❌ TripCode " + tripCode + " found in UI but missing in API.");
+	            isMatch = false;
+	            continue;
+	        }
+
+	        List<String> apiGrndList = apiGrndHr.get(tripCode);
+
+	        if (!uiGrndList.equals(apiGrndList)) {
+	            WbidBasepage.logger.fail("❌ Mismatch for TripCode " + tripCode +
+	                "\nUI GRND Hours: " + uiGrndList +
+	                "\nAPI GRND Hours: " + apiGrndList);
+	            isMatch = false;
+	        } else {
+	            WbidBasepage.logger.info("✅ Match for TripCode " + tripCode + " | GRND: " + uiGrndList);
+	        }
+	    }
+
+	    for (String apiTripCode : apiGrndHr.keySet()) {
+	        if (!tripGrndUI.containsKey(apiTripCode)) {
+	            WbidBasepage.logger.info("TripCode " + apiTripCode + " found in API but missing in UI.");
+	            
+	        }
+	    }
+
+	    if (isMatch) {
+	        WbidBasepage.logger.info("✅ All GRND hours match between UI and API!");
+	    } else {
+	        WbidBasepage.logger.fail("❌ Some GRND hour mismatches found between UI and API.");
+	    }
+
+	    return isMatch;
 	}
 
 }

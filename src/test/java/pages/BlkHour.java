@@ -1,16 +1,9 @@
 package pages;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -23,7 +16,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import API.BlockTest;
-import API.GroundTest;
 import utilities.ActionUtilities;
 import utilities.WaitCondition;
 import utilities.WbidBasepage;
@@ -161,95 +153,7 @@ public class BlkHour {
 		int minutes = Integer.parseInt(uiValue.substring(len - 2));
 		return String.format("%02d:%02d", hours, minutes);
 	}
-/*	
-	public boolean compareBlkHour() {
-		Map<String, Map<String, List<String>>> tripBlkMap = new LinkedHashMap<>();
-		  boolean isComparisonSuccessful = true;
-	//	int i = 0;
 
-		for (WebElement tripElement : tripList) {
-			try {
-//			if (i >= 5)break; // Limit to 5 iterations
-//			i++;
-
-				objwait.waitForElementTobeVisible(driver, tripElement, 90);
-				((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});",
-						tripElement);
-				objwait.waitForElemntTobeClickable(driver, tripElement, 30);
-
-				try {
-					tripElement.click();
-				} catch (Exception e) {
-					((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
-				}
-
-				objwait.waitForElementTobeVisible(driver, tripSequence, 90);
-				String tripSequenceText = objaction.gettext(tripSequence).trim().replaceAll("\\s+", " ");
-
-				// Extract trip code
-				Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
-				Matcher matcher = pattern.matcher(tripSequenceText);
-
-				if (matcher.find()) {
-					String tripCode = matcher.group(1).trim();
-
-					for (WebElement tripEle : tripdata) {
-						String tripDataText = objaction.gettext(tripEle).trim();
-
-						if (tripDataText.startsWith("Rpt") || tripDataText.startsWith("TAFB")) {
-							continue;
-						}
-
-						// Extract trip date
-						Pattern datePattern = Pattern.compile("^(\\d{2}[A-Za-z]{3})\\b");
-						Matcher dateMatcher = datePattern.matcher(tripDataText);
-
-						if (dateMatcher.find()) {
-							String tripDate = dateMatcher.group(1).trim();
-
-			// Extract all numeric values (include 1- to 4-digit numbers)
-							Pattern numberPattern = Pattern.compile("\\b\\d{1,4}\\b");
-							Matcher numberMatcher = numberPattern.matcher(tripDataText);
-
-							List<String> numbers = new ArrayList<>();
-							while (numberMatcher.find()) {
-								numbers.add(numberMatcher.group());
-							}
-
-							String blkValue = null;
-							if (numbers.size() >= 3) {
-								blkValue = numbers.get(numbers.size() - 3); // 3rd last numeric value
-								
-							}
-
-							if (blkValue != null) {
-								String formattedBlkValue = convertToApiFormat(blkValue);
-
-								WbidBasepage.logger.info("Trip Code: " + tripCode + " | Trip Date: " + tripDate
-										+ " | Blk (formatted): " + formattedBlkValue);
-
-								tripBlkMap.computeIfAbsent(tripCode, k -> new LinkedHashMap<>())
-										.computeIfAbsent(tripDate, k -> new ArrayList<>()).add(formattedBlkValue);
-						}
-					}
-					
-					 boolean isCurrentComparisonSuccessful = compareBlkData(tripBlkMap, BlockTest.apiBlk);
-		                if (!isCurrentComparisonSuccessful) {
-		                    isComparisonSuccessful = false;
-		                }
-					}
-				}
-
-			} catch (Exception e) {
-				System.out.println("Error extracting Blk time: " + e.getMessage());
-				 isComparisonSuccessful = false;
-			}
-		}
-
-		//WbidBasepage.logger.info("UI Blk Hours (Formatted): " + tripBlkMap);
-		return isComparisonSuccessful;
-	}
-*/
 	public boolean compareBlkHour() {
 	    Map<String, List<String>> tripBlkMap = new LinkedHashMap<>();
 	    boolean isComparisonSuccessful = true;
@@ -325,91 +229,6 @@ public class BlkHour {
 	    return isComparisonSuccessful;
 	}
 
-/*	public boolean compareBlkData(Map<String, Map<String, List<String>>> uiData,
-			Map<String, Map<Integer, List<String>>> apiData) {
-		boolean isMatch = true;
-
-		for (String tripCode : uiData.keySet()) {
-			if (!apiData.containsKey(tripCode)) {
-				WbidBasepage.logger.fail("❌ Mismatch! UI has TripCode: " + tripCode + ", but API does not.");
-				isMatch = false;
-				continue;
-			}
-
-			Map<String, List<String>> uiDateMap = uiData.get(tripCode);
-			List<String> sortedUiDates = new ArrayList<>(uiDateMap.keySet());
-			sortedUiDates.sort(Comparator.comparing(t -> {
-				try {
-					return convertDateToDate(t);
-				} catch (Exception e) {
-					e.printStackTrace();
-					return new Date(0);
-				}
-			}));
-
-			List<String> uiGrndsSequential = new ArrayList<>();
-			for (String date : sortedUiDates) {
-				uiGrndsSequential.addAll(uiDateMap.getOrDefault(date, new ArrayList<>()));
-			}
-
-			Map<Integer, List<String>> apiDutySeqMap = apiData.get(tripCode);
-			List<Integer> sortedApiDutySeq = new ArrayList<>(apiDutySeqMap.keySet());
-			Collections.sort(sortedApiDutySeq);
-
-			List<String> apiSequential = new ArrayList<>();
-			for (Integer dutySeq : sortedApiDutySeq) {
-				apiSequential.addAll(apiDutySeqMap.getOrDefault(dutySeq, new ArrayList<>()));
-			}
-
-			if (!uiGrndsSequential.equals(apiSequential)) {
-				WbidBasepage.logger.fail("❌ Block Hour mismatch for TripCode: " + tripCode + " UI Blks (sequential): "
-						+ uiGrndsSequential + " API Blks (sequential): " + apiSequential);
-				isMatch = false;
-			}
-		}
-
-		if (isMatch) {
-			WbidBasepage.logger.info("✅ UI and API Blk values match perfectly!");
-		} else {
-			WbidBasepage.logger.fail("❌ Differences found in UI and API Blk hour data!");
-			
-		}
-
-		return isMatch;
-	}
-
-	public boolean compareBlkData(Map<String, List<String>> tripBlkMapUI, Map<String, Map<Integer, List<String>>> tripBlkMapAPI) {
-	    boolean isMatch = true;
-
-	    for (Map.Entry<String, List<String>> entry : tripBlkMapUI.entrySet()) {
-	        String tripCode = entry.getKey();
-	        List<String> uiBlkValues = entry.getValue();
-
-	        // Flatten API values for this tripCode
-	        List<String> apiBlkValues = new ArrayList<>();
-
-	        Map<Integer, List<String>> dutyMap = tripBlkMapAPI.get(tripCode);
-	        if (dutyMap != null) {
-	            for (Map.Entry<Integer, List<String>> dutyEntry : dutyMap.entrySet()) {
-	                apiBlkValues.addAll(dutyEntry.getValue());
-	            }
-	        }
-
-	        if (!uiBlkValues.equals(apiBlkValues)) {
-	        	WbidBasepage.logger.fail("❌ Block Hour mismatch for TripCode: " + tripCode +
-	                    " UI Blks (sequential): " + uiBlkValues +
-	                    " API Blks (sequential): " + apiBlkValues);
-	            isMatch = false;
-	        } else {
-	            WbidBasepage.logger.pass("✅ Block Hours match for TripCode: : " + tripCode +
-	                    " UI Blks (sequential): " + uiBlkValues +
-	                    " API Blks (sequential): " + apiBlkValues);
-	        }
-	    }
-
-	    return isMatch;
-	}
-*/
 	public boolean compareBlkData(String tripCode, List<String> uiBlkValues, Map<String, Map<Integer, List<String>>> tripBlkMapAPI) {
 	    boolean isMatch = true;
 
@@ -456,16 +275,212 @@ public class BlkHour {
 
 	    return isMatch;
 	}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// ✅ Trip list excluding Reserve Line Trips (greenish-cyan background)
+			@FindBy(xpath = "//td[contains(@class,'left-side-radius') and not(contains(@style,'background-color: rgb(17, 166, 124)')) and not(contains(@style,'background-color: rgb(185, 54, 16)'))]")
+			public List<WebElement> tripL;
+			public Map<String, List<String>> getCPBlkHour() {
+			    Set<String> processedTripCodes = new HashSet<>();
+			  //int i = 0;
+			    for (WebElement tripElement : tripL) {
+			        try {
+			          //  if (i >= 5)
+			           //    break; // Limit to 5 iterations
+			          //  i++;
+			            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+			            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+			            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
 
-/*
-	private Date convertDateToDate(String dateStr) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("ddMMM", Locale.ENGLISH);
-			return sdf.parse(dateStr);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return new Date(0);
-		}
+			            try {
+			                tripElement.click();
+			            } catch (Exception e) {
+			                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+			            }
+
+			            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+			            String tripSequenceText = objaction.gettext(tripSequence).trim().replaceAll("\\s+", " ");
+
+			            // Extract trip code
+			            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+			            Matcher matcher = pattern.matcher(tripSequenceText);
+
+			            if (matcher.find()) {
+			                String tripCode = matcher.group(1).trim();
+
+			                // Skip if already processed
+			                if (processedTripCodes.contains(tripCode)) {
+			                    WbidBasepage.logger.info("Trip Code: " + tripCode + " already processed, skipping.");
+			                    continue;
+			                }
+
+			                processedTripCodes.add(tripCode);
+			                List<String> BlkValues = new ArrayList<>();
+
+			                for (WebElement tripEle : tripdata) {
+			                    String tripDataText = objaction.gettext(tripEle).trim();
+
+			                    if (tripDataText.startsWith("Rpt") || tripDataText.startsWith("TAFB")) {
+			                        continue;
+			                    }
+
+			                    // Extract all numbers
+			                    Pattern numberPattern = Pattern.compile("\\b(\\d{1,4})\\b");
+			                    Matcher numberMatcher = numberPattern.matcher(tripDataText);
+
+			                    List<String> numbers = new ArrayList<>();
+			                    while (numberMatcher.find()) {
+			                        numbers.add(numberMatcher.group(1));
+			                    }
+
+			                    // ✅ Use reliable method to get third-last number-BLK
+			                    String BlkValue = getThirdLastNumber(numbers);
+
+			                    if (BlkValue != null) {
+			                        String formattedBlkValue = convertToApiFormat(BlkValue);
+			                        BlkValues.add(formattedBlkValue);
+			                        WbidBasepage.logger.info("Trip Code: " + tripCode + " | Blk (formatted): " + formattedBlkValue);
+			                    }
+			                }
+
+			                if (!BlkValues.isEmpty()) {
+			                    tripBlkUI.put(tripCode, BlkValues);
+			                }
+			            }
+
+			        } catch (Exception e) {
+			            System.out.println("Error extracting Blk time: " + e.getMessage());
+			        }
+			    }
+
+			    WbidBasepage.logger.info("✅ UI Blk Hours (Formatted): " + tripBlkUI);
+			    return tripBlkUI;
+			}
+			
+public Map<String, List<String>> tripBlkUI = new LinkedHashMap<>();
+	
+	public Map<String, List<String>> getFABlkHour() {
+	    Set<String> processedTripCodes = new HashSet<>();
+	  //int i = 0;
+	    for (WebElement tripElement : tripList) {
+	        try {
+	          //  if (i >= 5)
+	           //    break; // Limit to 5 iterations
+	          //  i++;
+	            objwait.waitForElementTobeVisible(driver, tripElement, 90);
+	            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tripElement);
+	            objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+
+	            try {
+	                tripElement.click();
+	            } catch (Exception e) {
+	                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+	            }
+
+	            objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+	            String tripSequenceText = objaction.gettext(tripSequence).trim().replaceAll("\\s+", " ");
+
+	            // Extract trip code
+	            Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+	            Matcher matcher = pattern.matcher(tripSequenceText);
+
+	            if (matcher.find()) {
+	                String tripCode = matcher.group(1).trim();
+
+	                // Skip if already processed
+	                if (processedTripCodes.contains(tripCode)) {
+	                    WbidBasepage.logger.info("Trip Code: " + tripCode + " already processed, skipping.");
+	                    continue;
+	                }
+
+	                processedTripCodes.add(tripCode);
+	                List<String> BlkValues = new ArrayList<>();
+
+	                for (WebElement tripEle : tripdata) {
+	                    String tripDataText = objaction.gettext(tripEle).trim();
+
+	                    if (tripDataText.startsWith("Rpt") || tripDataText.startsWith("TAFB")) {
+	                        continue;
+	                    }
+
+	                    // Extract all numbers
+	                    Pattern numberPattern = Pattern.compile("\\b(\\d{1,4})\\b");
+	                    Matcher numberMatcher = numberPattern.matcher(tripDataText);
+
+	                    List<String> numbers = new ArrayList<>();
+	                    while (numberMatcher.find()) {
+	                        numbers.add(numberMatcher.group(1));
+	                    }
+
+	                    // ✅ Use reliable method to get third-last number-BLK
+	                    String BlkValue = getThirdLastNumber(numbers);
+
+	                    if (BlkValue != null) {
+	                        String formattedBlkValue = convertToApiFormat(BlkValue);
+	                        BlkValues.add(formattedBlkValue);
+	                        WbidBasepage.logger.info("Trip Code: " + tripCode + " | Blk (formatted): " + formattedBlkValue);
+	                    }
+	                }
+
+	                if (!BlkValues.isEmpty()) {
+	                    tripBlkUI.put(tripCode, BlkValues);
+	                }
+	            }
+
+	        } catch (Exception e) {
+	            System.out.println("Error extracting Blk time: " + e.getMessage());
+	        }
+	    }
+
+	    WbidBasepage.logger.info("✅ UI Blk Hours (Formatted): " + tripBlkUI);
+	    return tripBlkUI;
 	}
-	*/
+	// ✅ Helper method to get third-last number 
+	private String getThirdLastNumber(List<String> numbers) {
+		if (numbers == null || numbers.size() < 3) return null;
+	    return numbers.get(numbers.size() - 3);
+	}
+
+
+
+	public boolean compareBlkFA(Map<String, List<String>> tripBlkUI, Map<String, List<String>> apiBlkHr) {
+	    boolean isMatch = true;
+
+	    for (Map.Entry<String, List<String>> uiEntry : tripBlkUI.entrySet()) {
+	        String tripCode = uiEntry.getKey();
+	        List<String> uiBlkList = uiEntry.getValue();
+
+	        if (!apiBlkHr.containsKey(tripCode)) {
+	            WbidBasepage.logger.fail("❌ TripCode " + tripCode + " found in UI but missing in API.");
+	            isMatch = false;
+	            continue;
+	        }
+
+	        List<String> apiBlkList = apiBlkHr.get(tripCode);
+
+	        if (!uiBlkList.equals(apiBlkList)) {
+	            WbidBasepage.logger.fail("❌ Mismatch for TripCode " + tripCode +
+	                "\nUI Block Hour Hours: " + uiBlkList +
+	                "\nAPI Block Hour Hours: " + apiBlkList);
+	            isMatch = false;
+	        } else {
+	            WbidBasepage.logger.info("✅ Match for TripCode " + tripCode + " | Block Hour: " + uiBlkList);
+	        }
+	    }
+
+	    for (String apiTripCode : apiBlkHr.keySet()) {
+	        if (!tripBlkUI.containsKey(apiTripCode)) {
+	            WbidBasepage.logger.info("TripCode " + apiTripCode + " found in API but missing in UI.");
+	            
+	        }
+	    }
+
+	    if (isMatch) {
+	        WbidBasepage.logger.info("✅ All Block Hour hours match between UI and API!");
+	    } else {
+	        WbidBasepage.logger.fail("❌ Some Block Hour hour mismatches found between UI and API.");
+	    }
+
+	    return isMatch;
+	}
+
 }
