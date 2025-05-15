@@ -63,15 +63,7 @@ public class FABIDCalculation {
 		WbidBasepage.logger.info("Cred Values in an array");
 		RestAssured.baseURI = "https://www.auth.wbidmax.com/WBidCoreService/api";
 		String endpoint = "/user/GetSWAAndWBidAuthenticationDetails/";
-		/*
-		 * String requestBody1 = "{\n" + "    \"Base\": null,\n" +
-		 * "    \"BidRound\": 0,\n" + "    \"EmployeeNumber\": \"x21221\",\n" +
-		 * "    \"FromAppNumber\": \"12\",\n" + "    \"Month\": null,\n" +
-		 * "    \"OperatingSystem\": null,\n" + "    \"Password\": \"Vofox2025@2$\",\n"
-		 * + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n" +
-		 * "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" +
-		 * "    \"Version\": \"10.4.16.5\"\n" + "}";
-		 */
+		
 		String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
 				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n"
@@ -97,15 +89,7 @@ public class FABIDCalculation {
 
 // Step 2: Use the Token as Authorization in the Next API Call
 		String nextEndpoint = "/BidData/GetMonthlyBidFiles/";
-		/*
-		 * String requestBody2 = "{" + "\"Domicile\": \"" + domicile + "\"," +
-		 * "\"EmpNum\": \"21221\"," + "\"FromAppNumber\": \"12\"," +
-		 * "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": " +
-		 * expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" +
-		 * expectedPosition + "\"," + "\"Round\": " + expectedRound + "," +
-		 * "\"secretEmpNum\": \"21221\"," + "\"Version\": \"10.4.16.5\"," +
-		 * "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
-		 */
+		
 		String requestBody2 = "{" + "\"Domicile\": \"" + domicile + "\"," + "\"EmpNum\": \"21221\","
 				+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
 				+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
@@ -123,7 +107,7 @@ public class FABIDCalculation {
 		String fileContents = nextResponse.jsonPath().getString("lstBidDataFiles.FileContent[0]");
 		String filePath = "WBL_Decompressed.txt";
 		String decompressedString = LZString.decompressFromUTF16(fileContents);
-		// System.out.println("Decompressed String: " + decompressedString);
+// System.out.println("Decompressed String: " + decompressedString);
 		ObjectMapper mapper = new ObjectMapper();
 		Object json = mapper.readValue(decompressedString, Object.class);
 		String prettyJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
@@ -212,8 +196,7 @@ public class FABIDCalculation {
 				totRigAdgMap
 						.forEach((key, value) -> System.out.println("TripCode: " + key + ", TotalRigAdg: " + value));
 				// System.out.println("Stored Tafb Data:");
-				// tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ",
-				// Tafb: " + value));
+				
 
 				// Start building the output for this trip
 				tripOutput = new StringBuilder(tripCode + "  ");
@@ -235,8 +218,7 @@ public class FABIDCalculation {
 					int hours = (int) (Dutyhrs / 60);
 					int minutes = (int) (Dutyhrs % 60);
 					double timeAsDouble = hours + (minutes / 100.0);
-					// tripOutput.append("DutySeqNum" + DutSeqNum + "
-					// TOTALtfp").append(":").append(TOTALtfp).append(" ");
+					
 					double RigAdg = dutyPeriod.getDouble("RigAdg");
 					double RigThr = dutyPeriod.getDouble("RigThr");
 

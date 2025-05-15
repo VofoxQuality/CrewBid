@@ -306,7 +306,7 @@ public class FARnd1IndividualCredTest extends WbidBasepage {
 		driver.navigate().refresh();
 		objwait.waitS(7000);
 		logger.info("Get Total cred of Each Trip from UI and compare with API Data ");
-		Assert.assertTrue(objInCred.totalCredCompareAPI(),"cred not same as API cred");
+		Assert.assertTrue(objInCred.totalCredCompareAPIFA(),"cred not same as API cred");
 	}
 
 	@Test(priority = 26, enabled = true, dependsOnMethods = { "CBW0100030010011" })

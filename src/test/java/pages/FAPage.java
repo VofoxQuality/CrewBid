@@ -271,7 +271,7 @@ public class FAPage {
 		                String tripCode = matcher.group(1).trim();
 
 		                if (processedTripCodes.contains(tripCode)) {
-		                    WbidBasepage.logger.info("Trip Code: " + tripCode + " already processed, skipping.");
+		                  //  WbidBasepage.logger.info("Trip Code: " + tripCode + " already processed, skipping.");
 		                    continue;
 		                }
 
@@ -298,7 +298,7 @@ public class FAPage {
 		                        try {
 		                            int extractedValue = Integer.parseInt(credValue);
 		                            credValues.add(extractedValue);
-		                            WbidBasepage.logger.info("Trip Code: " + tripCode + " | indiCred: " + extractedValue);
+		                         //   WbidBasepage.logger.info("Trip Code: " + tripCode + " | indiCred: " + extractedValue);
 		                        } catch (NumberFormatException e) {
 		                            WbidBasepage.logger.info("Invalid number found: " + credValue);
 		                        }
@@ -354,7 +354,7 @@ public class FAPage {
 
 		    for (String apiTripCode : apiCredHr.keySet()) {
 		        if (!tripCredUI.containsKey(apiTripCode)) {
-		            WbidBasepage.logger.info("TripCode " + apiTripCode + " found in API but missing in UI.");
+		           // WbidBasepage.logger.info("TripCode " + apiTripCode + " found in API but missing in UI.");
 		            
 		        }
 		    }

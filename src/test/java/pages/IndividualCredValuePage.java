@@ -24,6 +24,8 @@ import org.openqa.selenium.support.PageFactory;
 
 import com.aventstack.extentreports.Status;
 
+import API.CPBIDCalculation;
+import API.FABIDCalculation;
 import API.TrialBidAPI;
 import utilities.ActionUtilities;
 import utilities.WaitCondition;
@@ -941,7 +943,7 @@ public class IndividualCredValuePage {
 //TC 25  -->Get Total Cred compare with API total cred
 // Format--->Stores (Trip Code -> no of times Rtp occurs in one trip-> total Credit})
 
-	public boolean totalCredCompareAPI() {
+	public boolean totalCredCompareAPIFA() {
 		boolean isComparisonSuccessful = true; // Assume success unless proven otherwise
 		Map<String, Map<Integer, Integer>> tripDataMap = new LinkedHashMap<>(); // Keep trip data across iterations
 
@@ -1002,7 +1004,88 @@ public class IndividualCredValuePage {
 
 					// Compare UI data with API data
 					boolean isCurrentComparisonSuccessful = compareTotalCredData(tripDataMap,
-							TrialBidAPI.apiTotalCredData);
+							FABIDCalculation.apiTotalCredData);
+					if (!isCurrentComparisonSuccessful) {
+						isComparisonSuccessful = false; // Mark overall failure if one comparison fails
+					}
+				}
+				// Close modal popup if present
+				try {
+					new Actions(driver).sendKeys(Keys.ESCAPE).perform();
+				} catch (Exception e) {
+					WbidBasepage.logger.info("Modal close action failed, continuing.");
+				}
+
+			} catch (Exception e) {
+				WbidBasepage.logger.fail("Error processing trip element: " + e.getMessage());
+			}
+		}
+
+		WbidBasepage.logger.info("Final Extracted Trip Data: " + tripDataMap);
+		return isComparisonSuccessful;
+	}
+	public boolean totalCredCompareAPICP() {
+		boolean isComparisonSuccessful = true; // Assume success unless proven otherwise
+		Map<String, Map<Integer, Integer>> tripDataMap = new LinkedHashMap<>(); // Keep trip data across iterations
+
+		// int i = 0;
+		for (WebElement tripElement : tripList) {
+			try {
+				// if (i >= 50) break; // Limit to 3 iterations if required
+				// i++;
+
+				objwait.waitForElementTobeVisible(driver, tripElement, 90);
+				((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});",
+						tripElement);
+				objwait.waitForElemntTobeClickable(driver, tripElement, 30);
+
+				try {
+					tripElement.click();
+				} catch (Exception e) {
+					((JavascriptExecutor) driver).executeScript("arguments[0].click();", tripElement);
+				}
+
+				objwait.waitForElementTobeVisible(driver, tripSequence, 90);
+				String tripSequenceText = objaction.gettext(tripSequence).trim().replaceAll("\\s+", " ");
+
+				Pattern pattern = Pattern.compile("Trip\\s(\\w+)\\sDated");
+				Matcher matcher = pattern.matcher(tripSequenceText);
+
+				if (!matcher.find()) {
+					WbidBasepage.logger.fail("Trip code not found in text: " + tripSequenceText);
+					continue; // Skip this trip element
+				}
+
+				String tripCode = matcher.group(1).trim();
+				tripDataMap.putIfAbsent(tripCode, new LinkedHashMap<>());
+				int rptCount = 0;
+
+				for (WebElement tripEle : tripdata) {
+					String tripDataText = objaction.gettext(tripEle).trim().replaceAll("\\s+", " ");
+
+					if (tripDataText.contains("Rpt")) {
+						rptCount++; // Count occurrences of "Rpt"
+
+						Matcher numberMatcher = Pattern.compile("\\b(\\d{3,4})\\b").matcher(tripDataText);
+						String lastCredit = null;
+						while (numberMatcher.find()) {
+							lastCredit = numberMatcher.group(1); // Get last occurrence
+						}
+						if (lastCredit != null) {
+							try {
+								int extractedCredit = Integer.parseInt(lastCredit);
+								tripDataMap.get(tripCode).put(rptCount, extractedCredit);
+							} catch (NumberFormatException e) {
+								WbidBasepage.logger.fail("Failed to parse credit value: " + lastCredit);
+							}
+						}
+					}
+
+					// WbidBasepage.logger.info("Extracted Data: " + tripDataMap);
+
+					// Compare UI data with API data
+					boolean isCurrentComparisonSuccessful = compareTotalCredData(tripDataMap,
+							CPBIDCalculation.apiTotalCredData);
 					if (!isCurrentComparisonSuccessful) {
 						isComparisonSuccessful = false; // Mark overall failure if one comparison fails
 					}
@@ -1261,7 +1344,7 @@ public class IndividualCredValuePage {
 						boolean isComparisonSuccessful1 = true;
 						for (Map<String, List<Integer>> dateMap : tripDataMap.values()) {
 							for (List<Integer> values : dateMap.values()) {
-								WbidBasepage.logger.info("AM color-greenish-cyan Individual Cred: " + tripDataMap);
+								WbidBasepage.logger.info("AM Individual Cred: " + tripDataMap);//color-greenish-cyan
 
 								if (!values.contains(600)) {
 									isComparisonSuccessful1 = false; // If any value is not 600, mark as failure

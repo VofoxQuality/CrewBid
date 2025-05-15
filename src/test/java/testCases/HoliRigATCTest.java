@@ -1,6 +1,10 @@
 package testCases;
 
+import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
@@ -9,6 +13,7 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import API.FetchDates;
+import API.HoliRigCPFO;
 import API.JavaDirectHolirig;
 import pages.BidDownloadPage;
 import pages.CommonPage;
@@ -35,10 +40,13 @@ public class HoliRigATCTest extends WbidBasepage {
 	public String round = "1st Round";
 	public String APIRound = "1";
 	public String APIMonth = String.valueOf(objCommon.getNextMonth());
+	
+	public static List<Map<String, Object>> DirectHolirigresultReturned = new ArrayList<>();
+	public static List<Map<String, Object>> holirigResultReturned = new ArrayList<>();
 
 	@Test(priority = 1, enabled = true)
 	public void CBW010005000001() {
-		logger = extent.createTest(" HOLI RIG (CBW010005000001)").assignAuthor("VS/482");
+		logger = extent.createTest(" CP-HOLI RIG (CBW010005000001)").assignAuthor("VS/482");
 		logger.info("Verify user is able see the Login page ");
 		actualtitle = objlogin.pageHeading();
 		expectedtitle = "CrewbidWebApp";
@@ -49,7 +57,7 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 2, enabled = true)
 	public void CBW010005000002() {
-		logger = extent.createTest(" HOLI RIG (CBW010005000001)").assignAuthor("VS/482");
+		logger = extent.createTest(" CP-HOLI RIG (CBW010005000001)").assignAuthor("VS/482");
 		logger.info("Verify the update popup");
 		objlogin.updateVersionLogin();
 		// objwait.waitS(3000);
@@ -59,7 +67,7 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 3, enabled = true)
 	public void CBW010005000003() {
-		logger = extent.createTest("HOLI RIG (CBW010005000003)").assignAuthor("VS/482");
+		logger = extent.createTest("CP-HOLI RIG (CBW010005000003)").assignAuthor("VS/482");
 		logger.info("Verify the login (subscribed user)");
 		objwait.waitS(9000);
 		logger.info("Assert the title : \"Crewbid\" in the top left");
@@ -68,7 +76,7 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 4, enabled = true)
 	public void CBW010005000004() {
-		logger = extent.createTest("HOLI RIG (CBW010005000004)").assignAuthor("VS/482");
+		logger = extent.createTest("CP-HOLI RIG (CBW010005000004)").assignAuthor("VS/482");
 		logger.info("Verify the Retreive button");
 		Assert.assertTrue(objdownload.fordisplayretrivedropdown(), "❌ Retrive button not displayed");
 		logger.info("Assert : Retrieve new bid data and Retrieve Historical bid data");
@@ -79,7 +87,7 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 5, enabled = true)
 	public void CBW010005000005() {
-		logger = extent.createTest("HOLI RIG (CBW010005000005)").assignAuthor("VS/482");
+		logger = extent.createTest("CP-HOLI RIG (CBW010005000005)").assignAuthor("VS/482");
 		logger.info("verify the Retreive new bid data title");
 		objdownload.forclicknewbiddata();
 		Assert.assertEquals(objdownload.checkEmpnumpopupheader(), "Enter Employee Number",
@@ -89,7 +97,7 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 6, enabled = true)
 	public void CBW010005000006() {
-		logger = extent.createTest("HOLI RIG (CBW010005000006)").assignAuthor("VS/482");
+		logger = extent.createTest("CP-HOLI RIG (CBW010005000006)").assignAuthor("VS/482");
 		logger.info("Verify the User ID ");
 		objdownload.enterempid();
 		Assert.assertEquals(objdownload.checkretrievebidpopupheader(), "Retrieve New Bid Period",
@@ -99,7 +107,7 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 7, enabled = true)
 	public void CBW010005000007() {
-		logger = extent.createTest("HOLI RIG (CBW010005000007)").assignAuthor("VS/482");
+		logger = extent.createTest("CP-HOLI RIG (CBW010005000007)").assignAuthor("VS/482");
 		logger.info("Verify the title in the Retrive new bid period popup alert");
 		Assert.assertEquals(objdownload.checkretrievebidpopupheader(), "Retrieve New Bid Period",
 				"❌ Popup header mismatch or popup not displayed");
@@ -108,7 +116,7 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 8, enabled = true)
 	public void CBW010005000008() {
-		logger = extent.createTest("HOLI RIG (CBW010005000008)").assignAuthor("VS/482");
+		logger = extent.createTest("CP-HOLI RIG (CBW010005000008)").assignAuthor("VS/482");
 		logger.info("Verify the all the base is enabled");
 		objdownload.forclickokbtn();
 		objwait.waitS(3000);
@@ -216,7 +224,7 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 19, enabled = true)
 	public void CBW010005000019() {
-		logger = WbidBasepage.extent.createTest("HOLI RIG (CBW010005000019)").assignAuthor("VS/482");
+		logger = WbidBasepage.extent.createTest("CP-HOLI RIG (CBW010005000019)").assignAuthor("VS/482");
 		logger.info("Verify Start over button - scratch pad should be in default state");
 		objdownload.startOver();
 		objwait.waitS(4000);
@@ -226,7 +234,7 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 20, enabled = true)
 	public void CBW010005000020() throws JsonProcessingException, ParseException {
-		logger = WbidBasepage.extent.createTest("HOLI RIG (CBW010005000020)").assignAuthor("VS/482");
+		logger = WbidBasepage.extent.createTest("CP-HOLI RIG (CBW010005000020)").assignAuthor("VS/482");
 		logger.info(
 				"Assert: Inside the trip details , the dates are shown same as the dates of the trips and should be same as its in the wbl file");
 		logger.info("Get  trip Details from UI- Trip Code and Trip date and compare with API Trip code and dates");
@@ -236,7 +244,7 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 21, enabled = true)
 	public void CBW010005000021() throws JsonProcessingException, ParseException {
-		logger = WbidBasepage.extent.createTest("HOLI RIG (CBW010005000021)").assignAuthor("VS/482");
+		logger = WbidBasepage.extent.createTest("CP-HOLI RIG (CBW010005000021)").assignAuthor("VS/482");
 		logger.info("User can able to select the HoliRig  parameter from line parameter ");
 		objholirig.selectHoliRig();
 		Assert.assertTrue(objholirig.fordisplayholirig(), "❌ Holi rig not displayed");
@@ -245,23 +253,32 @@ public class HoliRigATCTest extends WbidBasepage {
 
 	@Test(priority = 22, enabled = true)
 	public void CBW010005000022() {
-		logger = WbidBasepage.extent.createTest("HOLI RIG (CBW010005000022)").assignAuthor("VS/482");
+		logger = WbidBasepage.extent.createTest("CP-HOLI RIG (CBW010005000022)").assignAuthor("VS/482");
 		logger.info(
 				"check after selecting HoliRig parameter, when clicking the line parameter area and looking HoliRig parameter, the HoliRig parameter is showed as selected by blue tick mark");
 		Assert.assertTrue(objholirig.forClickHoliRig(), "❌ Not displayed blue tick ");
 		logger.info("✅ Assert : blue tick on the HoliRig parameter");
 	}
-
+	
 	@Test(priority = 23, enabled = true)
 	public void CBW010005000023() throws JsonProcessingException {
-		logger = WbidBasepage.extent.createTest("HOLI RIG (CBW010005000023)").assignAuthor("VS/482");
-		logger.info("Check whether the Holirig parameter shows correct value  for CP and FO bids");
-		JavaDirectHolirig.fetchParam("ATL", "1", "CP", "4");
+		logger = WbidBasepage.extent.createTest("CP-HOLI RIG (CBW010005000023)").assignAuthor("VS/482");
+		logger.info("Check whether the Holirig parameter shows correct value in UI  for CP and FO bids");
+		DirectHolirigresultReturned = JavaDirectHolirig.fetchParam(domicile, APIRound, position, APIMonth);
 		objHoli.getHoliRigVal();
 		Assert.assertTrue(objHoli.isHoliRigDataMatching(JavaDirectHolirig.result));
 		logger.info(
 				"✅ Assert : the  Holirig parameter shows correct value  for CP and FO bids after calculation  and same from the WBP file ");
 	}
  
-	
+	@Test(priority = 24, enabled = true)
+	public void CBW010005000024() throws Exception, ParseException, IOException {
+		logger = WbidBasepage.extent.createTest("CP-HOLI RIG (CBW010005000024)").assignAuthor("VS/483");
+		logger.info("Calling method to get calculated holirig for CP");
+		holirigResultReturned =HoliRigCPFO.fetchApiData(domicile, APIRound, position, APIMonth);
+		logger.info("Comparison of calcuated Holirig and Direct Holirig");
+		boolean matched = JavaDirectHolirig.compareLists(holirigResultReturned, DirectHolirigresultReturned);
+		Assert.assertTrue(matched);
+		
+		}
 }

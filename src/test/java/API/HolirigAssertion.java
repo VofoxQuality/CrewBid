@@ -32,7 +32,7 @@ public class HolirigAssertion extends WbidBasepage {
 		DirectHolirigresultReturned = JavaDirectHolirig.fetchParam("ATL", "1", "FA", "6");		
 		
 		///////////*Calling method to get calculated holirig CP,FO*//////////
-		// holirigResultReturned = HoliRigCPFO.fetchApiData("ATL", "1", "CP", "6");
+		 holirigResultReturned = HoliRigCPFO.fetchApiData("ATL", "1", "CP", "6");
 		
 		
 		///////////*Calling method to get calculated holirig FA*//////////

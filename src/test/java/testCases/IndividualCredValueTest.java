@@ -10,6 +10,8 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import API.BlockTest;
+import API.CPBIDCalculation;
+import API.FABIDCalculation;
 import API.FetchDates;
 import API.ScratchPadBlankReservedLines;
 import API.TrialBidAPI;
@@ -180,7 +182,6 @@ public class IndividualCredValueTest extends WbidBasepage {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-Individual Cred Value Page - CBW010003000012").assignAuthor("VS/483");
 		logger.info("Fetchinh API data");
 		ScratchPadBlankReservedLines.fetchApiData(domicile, APIRound, position, APIMonth);
-		TrialBidAPI.fetchApiData(domicile, APIRound, position, APIMonth);
 		logger.info("Verify the subscription expiring alert - Expiring alert  not visible ");
 	}
 
@@ -272,7 +273,7 @@ public class IndividualCredValueTest extends WbidBasepage {
 		logger.info(
 				"Assert: Inside the trip details , the dates are shown same as the dates of the trips and should be same as its in the wbl file");
 		logger.info("Get  trip Details from UI- Trip Code and Trip date and compare with API Trip code and dates");
-		FetchDates.fetchApiData(domicile, APIRound, position, APIMonth);
+//		FetchDates.fetchApiData(domicile, APIRound, position, APIMonth);
 //		Assert.assertTrue(objCommon.getAllTripDataAndCompare(FetchDates.tripData));
 	}
 
@@ -286,17 +287,15 @@ public class IndividualCredValueTest extends WbidBasepage {
 	}
 	FAPage objFACred=new FAPage(driver);
 	@Test(priority = 24, dependsOnMethods = { "CBW0100030000011" })
-	public void CBW0100030000024() {
+	public void CBW0100030000024() throws JsonProcessingException {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-Individual Cred Value Page - CBW010003000024").assignAuthor("VS/483");
 		logger.info(
 				"Verify the Individual cred value in the trip details  in same as its in the wbp file for each leg ");
-		// objInCred.getAllIndivdualCred();
-		// objInCred.getIndividualCred();
+		//TrialBidAPI.fetchApiData(domicile, APIRound, position, APIMonth);
+		CPBIDCalculation.fetchApiData(domicile, APIRound, position, APIMonth);
 		logger.info("Get individual cred of Each Trip from UI and compare with API Data ");
-	//	Assert.assertTrue(objInCred.IndividualCredCompareAPI(), "cred not same as API cred ");
-	//	Assert.assertTrue(objFACred.IndividualCredCompareAPI(), "cred not same as API cred ");
 		objFACred.getFAindiCredHour();
-		Assert.assertTrue(objFACred.compareindiCredFA(objFACred.tripindiCredUI,TrialBidAPI.apiCred), "cred not same as API cred");
+		Assert.assertTrue(objFACred.compareindiCredFA(objFACred.tripindiCredUI,CPBIDCalculation.apiCred), "cred not same as API cred");
 	
 	}
 
@@ -307,7 +306,7 @@ public class IndividualCredValueTest extends WbidBasepage {
 		driver.navigate().refresh();
 		objwait.waitS(7000);
 		logger.info("Get Total cred of Each Trip from UI and compare with API Data ");
-		Assert.assertTrue(objInCred.totalCredCompareAPI(), "cred not same as API cred");
+		Assert.assertTrue(objInCred.totalCredCompareAPICP(), "cred not same as API cred");
 	}
 
 	@Test(priority = 26, dependsOnMethods = { "CBW0100030000011" })

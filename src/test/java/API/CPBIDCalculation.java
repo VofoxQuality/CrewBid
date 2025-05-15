@@ -46,7 +46,7 @@ public class CPBIDCalculation {
 	public static Map<String, Double> tafbMap = new HashMap<>();
 	public static Map<String, Double> totRigAdgMap = new HashMap<>();
 	public static Map<String, Double> tafbMapNew = new HashMap<>();
-	// public static int i=0;
+	
 	public static List<String> dynamicArray = new ArrayList<>();
 	public static List<Double> tfpSums = new ArrayList<>();
 	public static List<Double> dutyHrs = new ArrayList<>();
@@ -63,15 +63,7 @@ public class CPBIDCalculation {
 		WbidBasepage.logger.info("Cred Values in an array");
 		RestAssured.baseURI = "https://www.auth.wbidmax.com/WBidCoreService/api";
 		String endpoint = "/user/GetSWAAndWBidAuthenticationDetails/";
-		/*
-		 * String requestBody1 = "{\n" + "    \"Base\": null,\n" +
-		 * "    \"BidRound\": 0,\n" + "    \"EmployeeNumber\": \"x21221\",\n" +
-		 * "    \"FromAppNumber\": \"12\",\n" + "    \"Month\": null,\n" +
-		 * "    \"OperatingSystem\": null,\n" + "    \"Password\": \"Vofox2025@2$\",\n"
-		 * + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n" +
-		 * "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" +
-		 * "    \"Version\": \"10.4.16.5\"\n" + "}";
-		 */
+		
 		String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
 				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n"
@@ -97,15 +89,7 @@ public class CPBIDCalculation {
 
 // Step 2: Use the Token as Authorization in the Next API Call
 		String nextEndpoint = "/BidData/GetMonthlyBidFiles/";
-		/*
-		 * String requestBody2 = "{" + "\"Domicile\": \"" + domicile + "\"," +
-		 * "\"EmpNum\": \"21221\"," + "\"FromAppNumber\": \"12\"," +
-		 * "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": " +
-		 * expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" +
-		 * expectedPosition + "\"," + "\"Round\": " + expectedRound + "," +
-		 * "\"secretEmpNum\": \"21221\"," + "\"Version\": \"10.4.16.5\"," +
-		 * "\"Year\": 2025," + "\"isSecretUser\": true" + "}";// Replace with
-		 */
+		
 		String requestBody2 = "{" + "\"Domicile\": \"" + domicile + "\"," + "\"EmpNum\": \"21221\","
 				+ "\"FromAppNumber\": \"12\"," + "\"IsQATest\": false," + "\"IsRetrieveNewBid\": true," + "\"Month\": "
 				+ expectedMonth + "," + "\"Platform\": \"Web\"," + "\"Position\": \"" + expectedPosition + "\","
@@ -453,7 +437,13 @@ public class CPBIDCalculation {
 		// Step 3: Compare new rig dpm with new dhr to get new cred values
 		List<Double> ar = new ArrayList<>();
 		for (int i = 0; i < tfpSums.size(); i++) {
+			if(newDhr.get(i)!=0) {
 			ar.add(Math.max(newRigDpm.get(i), newDhr.get(i)));
+			
+		}else
+		{
+			ar.add(0.0);
+		}
 		}
 
 		// Step 4: Calculate total cred value
@@ -484,18 +474,22 @@ public class CPBIDCalculation {
 		double newTafb = newTafbhr / 3;
 
 		if (tmp > totCredValue && tmp >= newTafb) {
+			if(totCredValue!=0) {
 		
 			// RigAdg = tmp - totCredValue;
 			RigAdg = Math.round((tmp - totCredValue) * 100.0) / 100.0;
 			// RigAdg =BigDecimal.valueOf(tmp - totCredValue).setScale(2,
 			// RoundingMode.HALF_UP);
 			// RigAdg=Math.round(RigAdg * 100.0) / 100.0;
-
+			}
+			
 		} else if (newTafb > totCredValue && newTafb > tmp) {
+			if(totCredValue!=0) {
 			// RigThr = newTafb - totCredValue;
 			RigThr = Math.round((newTafb - totCredValue) * 100.0) / 100.0;
 
 			// RigThr=Math.round(RigThr * 100.0) / 100.0;
+			}
 		}
 
 //Output the results
