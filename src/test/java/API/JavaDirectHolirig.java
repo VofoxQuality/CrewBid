@@ -159,7 +159,7 @@ public class JavaDirectHolirig{
 
 	        // Print the result
 	        //System.out.println(result);
-	       // WbidBasepage.logger.info("Direct Holirig "+resultAPI);
+	        WbidBasepage.logger.info("Direct Holirig "+resultAPI);
 	        WbidBasepage.logger.info("API TAFB line parameter : "+tafbLineAPI);
 	        return resultAPI;
 	    }
@@ -214,6 +214,7 @@ public class JavaDirectHolirig{
 
 	        if (list1.size() != list2.size()) {
 	            System.out.println("❌ Lists have different sizes! Cannot compare.");
+	            WbidBasepage.logger.info("❌ Lists have different sizes! Cannot compare.");
 	            return false;
 	        }
 
@@ -224,15 +225,17 @@ public class JavaDirectHolirig{
 
 	                // ✅ Print HolRig values for both lists
 	                System.out.println("Index " + i + " -> Calculated HolRig: " + holRig1 + " | Direct Holrig: " + holRig2);
-
+	                WbidBasepage.logger.info("Index " + i + " -> Calculated HolRig: " + holRig1 + " | Direct Holrig: " + holRig2);
 	                // ✅ Fix: Use BigDecimal for precise comparison
 	                if (Math.abs(holRig1 - holRig2) > TOLERANCE) {
 	                	mismatchcount++;
 	                    ismatch = false;
 	                    System.out.println("❌ MISMATCH at index: " + i);
+	                    WbidBasepage.logger.info("❌ MISMATCH at index: " + i);
 	                } else {
 	                	matchcount++;
 	                    System.out.println("✅ MATCH at index: " + i);
+	                    WbidBasepage.logger.info("✅ MATCH at index: " + i);
 	                }
 	            }
 	        }
@@ -241,8 +244,10 @@ public class JavaDirectHolirig{
 
 	        if (ismatch) {
 	            System.out.println("🎉 All values matched successfully!");
+	            WbidBasepage.logger.info("🎉 All values matched successfully!");
 	        } else {
 	            System.out.println("⚠️ There were mismatches in the lists.");
+	            WbidBasepage.logger.info("⚠️ There were mismatches in the lists.");
 	        }
 
 	        return ismatch;

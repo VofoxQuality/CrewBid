@@ -19,34 +19,38 @@ public class ParameterCall extends WbidBasepage {
 	public static List<Map<String, Object>> holirigFAResultReturned = new ArrayList<>();
 	public static List<Map<String, Object>> DirectHolirigresultReturned = new ArrayList<>();
 
-	@Test(priority = 1, enabled = true)
+	@Test(priority = 1, enabled = false)
 	public void f() throws Throwable {
-		//WbidBasepage.logger = extent.createTest("Bid Download API").assignAuthor("VS/445");
+		WbidBasepage.logger = extent.createTest("Bid Download API").assignAuthor("VS/445");
 
 		//logger.info("ScratchPad Blank and Reserved");
 		
 		// ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "CP", "3");
 		//TAFBCPFO.fetchTafb("ATL", "1", "CP", "6");
-		TAFB_FA.fetchTafb("ATL", "1", "FA", "6");
+		//TAFB_FA.fetchTafb("ATL", "1", "FA", "6");
+		
+		ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "FA", "6");
+		TrialBidAPI.fetchApiData("ATL", "1", "FA", "6");
+		
 		
 	}
 
-	@Test(priority = 2, enabled = false)
+	@Test(priority = 2, enabled = true)
 	public void g() throws Throwable {
 		WbidBasepage.logger = extent.createTest("Direct HoliRig").assignAuthor("VS/445");
 
 		logger.info("HoliRig values ");
 		
-		// TrialBidAPI.fetchApiData("ATL", "1", "CP", "4");
+		CPBIDCalculation.fetchApiData("ATL", "1", "CP", "6");
 		// ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "CP", "3");
 		
 		// DutyPeriodTest.fetchApiData("ATL", "1", "FA", "7");
 		// GroundTest.fetchground("ATL", "1", "FA", "7");
-		//BlockTest.fetchBlock("ATL", "1", "FA", "7");
+		//BlockTest.fetchBlock("ATL", "1", "FA", "6");
 		
 		
 		///////////*Calling method to get Direct holirig CP,FO and FA*//////////
-		DirectHolirigresultReturned = JavaDirectHolirig.fetchParam("ATL", "1", "FA", "5");
+//		DirectHolirigresultReturned = JavaDirectHolirig.fetchParam("ATL", "1", "FA", "5");
 		
 		
 		
@@ -55,7 +59,7 @@ public class ParameterCall extends WbidBasepage {
 		
 		
 		///////////*Calling method to get calculated holirig FA*//////////
-		holirigFAResultReturned = HoliRigFA.fetchApiData("ATL", "1", "FA", "5");
+//		holirigFAResultReturned = HoliRigFA.fetchApiData("ATL", "1", "FA", "5");
 		//holirigFAResultReturned = HoliRigFA_Copy.fetchApiData("ATL", "1", "FA", "7");
 	}
 

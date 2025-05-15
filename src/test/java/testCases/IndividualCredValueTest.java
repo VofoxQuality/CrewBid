@@ -296,7 +296,7 @@ public class IndividualCredValueTest extends WbidBasepage {
 	//	Assert.assertTrue(objInCred.IndividualCredCompareAPI(), "cred not same as API cred ");
 	//	Assert.assertTrue(objFACred.IndividualCredCompareAPI(), "cred not same as API cred ");
 		objFACred.getFAindiCredHour();
-		Assert.assertTrue(objFACred.compareindiCredFA(objFACred.tripindiCredUI,TrialBidAPI.apiCred), "Blk hr Mismatch");
+		Assert.assertTrue(objFACred.compareindiCredFA(objFACred.tripindiCredUI,TrialBidAPI.apiCred), "cred not same as API cred");
 	
 	}
 

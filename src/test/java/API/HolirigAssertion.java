@@ -29,14 +29,14 @@ public class HolirigAssertion extends WbidBasepage {
 		
 		
 		///////////*Calling method to get Direct holirig CP,FO and FA*//////////
-		DirectHolirigresultReturned = JavaDirectHolirig.fetchParam("ATL", "1", "FA", "5");		
+		DirectHolirigresultReturned = JavaDirectHolirig.fetchParam("ATL", "1", "FA", "6");		
 		
 		///////////*Calling method to get calculated holirig CP,FO*//////////
-		// holirigResultReturned = HoliRigCPFO.fetchApiData("ATL", "1", "CP", "4");
+		// holirigResultReturned = HoliRigCPFO.fetchApiData("ATL", "1", "CP", "6");
 		
 		
 		///////////*Calling method to get calculated holirig FA*//////////
-		holirigFAResultReturned = HoliRigFA.fetchApiData("ATL", "1", "FA", "5");
+		holirigFAResultReturned = HoliRigFA.fetchApiData("ATL", "1", "FA", "6");
 		
 	}
 
@@ -48,7 +48,7 @@ public class HolirigAssertion extends WbidBasepage {
 		
 		
 		///////////*Calling comparison method for holirig CP and FO*//////////
-		// boolean matched = JavaDirectHolirig.compareLists(holirigResultReturned, DirectHolirigresultReturned);
+		//boolean matched = JavaDirectHolirig.compareLists(holirigResultReturned, DirectHolirigresultReturned);
 		
 		///////////*Calling comparison method for holirig for FA*//////////
 		boolean matched = JavaDirectHolirig.compareListsFA(holirigFAResultReturned, DirectHolirigresultReturned);

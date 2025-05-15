@@ -26,7 +26,7 @@ import utilities.ActionUtilities;
 import utilities.WaitCondition;
 import utilities.WbidBasepage;
 
-public class FAIndividualCredValueTest extends WbidBasepage {
+public class FARnd1IndividualCredTest extends WbidBasepage {
 	WebDriver driver = returnDriver();
 	WaitCondition objwait = new WaitCondition();
 	ActionUtilities objaction = new ActionUtilities(driver);
@@ -43,17 +43,17 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 	public String expectedVersion = testDataMap.get("Version");
 	public String domicile = "ATL";
 	public String position = "FA";
-	public String round = "2nd Round";
+	public String round = "1st Round";
 	public String ScratchpadPosition = "Flight Attendant";
-	public String ScratchpadRound = "Round 2";
+	public String ScratchpadRound = "Round 1";
 	public String year = objCommon.getNextMonthAndCurrentYear();
-	public String APIRound = "2";
+	public String APIRound = "1";
 	public String APIMonth = String.valueOf(objCommon.getNextMonth());
 	public static List<String> TripCodes = new ArrayList<>();
 
 	@Test(priority = 1, enabled = true)
 	public void CBW010003001001() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW010003001001").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW010003001001").assignAuthor("VS/483");
 		logger.info("To check that CrewBid Login page is displaying when entering the Url");
 		String actualtitle = objlogin.pageHeading();
 		String expectedtitle = "CrewbidWebApp";
@@ -64,7 +64,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 2, enabled = true)
 	public void CBW010003001002() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW010003001002").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW010003001002").assignAuthor("VS/483");
 		logger.info("When Click on update button-Automatically redirect to landing page");
 		objlogin.updateVersionLogin();
 		logger.info("Assert that Home page header shows updated version.");
@@ -75,7 +75,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 3, enabled = true)
 	public void CBW010003001003() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW010003001003").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW010003001003").assignAuthor("VS/483");
 		logger.info(
 				"Verify the login-Assert the title : Crewbid in the top left-Assert the image : Crewbid icon in the top left");
 		Assert.assertTrue(objInCred.logoVisibile(), "Crewbid Logo not display");
@@ -83,7 +83,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 4, enabled = true)
 	public void CBW010003001004() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW010003001004").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW010003001004").assignAuthor("VS/483");
 		logger.info("Verify the Retreive button-Assert : Retrieve new bid data and Retrieve Historical bid data");
 		logger.info("click Retreive button");
 		objCommon.click_retrievedownload();
@@ -94,7 +94,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 5, enabled = true)
 	public void CBW010003001005() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW010003001005").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW010003001005").assignAuthor("VS/483");
 		logger.info("Verify the user able to select Retrieve new bid data button ");
 		objCommon.forclicknewbiddata();
 		Assert.assertEquals(objInCred.checkEmpnumHeader(), "Enter Employee Number", "Header mismatch or not displayed");
@@ -102,7 +102,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 6, enabled = true)
 	public void CBW010003001006() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW010003001006").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW010003001006").assignAuthor("VS/483");
 		logger.info("Verify user can able to select any condition  Assert: Download button is enabled");
 		logger.info("Enter the User ID ");
 		objCommon.enterempid();
@@ -113,7 +113,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 7, enabled = true)
 	public void CBW010003001007() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW010003001007").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW010003001007").assignAuthor("VS/483");
 		logger.info("Verify user can able to select any condition  Assert: Download button is enabled");
 		Assert.assertTrue(objInCred.downloadEnable());
 	}
@@ -122,7 +122,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 8, enabled = true)
 	public void CBW010003001008() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW010003001008").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW010003001008").assignAuthor("VS/483");
 		logger.info("Verify the download button - Scratch pad view is visible");
 		logger.info("Click Download Bid");
 		objCommon.clickDownload();
@@ -138,7 +138,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 9, dependsOnMethods = { "CBW010003001008" }, alwaysRun = true)
 	public void CBW010003001009() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW010003001009").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW010003001009").assignAuthor("VS/483");
 		if (isDownloadSuccessful) {
 			logger.info("Download was successful, skipping warning popup verification.");
 		} else {
@@ -150,7 +150,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 10, dependsOnMethods = { "CBW010003001008" }, alwaysRun = true)
 	public void CBW0100030010010() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010010").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010010").assignAuthor("VS/483");
 		if (isDownloadSuccessful) {
 			logger.info("Download was successful, skipping bid not available popup verification.");
 		} else {
@@ -164,7 +164,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 11, dependsOnMethods = { "CBW010003001009", "CBW0100030010010" }, alwaysRun = true)
 	public void CBW0100030010011() throws Exception {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010011").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010011").assignAuthor("VS/483");
 		if (isDownloadSuccessful) {
 			logger.info("Download was successful, skipping cancel button verification.");
 		} else {
@@ -178,7 +178,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 12, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010012() throws JsonProcessingException {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010012").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010012").assignAuthor("VS/483");
 		logger.info("Fetchinh API data");
 		ScratchPadBlankReservedLines.fetchApiData(domicile, APIRound, position, APIMonth);
 		FABIDCalculation.fetchApiData(domicile, APIRound, position, APIMonth);
@@ -187,21 +187,21 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 13, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010013() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010013").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010013").assignAuthor("VS/483");
 		logger.info("Verify the user is able to close the subscription expire pop up alert ");
 		logger.info("Expiring alert  not visible");
 	}
 
 	@Test(priority = 14, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010014() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010014").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010014").assignAuthor("VS/483");
 		logger.info("Verify the subscription Expired Popup ");
 		logger.info("Expiring alert  not visible");
 	}
 
 	@Test(priority = 15, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010015() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010015").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010015").assignAuthor("VS/483");
 		logger.info("Verify user can able to view the Seniority list popup");
 		Assert.assertEquals(objInCred.displaySeniority(), "Seniority List", "Seniority list popup not visible");
 
@@ -209,7 +209,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 16, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010016() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010016").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010016").assignAuthor("VS/483");
 		logger.info("Verify the user can able to view the 'Latest news' popup");
 		logger.info("close Seniority list Pop Up");
 		objCommon.clickSeniorityCancel();
@@ -220,7 +220,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 17, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010017() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010017").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010017").assignAuthor("VS/483");
 		logger.info("Verify the user can able to view the Cover letter popup");
 		logger.info("close Latest Pop Up");
 		objCommon.clickLatestNwzClose();
@@ -235,7 +235,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 18, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010018() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010018").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010018").assignAuthor("VS/483");
 		logger.info("User can able to start over the bid");
 		logger.info("Verify the user can select the Arrow button");
 		initialScratchPadCount = objInCred.scrLinesTotalCount();
@@ -244,7 +244,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 19, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010019() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010019").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010019").assignAuthor("VS/483");
 		logger.info("Bidlsit count should be the previous count count of the scratchpad view");
 		Assert.assertEquals(objInCred.bidListHeadCount(), initialScratchPadCount,
 				"Bidlsit count not same as previous count count of the scratchpad view");
@@ -252,14 +252,14 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 
 	@Test(priority = 20, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010020() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010020").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010020").assignAuthor("VS/483");
 		logger.info("Verify the ellipsis icon");
 		Assert.assertTrue(objInCred.ellipisIconVisible(), "Ellipis icon not displayed");
 	}
 
 	@Test(priority = 21, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010021() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010021").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010021").assignAuthor("VS/483");
 		logger.info("Verify Start over button - scratch pad should be in default state");
 		objInCred.startOver();
 		logger.info(
@@ -267,9 +267,9 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 		Assert.assertTrue(objCommon.scrLinesTotalCount(ScratchPadBlankReservedLines.linecount));
 	}
 
-	@Test(priority = 22, dependsOnMethods = { "CBW0100030010011" })
+	@Test(priority = 22, enabled = true, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010022() throws JsonProcessingException, ParseException {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010022").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010022").assignAuthor("VS/483");
 		logger.info(
 				"Assert: Inside the trip details , the dates are shown same as the dates of the trips and should be same as its in the wbl file");
 		logger.info("Get  trip Details from UI- Trip Code and Trip date and compare with API Trip code and dates");
@@ -277,9 +277,9 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 	  //Assert.assertTrue(objCommon.getAllTripDataAndCompare(FetchDates.tripData));	
 	}
 
-	@Test(priority = 23, dependsOnMethods = { "CBW0100030010011" })
+	@Test(priority = 23, enabled = true, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010023() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010023").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010023").assignAuthor("VS/483");
 		logger.info("Assert the 'cred' inside the trip detials ");
 		driver.navigate().refresh();
 		objwait.waitS(7000);
@@ -287,20 +287,21 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 	
 	}
 
-	@Test(priority = 24, dependsOnMethods = { "CBW0100030010011" })
+	@Test(priority = 24, enabled = true, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010024() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010024").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010024").assignAuthor("VS/483");
 		logger.info(
 				"Verify the Individual cred value in the trip details  in same as its in the wbp file for each leg ");
 		logger.info("Get individual cred of Each Trip from UI and compare with API Data ");
+		//Assert.assertTrue(objInCred.IndividualCredCompareAPI(),"cred not same as API cred ");              //date issue while comparing(30,1,2)
 		objFACred.getFAindiCredHour();
 		Assert.assertTrue(objFACred.compareindiCredFA(objFACred.tripindiCredUI,FABIDCalculation.apiCred), "cred not same as API cred");
 	
 	}
 
-	@Test(priority = 25, dependsOnMethods = { "CBW0100030010011" })
+	@Test(priority = 25, enabled = true, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010025() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010025").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010025").assignAuthor("VS/483");
 		logger.info("Verify the sum of individual cred value (total Cred value) for each day is shown in cred values ");
 		driver.navigate().refresh();
 		objwait.waitS(7000);
@@ -308,57 +309,12 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 		Assert.assertTrue(objInCred.totalCredCompareAPI(),"cred not same as API cred");
 	}
 
-	@Test(priority = 26, dependsOnMethods = { "CBW0100030010011" })
+	@Test(priority = 26, enabled = true, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010026() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010026").assignAuthor("VS/483");
+		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010026").assignAuthor("VS/483");
 		driver.navigate().refresh();
 		objwait.waitS(7000);
-		// FA -6.5-Round 2 -SP ( FA round 2 Reserve lines)
-		logger.info(
-				"SP:-Verify in FA round 2 bid ,in reserve line  the Individual cred value in the trip details  is 650 and should be  same as its in the wbp file ");
-		Assert.assertTrue(objInCred.ReserveLinesFACred(objInCred.spReserveTripsFA), "cred not same as 650 for FA");
-	}
-	@Test(priority = 27, enabled = true)
-	public void CBW0100030010027() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010027").assignAuthor("VS/483");
-		driver.navigate().refresh();
-		objwait.waitS(7000);
-		// FA -6.5-Round 2 -SA ( FA round 2 Reserve lines)
-		logger.info(
-				"SA:-Verify in FA round 2 bid ,in reserve line  the Individual cred value in the trip details  is 650 and should be  same as its in the wbp file ");
-		Assert.assertTrue(objInCred.ReserveLinesFACred(objInCred.saReserveTripsFA), "cred not same as 650 for FA");
-
-	}
-	@Test(priority = 28, enabled = true)
-	public void CBW0100030010028() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010028").assignAuthor("VS/483");
-		driver.navigate().refresh();
-		objwait.waitS(7000);
-		// FA -6.5-Round 2 -JA ( FA round 2 Reserve lines)
-		logger.info(
-				"JA:-Verify in FA round 2 bid ,in reserve line  the Individual cred value in the trip details  is 650 and should be  same as its in the wbp file ");
-		Assert.assertTrue(objInCred.ReserveLinesFACred(objInCred.jaReserveTripsFA), "cred not same as 650 for FA");
-
-	}
-	@Test(priority = 29, enabled = true)
-	public void CBW0100030010029() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010029").assignAuthor("VS/483");
-		driver.navigate().refresh();
-		objwait.waitS(7000);
-		// FA -6.5-Round 2 -JP ( FA round 2 Reserve lines)
-		logger.info(
-				"JP:-Verify in FA round 2 bid ,in reserve line  the Individual cred value in the trip details  is 650 and should be  same as its in the wbp file ");
-		Assert.assertTrue(objInCred.ReserveLinesFACred(objInCred.jpReserveTripsFA), "cred not same as 650 for FA");
-
-	}
-	@Test(priority = 30, enabled = true)
-	public void CBW0100030010030() {
-		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW0100030010030").assignAuthor("VS/483");
-		driver.navigate().refresh();
-		objwait.waitS(7000);
-		// FA -6.5-Round 2 -JLR ( FA round 2 Reserve lines)
-		logger.info(
-				"JLR:-Verify in FA round 2 bid ,in reserve line  the Individual cred value in the trip details  is 650 and should be  same as its in the wbp file ");
-		Assert.assertTrue(objInCred.ReserveLinesFACred(objInCred.jlReserveTripsFA), "cred not same as 650 for FA");
+		logger.info("No Reserve Lines in FA Round 1 ");
+		
 	}
 }
