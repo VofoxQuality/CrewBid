@@ -327,7 +327,7 @@ public class LoginPage {
 		String displayedText = maskedPswd.getText().trim();
 		WbidBasepage.logger.log(Status.PASS, "Displayed Password Text: " + displayedText);
 		// Check if the displayed text is in a masked format
-		if (displayedText.matches("[•*]+")) {
+		if (displayedText.matches("[\\u2022*]+")) {
 			System.out.println("The password is displayed in a masked format.");
 			return true;
 		} else {
