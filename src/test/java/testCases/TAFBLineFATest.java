@@ -198,7 +198,7 @@ public class TAFBLineFATest extends WbidBasepage{
 		logger.info("Fetchinh API data");
 		ScratchPadBlankReservedLines.fetchApiData(domicile, APIRound, position, APIMonth);
 		TrialBidAPI.fetchApiData(domicile, APIRound, position, APIMonth);
-		FABIDCalculation.fetchApiData(domicile, APIRound, position, APIMonth);
+		
 		logger.info("Verify the subscription expiring alert - Expiring alert  not visible ");
 	}
 
@@ -295,8 +295,9 @@ public class TAFBLineFATest extends WbidBasepage{
 	}
 
 	@Test(priority = 23, enabled=true ,dependsOnMethods = { "CBW0100020000011" })
-	public void CBW0100020000023() {
+	public void CBW0100020000023() throws JsonProcessingException {
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000023").assignAuthor("VS/483");
+		FABIDCalculation.fetchApiData(domicile, APIRound, position, APIMonth);
 		logger.info("Assert Grnd -Check the Grnd  hours is visible in the trip details    ");
 		driver.navigate().refresh();
 		objwait.waitS(7000);

@@ -137,7 +137,16 @@
                 <version>3.1.2</version>
                 <configuration>
                     <suiteXmlFiles>
-                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                        
+                        <!-- TestNG suite XML files -->
+						<suiteXmlFile>CBW002001000-Login.xml</suiteXmlFile>
+						<suiteXmlFile>CBW010002000-CPTAFB.xml</suiteXmlFile>
+						<suiteXmlFile>CBW010002001-FATAFB.xml</suiteXmlFile>
+						<suiteXmlFile>CBW010003000-CPCredValue.xml</suiteXmlFile>
+						<suiteXmlFile>CBW010003001-FACredValue.xml</suiteXmlFile>
+						<suiteXmlFile>CBW010005000-HoliRigCP.xml</suiteXmlFile>
+						<suiteXmlFile>CBW010005001-FAHoliRig.xml</suiteXmlFile>
+						
                     </suiteXmlFiles>
                 </configuration>
             </plugin>

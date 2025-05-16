@@ -210,7 +210,7 @@ public class GroundTest extends WbidBasepage{
 				passCount++;
 				// System.out.println("Pass count is" + passCount);
 			} else {
-				logger.fail( " Block Time mismatch. ❌ Calculated = "
+				logger.fail( " Grnd Time mismatch. ❌ Calculated = "
 						+ groundTimeFormatted + " | Actual = " + groundValueTimeFormatted);
 
 				errorCount++;
