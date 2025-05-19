@@ -19,14 +19,14 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import utilities.WbidBasepage;
 
-public class DutyPeriodTest extends WbidBasepage{
+public class DutyPeriodTestFA extends WbidBasepage{
 	public static HashMap<String, String> testDataMap = testData("qa environment");
 	public static String expectedVersion = testDataMap.get("Version");
 	public static int errorcount;
 	public static int passcount;
 	
 	@Test(priority = 1)
-	public static void fetchApiData(String domicile, String expectedRound, String expectedPosition,
+	public static void fetchApiDataFA(String domicile, String expectedRound, String expectedPosition,
 			String expectedMonth) throws ParseException, NumberFormatException, IOException {
 		WbidBasepage.logger = extent.createTest("Duty Period Calculation").assignAuthor("VS/445");
 
@@ -146,7 +146,7 @@ public class DutyPeriodTest extends WbidBasepage{
 	                // Extract ShowTime and ReleaseTime (default to 0.0 if missing)
 	                double reportTimeAPI = dutyPeriod.optDouble("ShowTime", 0.0);
 	             
-	                double releaseTimeAPI = dutyPeriod.optDouble("ReleaseTime", 0.0);
+	                double releaseTimeAPI = dutyPeriod.optDouble("ReleaseTime", 0.0)+30;
 	                
 	             // Store the times as a list
 	               // List<Double> timePair = Arrays.asList(reportTime, releaseTime);
