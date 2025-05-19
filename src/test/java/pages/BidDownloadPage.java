@@ -1061,7 +1061,10 @@ public class BidDownloadPage {
 		System.out.println(" Reserve value:" + reserve);
 		return reserve;
 	}
-
+	public String getBlankvalue() {
+		System.out.println(" Blank Lines:" + blank);
+		return blank;
+	}
 	public boolean checkLineNumberFromScratchpad() {
 		String text = objaction.gettext(scratchpadlinenumber);
 
@@ -1230,13 +1233,14 @@ public class BidDownloadPage {
 	@FindBy(xpath = "//div/span/small[text()=\"R\"]")
 	public List<WebElement> reservelines;
 
-	public boolean checkreservelines() {
-		String count = String.valueOf(reservelines.size());
-		WbidBasepage.logger.info("💡Reserve lines: " + count);
+	public String reserveCountUI;
+	public boolean checkreservelines(String reserve) {
+		String reserveCountUI = String.valueOf(reservelines.size());
+		WbidBasepage.logger.info("💡Reserve lines: " + reserveCountUI);
 
-		if (count.equals(reserve)) {
-			System.out.println("Total Reserve Lines: " + count);
-			WbidBasepage.logger.pass("✅ Total Reserve Lines: " + count);
+		if (reserveCountUI.equals(reserve)) {
+			System.out.println("Total Reserve Lines: " + reserveCountUI);
+			WbidBasepage.logger.pass("✅ Total Reserve Lines: " + reserveCountUI);
 			return true;
 		} else {
 			System.out.println("No Reserve Lines Found.");
@@ -1244,7 +1248,20 @@ public class BidDownloadPage {
 			return false;
 		}
 	}
+	public boolean compareReserveLine(int reserveAPI, String reserveUI) {
+	    if (String.valueOf(reserveAPI).equals(reserveUI)) {
+	        System.out.println("✅ Total Reserve Lines API: " + reserveAPI + " | UI: " + reserveUI);
+	        WbidBasepage.logger.pass("✅ Total Reserve Lines API: " + reserveAPI + " | UI: " + reserveUI);
+	        return true;
+	    } else {
+	        System.out.println("No Reserve Lines Found.");
+	        WbidBasepage.logger.fail("❌ No Reserve Lines Found. API: " + reserveAPI + " | UI: " + reserveUI);
+	        return false;
+	    }
+	}
 
+	
+	
 	@FindBy(xpath = "//span/small[text()=\"\"]")
 	List<WebElement> blanklines;
 

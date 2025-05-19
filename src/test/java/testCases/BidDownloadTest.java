@@ -27,6 +27,7 @@ public class BidDownloadTest extends WbidBasepage {
 	protected String expectedtitle;
 	public String domicile = "ATL";
 	public String position = "CP";
+	public String APIRound = "1";
 	public String round = "1st Round";
 	public String APIMonth = String.valueOf(objCommon.getNextMonth());
 	public static List<String> TripCodes = new ArrayList<>();
@@ -357,7 +358,8 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("✅Assert : cover letter");
 	}
 
-	public String reserve;
+	public String reserve; //reserve line from UI cover letter
+	public String blank;
 
 	@Test(priority = 37, enabled = true)
 	public void CBW003001000037() {
@@ -365,7 +367,9 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("Verify the cover letter Close button");
 		objdownload.checklinenumber();
 		reserve = objdownload.getreservevalue();
-		logger.info("Reserve :" + reserve);
+		logger.info("Reserve line count from cover letter:" + reserve);
+		blank = objdownload.getBlankvalue();
+		logger.info("blankLine count from cover letter:" + blank);
 		objwait.waitS(3000);
 		objdownload.click_close_coverletter();
 		objwait.waitS(3000);
@@ -501,7 +505,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000053() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000053)").assignAuthor("VS/482");
 		logger.info("Check Reserve lines count");
-		Assert.assertTrue(objdownload.checkreservelines(), "❌ No Reserve Lines Found.");
+		Assert.assertTrue(objdownload.checkreservelines(reserve), "❌ No Reserve Lines Found.");//compare reserve count from cover letter equal to line count in scratch pad
 		logger.info("✅ Reserve line count matches ");
 	}
 
@@ -509,7 +513,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000054() throws JsonProcessingException {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000054)").assignAuthor("VS/482");
 		logger.info("Check Blank lines count");
-		ScratchPadBlankReservedLines.fetchApiData(domicile, round, position, APIMonth);
+		ScratchPadBlankReservedLines.fetchApiData(domicile, APIRound, position, APIMonth);
 		Assert.assertTrue(objdownload.checkblankAPIline(), "❌ No Blank Lines Found.");
 		logger.info("✅ Blank line count matches ");
 	}
@@ -520,9 +524,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000055() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000055)").assignAuthor("VS/482");
 		logger.info("Check Reserve lines count");
-		count = String.valueOf(ScratchPadBlankReservedLines.reservecount);
-		logger.info("💡Reserve lines: " + count);
-		Assert.assertEquals(reserve,count, "❌ No Reserve Lines Found.");
+		Assert.assertTrue(objdownload.compareReserveLine(ScratchPadBlankReservedLines.reservecount,reserve), "❌ No Reserve Lines Found.");
 		logger.info("✅ Reserve line count matches ");
 	}
 
