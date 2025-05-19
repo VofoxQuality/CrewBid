@@ -19,7 +19,7 @@ public class ParameterCall extends WbidBasepage {
 	public static List<Map<String, Object>> holirigFAResultReturned = new ArrayList<>();
 	public static List<Map<String, Object>> DirectHolirigresultReturned = new ArrayList<>();
 
-	@Test(priority = 1, enabled = false)
+	@Test(priority = 1, enabled = true)
 	public void f() throws Throwable {
 		WbidBasepage.logger = extent.createTest("Bid Download API").assignAuthor("VS/445");
 
@@ -29,24 +29,24 @@ public class ParameterCall extends WbidBasepage {
 		//TAFBCPFO.fetchTafb("ATL", "1", "CP", "6");
 		//TAFB_FA.fetchTafb("ATL", "1", "FA", "6");
 		
-		ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "FA", "6");
+		//ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "FA", "6");
 		TrialBidAPI.fetchApiData("ATL", "1", "FA", "6");
 		
 		
 	}
 
-	@Test(priority = 2, enabled = true)
+	@Test(priority = 2, enabled = false)
 	public void g() throws Throwable {
 		WbidBasepage.logger = extent.createTest("Direct HoliRig").assignAuthor("VS/445");
 
 		logger.info("HoliRig values ");
 		
-		CPBIDCalculation.fetchApiData("ATL", "1", "CP", "6");
+		//CPBIDCalculation.fetchApiData("ATL", "1", "CP", "6");
 		// ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "CP", "3");
 		
 		// DutyPeriodTest.fetchApiData("ATL", "1", "FA", "7");
-		// GroundTest.fetchground("ATL", "1", "FA", "7");
-		//BlockTest.fetchBlock("ATL", "1", "FA", "6");
+		// GroundTest.fetchground("ATL", "1", "CP", "6");
+		BlockTest.fetchBlock("ATL", "1", "CP", "6");
 		
 		
 		///////////*Calling method to get Direct holirig CP,FO and FA*//////////

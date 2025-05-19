@@ -45,6 +45,8 @@ public class TrialBidAPI {
 	public List<String> acftChanges;
 	public static Map<String, Double> tafbMap = new HashMap<>();
 	public static Map<String, Double> totRigAdgMap = new HashMap<>();
+	public static Map<String, Double> directRigThrMap = new HashMap<>();
+	
 	public static Map<String, Double> tafbMapNew = new HashMap<>();
 	// public static int i=0;
 	public static List<String> dynamicArray = new ArrayList<>();
@@ -52,6 +54,7 @@ public class TrialBidAPI {
 	public static List<Double> dutyHrs = new ArrayList<>();
 	public static double tafb;
 	public static double TotalRigAdg;
+	public static double dirctGlobalRigThr;
 	public static String tripCode;
 	public static int passCount = 0, errorCount = 0;
 
@@ -214,7 +217,12 @@ public class TrialBidAPI {
 				// System.out.println("Stored Tafb Data:");
 				// tafbMap.forEach((key, value) -> System.out.println("TripCode: " + key + ",
 				// Tafb: " + value));
-
+				
+				//rigthr
+				if (tripDetails.has("RigThr")){
+				double directRigThr = tripDetails.getDouble("RigThr");
+				directRigThrMap.put(tripCode, directRigThr);
+				}
 				// Start building the output for this trip
 				tripOutput = new StringBuilder(tripCode + "  ");
 				tripCompare = new StringBuilder("API Trip code and Individual Cred:" + tripCode);
@@ -335,6 +343,10 @@ public class TrialBidAPI {
 			tafb = tafbMap.get(tripCode);
 			TotalRigAdg = totRigAdgMap.get(tripCode);
 			TotalRigAdg = Math.round(TotalRigAdg * 100.0) / 100.0;
+			
+			////dirct RigThr
+			dirctGlobalRigThr = directRigThrMap.get(tripCode);
+			dirctGlobalRigThr = Math.round(dirctGlobalRigThr * 100.0) / 100.0;
 
 			// System.out.println("TafB is: " + tafb);
 
@@ -513,19 +525,29 @@ public class TrialBidAPI {
 		boolean assertionPassed = true;
 
 		String strTotRigAdg = Double.toString(TotalRigAdg);
+		
+		//thr
+		String strdirctRigThr = Double.toString(dirctGlobalRigThr);
+		
 
 		// Perform soft assertion (this will NOT throw an exception immediately)
 
 		softAssert.assertEquals(RigAdg, TotalRigAdg, .05, "RigAdgs are not equal");
+		
+		// Perform soft assertion for thr(this will NOT throw an exception immediately)
+
+				softAssert.assertEquals(RigThr, dirctGlobalRigThr, .05, "RigThrs are not equal");
 
 		// Validate soft assertions at the end
 		try {
 			softAssert.assertAll(); // This will throw AssertionError if any assertion failed
 			WbidBasepage.logger.log(Status.PASS, "RigAdgs are equal: " + strTotRigAdg);
+			WbidBasepage.logger.log(Status.PASS, "RigThrs are equal: " + strdirctRigThr);
 			passCount++;
 		} catch (AssertionError e) {
 			assertionPassed = false; // Mark failure
 			WbidBasepage.logger.log(Status.FAIL, "Soft Assertion failed: " + e.getMessage());
+			
 			errorCount++;
 		}
 

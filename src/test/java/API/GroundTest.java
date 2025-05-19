@@ -188,7 +188,9 @@ public class GroundTest extends WbidBasepage{
 	    	        double nextDeparture = nextFlight.optDouble("DepTime", 0.0);
 	    	        ground = nextDeparture - currentArrival;
 	    	    }
-
+	    	    else if(i+1==allFlights.size()) {
+	    	    	ground=0;
+	    	    }
 	    	    int groundHoursPart = (int) ground / 60;
 	    	    int groundMinutesPart = (int) ground % 60;
 
@@ -200,12 +202,12 @@ public class GroundTest extends WbidBasepage{
 	    	    groundTimeFormatted = String.format("%02d:%02d", groundHoursPart, groundMinutesPart);
 	    	    logger.info("Flight Seq " + (i + 1) + ": Ground Time = " + groundTimeFormatted);
 	    	    
-	    	  
+	    	 
 	     		
 	    	}
-	    	// Comparison and logging
-			if (Math.round(ground) == Math.round(groundValue)) {
-				logger.pass( " Block Time matches. ✅ Calculated = "
+	    	// Comparison and logging  need Rework
+	    	if (Math.round(ground) == Math.round(groundValue)) {
+				logger.pass( " Grnd Time matches. ✅ Calculated = "
 						+ groundTimeFormatted + " | Actual = " + groundValueTimeFormatted);
 				passCount++;
 				// System.out.println("Pass count is" + passCount);
