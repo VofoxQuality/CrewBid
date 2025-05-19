@@ -830,11 +830,14 @@ public class BidDownloadPage {
 	public void click_close_sen_btn() {
 		objaction.click(sen_close_btn);
 	}
-	@FindBy(xpath="( //button[text()=\" Cancel \"])[3]")
+
+	@FindBy(xpath = "( //button[text()=\" Cancel \"])[3]")
 	public WebElement cancel_sen_btn;
+
 	public void click_cancel_sen_btn() {
 		objaction.click(cancel_sen_btn);
 	}
+
 	public String checklatestnew_header() {
 		objwait.waitForElementTobeVisible(driver, latestnews_head, 10);
 		String news = objaction.gettext(latestnews_head);
@@ -989,107 +992,109 @@ public class BidDownloadPage {
 	public String blank;
 
 	public void checklinenumber() {
-	    // Log selected values before proceeding
-	    WbidBasepage.logger.info("Selected Position: " + selectedPosition);
-	    WbidBasepage.logger.info("Selected Base: " + selectedBase);
+		// Log selected values before proceeding
+		WbidBasepage.logger.info("Selected Position: " + selectedPosition);
+		WbidBasepage.logger.info("Selected Base: " + selectedBase);
 
-	    // Ensure selectedBase and selectedPosition are initialized
-	    if (selectedBase == null || selectedBase.trim().isEmpty() || 
-	        selectedPosition == null || selectedPosition.trim().isEmpty()) {
-	        System.out.println("⚠️ Error: Base or Position is empty. Please check inputs.");
-	        WbidBasepage.logger.fail("Base or Position is empty.");
-	        return;
-	    }
+		// Ensure selectedBase and selectedPosition are initialized
+		if (selectedBase == null || selectedBase.trim().isEmpty() || selectedPosition == null
+				|| selectedPosition.trim().isEmpty()) {
+			System.out.println("⚠️ Error: Base or Position is empty. Please check inputs.");
+			WbidBasepage.logger.fail("Base or Position is empty.");
+			return;
+		}
 
-	    // Convert to uppercase and normalize spaces
-	    selectedBase = selectedBase.trim().toUpperCase();
-	    selectedPosition = selectedPosition.trim().toUpperCase();
+		// Convert to uppercase and normalize spaces
+		selectedBase = selectedBase.trim().toUpperCase();
+		selectedPosition = selectedPosition.trim().toUpperCase();
 
-	    // Special handling for "CP" -> "CA"
-	    if (selectedPosition.equalsIgnoreCase("CP")) {
-	        selectedPosition = "CA";
-	    }
+		// Special handling for "CP" -> "CA"
+		if (selectedPosition.equalsIgnoreCase("CP")) {
+			selectedPosition = "CA";
+		}
 
-	    // Ensure content is available
-	    if (content == null || content.trim().isEmpty()) {
-	        System.out.println("⚠️ Error: Content is empty or null.");
-	        WbidBasepage.logger.fail("Content is empty or null.");
-	        return;
-	    }
+		// Ensure content is available
+		if (content == null || content.trim().isEmpty()) {
+			System.out.println("⚠️ Error: Content is empty or null.");
+			WbidBasepage.logger.fail("Content is empty or null.");
+			return;
+		}
 
-	    // Normalize content
-	    content = content.replaceAll("\\s+", " ").toUpperCase();
+		// Normalize content
+		content = content.replaceAll("\\s+", " ").toUpperCase();
 
-	    // Regex to extract relevant numbers
-	    String regex = "\\b" + selectedBase + "\\s+" + selectedPosition
-	            + "\\s+(\\d+)\\s+(?:\\d+[-])?(\\d+)\\s+\\d+-\\d+\\s+\\((\\d+)\\)\\s+\\d+-\\d+\\s+\\((\\d+)\\)";
+		// Regex to extract relevant numbers
+		String regex = "\\b" + selectedBase + "\\s+" + selectedPosition
+				+ "\\s+(\\d+)\\s+(?:\\d+[-])?(\\d+)\\s+\\d+-\\d+\\s+\\((\\d+)\\)\\s+\\d+-\\d+\\s+\\((\\d+)\\)";
 
-	    System.out.println("Regex: " + regex);
-	    WbidBasepage.logger.info("Regex: " + regex);
+		System.out.println("Regex: " + regex);
+		WbidBasepage.logger.info("Regex: " + regex);
 
-	    Pattern pattern = Pattern.compile(regex);
-	    Matcher matcher = pattern.matcher(content);
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(content);
 
-	    // Extract and log values
-	    if (matcher.find()) {
-	        total = matcher.group(1);
-	        hard = matcher.group(2);
-	        reserve = matcher.group(3);
-	        blank = matcher.group(4);
+		// Extract and log values
+		if (matcher.find()) {
+			total = matcher.group(1);
+			hard = matcher.group(2);
+			reserve = matcher.group(3);
+			blank = matcher.group(4);
 
-	        String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n" 
-	                + " 🔥 Total  : " + total + "\n" 
-	                + " 🔥 Hard   : " + hard + "\n" 
-	                + " 🔥 Reserve: " + reserve + "\n" 
-	                + " 🔥 Blank  : " + blank;
+			String output = "Extracted numbers for " + selectedBase + " (" + selectedPosition + "):\n" + " 🔥 Total  : "
+					+ total + "\n" + " 🔥 Hard   : " + hard + "\n" + " 🔥 Reserve: " + reserve + "\n" + " 🔥 Blank  : "
+					+ blank;
 
-	        System.out.println(output);
-	        WbidBasepage.logger.pass(output);
-	    } else {
-	        System.out.println("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
-	        WbidBasepage.logger.fail("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
-	    }
+			System.out.println(output);
+			WbidBasepage.logger.pass(output);
+		} else {
+			System.out.println("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
+			WbidBasepage.logger.fail("No matching data found for " + selectedBase + " (" + selectedPosition + ").");
+		}
 	}
-
 
 	@FindBy(xpath = "//h6[@class=\"scr-head\"]")
 	public WebElement scratchpadlinenumber;
 	public int extractedNumber;
 	public int totalNumber;
 
+	public String getreservevalue() {
+		System.out.println(" Reserve value:" + reserve);
+		return reserve;
+	}
+
 	public boolean checkLineNumberFromScratchpad() {
-	    String text = objaction.gettext(scratchpadlinenumber);
+		String text = objaction.gettext(scratchpadlinenumber);
 
-	    // Regex to find a number in the given text
-	    Pattern pattern = Pattern.compile("\\b(\\d+)\\b");
-	    Matcher matcher = pattern.matcher(text);
+		// Regex to find a number in the given text
+		Pattern pattern = Pattern.compile("\\b(\\d+)\\b");
+		Matcher matcher = pattern.matcher(text);
 
-	    if (matcher.find()) {
-	        extractedNumber = Integer.parseInt(matcher.group(1)); // Convert extracted number to int
-	        
-	        // Ensure `total` is not null before parsing
-	        if (total == null || total.trim().isEmpty()) {
-	            System.out.println("⚠️ Warning: `total` is null or empty. Skipping comparison.");
-	            return false;
-	        }
+		if (matcher.find()) {
+			extractedNumber = Integer.parseInt(matcher.group(1)); // Convert extracted number to int
 
-	        totalNumber = Integer.parseInt(total.trim()); // Convert total to int
+			// Ensure `total` is not null before parsing
+			if (total == null || total.trim().isEmpty()) {
+				System.out.println("⚠️ Warning: `total` is null or empty. Skipping comparison.");
+				return false;
+			}
 
-	        System.out.println("Extracted Number: " + extractedNumber);
-	        System.out.println("Total: " + totalNumber);
+			totalNumber = Integer.parseInt(total.trim()); // Convert total to int
 
-	        // Compare extracted number with totalNumber
-	        if (extractedNumber == totalNumber) {
-	            System.out.println("✅ Extracted number matches the total.");
-	            return true; // Return true if numbers match
-	        } else {
-	            System.out.println("❌ Extracted number does NOT match the total.");
-	            return false; // Return false if numbers do not match
-	        }
-	    } else {
-	        System.out.println("No number found.");
-	        return false; // Return false if no number is found
-	    }
+			System.out.println("Extracted Number: " + extractedNumber);
+			System.out.println("Total: " + totalNumber);
+
+			// Compare extracted number with totalNumber
+			if (extractedNumber == totalNumber) {
+				System.out.println("✅ Extracted number matches the total.");
+				return true; // Return true if numbers match
+			} else {
+				System.out.println("❌ Extracted number does NOT match the total.");
+				return false; // Return false if numbers do not match
+			}
+		} else {
+			System.out.println("No number found.");
+			return false; // Return false if no number is found
+		}
 	}
 
 	////////// Check only FA condition
@@ -1321,12 +1326,14 @@ public class BidDownloadPage {
 	// LIne parameters
 	@FindBy(xpath = "(//div[@class=\"cala-right\"])[1]")
 	public WebElement lineparam;
-	
-	//TC 57
-	@FindBy(xpath="(//button[text()=\"No\"])[2]")
+
+	// TC 57
+	@FindBy(xpath = "(//button[text()=\"No\"])[2]")
 	public WebElement no_btn;
+
 	public boolean checksavepopup() {
 		objaction.click(home_icon);
 		return objaction.fordisplay(no_btn);
 	}
+
 }

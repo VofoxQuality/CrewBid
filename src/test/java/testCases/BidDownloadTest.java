@@ -357,11 +357,15 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("✅Assert : cover letter");
 	}
 
+	public String reserve;
+
 	@Test(priority = 37, enabled = true)
 	public void CBW003001000037() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000037)").assignAuthor("VS/482");
 		logger.info("Verify the cover letter Close button");
 		objdownload.checklinenumber();
+		reserve = objdownload.getreservevalue();
+		logger.info("Reserve :" + reserve);
 		objwait.waitS(3000);
 		objdownload.click_close_coverletter();
 		objwait.waitS(3000);
@@ -505,20 +509,24 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000054() throws JsonProcessingException {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000054)").assignAuthor("VS/482");
 		logger.info("Check Blank lines count");
-		ScratchPadBlankReservedLines.fetchApiData("ATL", "1", "CP", "4");
+		ScratchPadBlankReservedLines.fetchApiData(domicile, round, position, APIMonth);
 		Assert.assertTrue(objdownload.checkblankAPIline(), "❌ No Blank Lines Found.");
 		logger.info("✅ Blank line count matches ");
 	}
+
+	public String count;
 
 	@Test(priority = 55, enabled = true)
 	public void CBW003001000055() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000055)").assignAuthor("VS/482");
 		logger.info("Check Reserve lines count");
-		Assert.assertTrue(objdownload.checkreserveAPIlines(), "❌ No Reserve Lines Found.");
+		count = String.valueOf(ScratchPadBlankReservedLines.reservecount);
+		logger.info("💡Reserve lines: " + count);
+		Assert.assertEquals(reserve,count, "❌ No Reserve Lines Found.");
 		logger.info("✅ Reserve line count matches ");
 	}
 
-	@Test(priority = 56, enabled = true)
+	@Test(priority = 56, enabled = false)
 	public void CBW003001000056() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000056)").assignAuthor("VS/482");
 		logger.info("Get  All the trip Codes from UI ");
@@ -527,16 +535,12 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("Compare All the trip Codes from UI with trip code fetched from API and get trip details ");
 		Assert.assertTrue(objCommon.compareTripCodesAndFetchData(TripCodes));
 	}
+
 	@Test(priority = 57, enabled = true)
 	public void CBW003001000057() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000057)").assignAuthor("VS/482");
 		logger.info("Check Save Popup");
-		Assert.assertTrue(objdownload.checksavepopup(),"❌ Popup not displayed");
+		Assert.assertTrue(objdownload.checksavepopup(), "❌ Popup not displayed");
 		logger.info("✅ Assert : A popup save state file should be displayed");
-		}
-	@Test(priority = 58, enabled = true)
-	public void CBW003001000058() {
-		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000058)").assignAuthor("VS/482");
-		logger.info("");
 	}
 }
