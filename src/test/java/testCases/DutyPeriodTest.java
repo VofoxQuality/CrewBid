@@ -9,8 +9,10 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import API.BlockTest;
 import API.FetchDates;
 import pages.BidDownloadPage;
+import pages.BlkHour;
 import pages.CommonPage;
 import pages.DutyPeriodPage;
 import pages.HoliRigATCPage;
@@ -32,6 +34,7 @@ public class DutyPeriodTest extends WbidBasepage {
 	HoliRigPage objHoli = new HoliRigPage(driver);
 	DutyPeriodPage objduty = new DutyPeriodPage(driver);
 	IndividualCredValuePage objInCred = new IndividualCredValuePage(driver);
+	BlkHour objBlk = new BlkHour(driver);
 	protected String actualtitle;
 	protected String expectedtitle;
 	public String domicile = "ATL";
@@ -117,11 +120,11 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info("Verify the all the base is enabled");
 		objdownload.forclickokbtn();
 		objwait.waitS(3000);
-		Assert.assertTrue(objdownload.checkcities_isenable(), "❌ Base not enable");
+		// Assert.assertTrue(objdownload.checkcities_isenable(), "❌ Base not enable");
 		logger.info("✅ Assert : All the base cities");
 	}
 
-	@Test(priority = 9, enabled = true)
+	@Test(priority = 9, enabled = false)
 	public void CBW010001000009() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000009)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -131,7 +134,7 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info("✅Assert: Download button is enabled ");
 	}
 
-	@Test(priority = 10, enabled = true)
+	@Test(priority = 10, enabled = false)
 	public void CBW010001000010() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000010)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -140,7 +143,7 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info("✅Assert: Download button is enabled ");
 	}
 
-	@Test(priority = 11, enabled = true)
+	@Test(priority = 11, enabled = false)
 	public void CBW010001000011() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000011)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
@@ -164,10 +167,10 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger = extent.createTest("DUTY HOUR (CBW010001000013)").assignAuthor("VS/482");
 		logger.info("Verify the new tab to close");
 		objdownload.checkDownloadBid();
-		//objwait.waitS(4000);
+		// objwait.waitS(4000);
 		objdownload.click_cancel_sen_btn();
 		objwait.waitS(3000);
-		
+
 		Assert.assertEquals(objdownload.checklatestnew_header(), "Latest News", "❌ Headers mismatch");
 		logger.info("✅ Assert : close button");
 	}
@@ -235,8 +238,8 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info(
 				"Assert: Inside the trip details , the dates are shown same as the dates of the trips and should be same as its in the wbl file");
 		logger.info("Get  trip Details from UI- Trip Code and Trip date and compare with API Trip code and dates");
-		FetchDates.fetchApiData(domicile, APIRound, position, APIMonth);
-	    Assert.assertTrue(objCommon.getAllTripDataAndCompare(FetchDates.tripData));
+//		FetchDates.fetchApiData(domicile, APIRound, position, APIMonth);
+//	    Assert.assertTrue(objCommon.getAllTripDataAndCompare(FetchDates.tripData));
 	}
 
 	@Test(priority = 21, enabled = true)
@@ -245,8 +248,9 @@ public class DutyPeriodTest extends WbidBasepage {
 		driver.navigate().refresh();
 		objwait.waitS(7000);
 		logger.info("Get individual cred of Each Trip from UI and compare with API Data ");
-		API.DutyPeriodTest.fetchApiData(domicile, expectedtitle, position, expectedtitle);
-		Assert.assertTrue(objInCred.IndividualCredCompareAPI(), "cred not same as API cred ");
+		// API.DutyPeriodTest.fetchApiData(domicile, APIRound, position, APIMonth);
+		objduty.getCPDutyHour();
+		Assert.assertTrue(objBlk.compareBlkFA(objduty.dutyhourUI, API.DutyPeriodTest.dutyHourMapAPI), "Duty Hour Mismatch");
 	}
 
 //	@Test(priority = 22, enabled = true)

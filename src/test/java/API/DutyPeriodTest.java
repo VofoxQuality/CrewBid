@@ -7,7 +7,10 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.Assert;
@@ -22,6 +25,7 @@ import utilities.WbidBasepage;
 public class DutyPeriodTest extends WbidBasepage{
 	public static HashMap<String, String> testDataMap = testData("qa environment");
 	public static String expectedVersion = testDataMap.get("Version");
+	public static  Map<String, List<String>> dutyHourMapAPI = new LinkedHashMap<>();
 	public static int errorcount;
 	public static int passcount;
 	
@@ -174,6 +178,8 @@ public class DutyPeriodTest extends WbidBasepage{
 	    	        }
 	    	        System.out.println("Pass Count is" +passcount);
 	    	        System.out.println("Error Count is" + errorcount);
+	    	        dutyHourMapAPI.computeIfAbsent(tripCode,k -> new ArrayList<>()).add(dutyPeriodFormatted);
+	    	        
 	    	    }}
 	            });
 		    }}
