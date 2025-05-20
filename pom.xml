@@ -140,6 +140,8 @@
                         
                         <!-- TestNG suite XML files -->
 						<suiteXmlFile>CBW002001000-Login.xml</suiteXmlFile>
+						<suiteXmlFile>CBW003001000-BidDataDdownload.xml</suiteXmlFile>
+						<suiteXmlFile>CBW010001000-DutyHour.xml</suiteXmlFile>
 						<suiteXmlFile>CBW010002000-CPTAFB.xml</suiteXmlFile>
 						<suiteXmlFile>CBW010002001-FATAFB.xml</suiteXmlFile>
 						<suiteXmlFile>CBW010003000-CPCredValue.xml</suiteXmlFile>
