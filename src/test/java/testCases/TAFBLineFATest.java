@@ -197,7 +197,7 @@ public class TAFBLineFATest extends WbidBasepage{
 		logger = WbidBasepage.extent.createTest("ATL-FA-Round 1-TAFB of each Line - CBW010002000012").assignAuthor("VS/483");
 		logger.info("Fetchinh API data");
 		ScratchPadBlankReservedLines.fetchApiData(domicile, APIRound, position, APIMonth);
-		TrialBidAPI.fetchApiData(domicile, APIRound, position, APIMonth);
+		//TrialBidAPI.fetchApiData(domicile, APIRound, position, APIMonth);
 		
 		logger.info("Verify the subscription expiring alert - Expiring alert  not visible ");
 	}
