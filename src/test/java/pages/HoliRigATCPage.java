@@ -31,7 +31,7 @@ public class HoliRigATCPage {
 	public WebElement reset_btn;
 	@FindBy(xpath = "//div[contains(@class,\"selected-col\")]")
 	public List<WebElement> linevalues;
-	@FindBy(xpath = "//label[text()=\" HoliRig \"]")
+	@FindBy(xpath = "//span[@class='date-com'][normalize-space()='HoliRig']")
 	public WebElement holirig;
 	@FindBy(xpath = "//span[text()=\"HoliRig\"]")
 	public WebElement scratchpadholirig;
