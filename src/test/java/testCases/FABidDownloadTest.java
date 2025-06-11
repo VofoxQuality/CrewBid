@@ -48,6 +48,7 @@ public class FABidDownloadTest extends WbidBasepage {
 	@Test(priority = 3, enabled = true)
 	public void test3() {
 		logger = WbidBasepage.extent.createTest("test3").assignAuthor("VS/482");
+		objCommon.clickOk();//handle subscription pop up
 		logger.info("Bid download");
 		logger.info("click Retreive button");
 		objdownload.click_retrievedownload();

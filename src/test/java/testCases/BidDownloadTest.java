@@ -53,10 +53,11 @@ public class BidDownloadTest extends WbidBasepage {
 		Assert.assertTrue(objlogin.gettexthome(), "Home page header does not show updated version");
 	}
 
-	@Test(priority = 3, enabled = false)
+	@Test(priority = 3, enabled = true)
 	public void CBW003001000003() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000003)").assignAuthor("VS/482");
 		logger.info("Verify the subscription expired");
+		objCommon.clickOk();//handle subscription pop up
 	}
 
 	@Test(priority = 4, enabled = true)

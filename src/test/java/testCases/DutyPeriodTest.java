@@ -69,6 +69,7 @@ public class DutyPeriodTest extends WbidBasepage {
 	public void CBW010001000003() {
 		logger = extent.createTest("DUTY HOUR(CBW010001000003)").assignAuthor("VS/482");
 		logger.info("Verify the login (subscribed user)");
+		objCommon.clickOk();//handle subscription pop up
 		objwait.waitS(9000);
 		logger.info("Assert the title : \"Crewbid\" in the top left");
 		Assert.assertTrue(objdownload.fordisplaylogo(), "❌ Logo not display");

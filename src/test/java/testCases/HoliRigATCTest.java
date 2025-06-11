@@ -69,6 +69,7 @@ public class HoliRigATCTest extends WbidBasepage {
 	public void CBW010005000003() {
 		logger = extent.createTest("CP-HOLI RIG (CBW010005000003)").assignAuthor("VS/482");
 		logger.info("Verify the login (subscribed user)");
+		objCommon.clickOk();//handle subscription pop up
 		objwait.waitS(9000);
 		logger.info("Assert the title : \"Crewbid\" in the top left");
 		Assert.assertTrue(objdownload.fordisplaylogo(), "❌ Logo not display");

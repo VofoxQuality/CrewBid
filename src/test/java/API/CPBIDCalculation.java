@@ -494,7 +494,7 @@ public class CPBIDCalculation {
 
 //Output the results
 		
-		WbidBasepage.logger.info("Trip Code:" + tripCode);
+		//WbidBasepage.logger.info("Trip Code:" + tripCode);
 		/*
 		WbidBasepage.logger.info("New Rig DPM: " + newRigDpm);
 		WbidBasepage.logger.info("New DHR: " + newDhr);
@@ -517,11 +517,11 @@ public class CPBIDCalculation {
 		// Validate soft assertions at the end
 		try {
 			softAssert.assertAll(); // This will throw AssertionError if any assertion failed
-			WbidBasepage.logger.log(Status.PASS, "RigAdgs are equal: " + strTotRigAdg);
+			//WbidBasepage.logger.log(Status.PASS, "RigAdgs are equal: " + strTotRigAdg);
 			passCount++;
 		} catch (AssertionError e) {
 			assertionPassed = false; // Mark failure
-			
+			WbidBasepage.logger.info("Trip Code:" + tripCode);
 			WbidBasepage.logger.log(Status.FAIL, "Soft Assertion failed: " +"Direct value"+TotalRigAdg+"  Cal Value:"+RigAdg);
 			
 			errorCount++;

@@ -59,6 +59,7 @@ public class CommonTest extends WbidBasepage {
 	@Test(priority = 2, enabled = true)
 	public void test2() {
 		logger = WbidBasepage.extent.createTest("test2").assignAuthor("VS/483");
+		objCommon.clickOk();//handle subscription pop up
 		logger.info("Get Login Version");
 		actualVersion = objCommon.getVersionValue();
 		logger.info("Assert that Home page header shows updated version.");

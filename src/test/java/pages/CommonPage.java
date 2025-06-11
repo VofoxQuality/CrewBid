@@ -20,6 +20,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+
+import com.aventstack.extentreports.Status;
+
 import API.FetchDates.TripEntry;
 import API.TrialBidAPI;
 import utilities.ActionUtilities;
@@ -37,6 +40,32 @@ public class CommonPage {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);// initial page factory
 		objaction = new ActionUtilities(driver);
+	}
+	//Current subscription 
+	@FindBy(xpath = "//button[text()='Ok']")
+	public List<WebElement>  okButton;
+	
+	public boolean visibilitySubScriptionPopup() {
+		WbidBasepage.logger.log(Status.INFO, "Check SubScription Pop up ");
+		return !okButton.isEmpty();
+	}
+	
+	@FindBy(xpath = "(//button[@aria-label='Close'])[6]")
+	public WebElement cancelSub;
+	
+	public boolean visibilitycancelSubBtn() {
+		objwait.waitForElementTobeVisible(driver, cancelSub, 30);
+		return cancelSub.isDisplayed();
+	}
+
+	public void clickOk() {
+		if (!okButton.isEmpty()) {
+			WebElement popupMessage = okButton.get(0); // Get the first matching element
+			objwait.waitForElementTobeVisible(driver, popupMessage, 30);
+			objaction.click(popupMessage);
+			WbidBasepage.logger.log(Status.PASS, "Subscription initiated.");
+			objaction.JavaScriptclick(cancelSub);
+		}	
 	}
 
 	@FindBy(xpath = "//*[contains(@id,'navbarToggler')]/ul[2]/li")

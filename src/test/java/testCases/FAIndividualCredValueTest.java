@@ -76,6 +76,7 @@ public class FAIndividualCredValueTest extends WbidBasepage {
 	@Test(priority = 3, enabled = true)
 	public void CBW010003001003() {
 		logger = WbidBasepage.extent.createTest("ATL-FA Round 2-Individual Cred Value Page - CBW010003001003").assignAuthor("VS/483");
+		objCommon.clickOk();//handle subscription pop up
 		logger.info(
 				"Verify the login-Assert the title : Crewbid in the top left-Assert the image : Crewbid icon in the top left");
 		Assert.assertTrue(objInCred.logoVisibile(), "Crewbid Logo not display");
