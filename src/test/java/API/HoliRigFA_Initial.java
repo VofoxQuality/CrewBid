@@ -16,7 +16,7 @@ import java.util.*;
 
 import static io.restassured.RestAssured.given;
 
-public class HoliRigFA extends WbidBasepage {
+public class HoliRigFA_Initial extends WbidBasepage {
 	private static final SimpleDateFormat INPUT_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final SimpleDateFormat OUTPUT_FORMAT = new SimpleDateFormat("dd MMM");
 

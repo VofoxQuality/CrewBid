@@ -70,7 +70,7 @@ public class TrialBidAPI {
 		 * String requestBody1 = "{\n" + "    \"Base\": null,\n" +
 		 * "    \"BidRound\": 0,\n" + "    \"EmployeeNumber\": \"x21221\",\n" +
 		 * "    \"FromAppNumber\": \"12\",\n" + "    \"Month\": null,\n" +
-		 * "    \"OperatingSystem\": null,\n" + "    \"Password\": \"Vofox2025@2$\",\n"
+		 * "    \"OperatingSystem\": null,\n" + "    \"Password\": \"Vofox2025@3$\",\n"
 		 * + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n" +
 		 * "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" +
 		 * "    \"Version\": \"10.4.16.5\"\n" + "}";
@@ -78,7 +78,7 @@ public class TrialBidAPI {
 		String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
 				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n"
-				+ "    \"Password\": \"Vofox2025@2$\",\n" + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
+				+ "    \"Password\": \"Vofox2025@3$\",\n" + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
 				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"" + expectedVersion
 				+ "\"\n" + "}";
 		Response response = given().header("Content-Type", "application/json").body(requestBody1).when().post(endpoint)
