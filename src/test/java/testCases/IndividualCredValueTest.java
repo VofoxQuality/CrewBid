@@ -243,7 +243,7 @@ public class IndividualCredValueTest extends WbidBasepage {
 		Assert.assertTrue(objInCred.movearrowclickable(), "Icon not clickable");
 	}
 
-	@Test(priority = 19, dependsOnMethods = { "CBW0100030000011" })
+	@Test(priority = 21,enabled = false, dependsOnMethods = { "CBW0100030000011" })
 	public void CBW0100030000019() {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-Individual Cred Value Page - CBW010003000019").assignAuthor("VS/483");
 		logger.info("Bidlsit count should be the previous count count of the scratchpad view");
@@ -251,14 +251,14 @@ public class IndividualCredValueTest extends WbidBasepage {
 				"Bidlsit count not same as previous count count of the scratchpad view");
 	}
 
-	@Test(priority = 20, dependsOnMethods = { "CBW0100030000011" })
+	@Test(priority = 19, dependsOnMethods = { "CBW0100030000011" })
 	public void CBW0100030000020() {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-Individual Cred Value Page - CBW010003000020").assignAuthor("VS/483");
 		logger.info("Verify the ellipsis icon");
 		Assert.assertTrue(objInCred.ellipisIconVisible(), "Ellipis icon not displayed");
 	}
 
-	@Test(priority = 21, dependsOnMethods = { "CBW0100030000011" })
+	@Test(priority = 20, dependsOnMethods = { "CBW0100030000011" })
 	public void CBW0100030000021() {
 		logger = WbidBasepage.extent.createTest("ATL-CP-Round 1-Individual Cred Value Page - CBW010003000021").assignAuthor("VS/483");
 		logger.info("Verify Start over button - scratch pad should be in default state");

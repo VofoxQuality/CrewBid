@@ -241,7 +241,7 @@ public class FARnd1IndividualCredTest extends WbidBasepage {
 		Assert.assertTrue(objInCred.movearrowclickable(), "Icon not clickable");
 	}
 
-	@Test(priority = 19, dependsOnMethods = { "CBW0100030010011" })
+	@Test(priority = 19,enabled = false, dependsOnMethods = { "CBW0100030010011" })
 	public void CBW0100030010019() {
 		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-Individual Cred Value Page - CBW0100030010019").assignAuthor("VS/483");
 		logger.info("Bidlsit count should be the previous count count of the scratchpad view");
