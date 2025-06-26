@@ -57,6 +57,7 @@ public class FAHoliRigTest extends WbidBasepage {
 	public static List<Map<String, Object>> DirectHolirigresultReturned = new ArrayList<>();
 	public static List<Map<String, Object>> holirigFAResultReturned = new ArrayList<>();
 	
+	
 	@Test(priority = 1, enabled = true)
 	public void CBW010005001001() {
 		logger = WbidBasepage.extent.createTest("ATL-FA Round 1-HoliRig  - CBW010005001001").assignAuthor("VS/483");
