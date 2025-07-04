@@ -489,7 +489,7 @@ public class CommonPage {
 
 	public String getNextMonth() {
 		LocalDate nextMonth = LocalDate.now().plusMonths(1); // Get next month
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM"); // Format as "MM"
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M"); // Format as "MM" if need for months such as october
 		return nextMonth.format(formatter);
 	}
 
