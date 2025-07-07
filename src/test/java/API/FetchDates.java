@@ -45,6 +45,7 @@ public class FetchDates extends WbidBasepage {
 	public static Map<String, Double> totRigAdgMap = new HashMap<>();
 	public static HashMap<String, String> testDataMap = testData("qa environment");
 	public static String expectedVersion = testDataMap.get("Version");
+	public static String userPassword = testDataMap.get("Password");
 	// public static int i=0;
 	public static List<String> dynamicArray = new ArrayList<>();
 	public static List<Double> tfpSums = new ArrayList<>();
@@ -69,12 +70,27 @@ public class FetchDates extends WbidBasepage {
 				+ "    \"Password\": \"Vofox2025@3$\",\n" + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
 				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \"10.4.16.5\"\n"
 				+ "}";*/
-		String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
+		/*String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
 				+ "    \"EmployeeNumber\": \"x21221\",\n" + "    \"FromAppNumber\": \"12\",\n"
 				+ "    \"Month\": null,\n" + "    \"OperatingSystem\": null,\n"
 				+ "    \"Password\": \"Vofox2025@3$\",\n" + "    \"Platform\": \"Web\",\n" + "    \"Postion\": null,\n"
 				+ "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" + "    \"Version\": \""+expectedVersion+"\"\n"
-				+ "}";
+				+ "}";*/
+		
+		String requestBody1 = "{\n" +
+			    "    \"Base\": null,\n" +
+			    "    \"BidRound\": 0,\n" +
+			    "    \"EmployeeNumber\": \"x21221\",\n" +
+			    "    \"FromAppNumber\": \"12\",\n" +
+			    "    \"Month\": null,\n" +
+			    "    \"OperatingSystem\": null,\n" +
+			    "    \"Password\": \"" + userPassword + "\",\n" +
+			    "    \"Platform\": \"Web\",\n" +
+			    "    \"Postion\": null,\n" +
+			    "    \"Token\": \"00000000-0000-0000-0000-000000000000\",\n" +
+			    "    \"Version\": \"" + expectedVersion + "\"\n" +
+			    "}";
+		
 		Response response = given().header("Content-Type", "application/json").body(requestBody1).when().post(endpoint)
 				.then().extract().response();
 		System.out.println("Response is " + response.getStatusCode());

@@ -35,7 +35,7 @@ public class ParameterCall extends WbidBasepage {
 		
 	}
 
-	@Test(priority = 2, enabled = false)
+	@Test(priority = 2, enabled = true)
 	public void g() throws Throwable {
 		WbidBasepage.logger = extent.createTest("Direct HoliRig").assignAuthor("VS/445");
 
@@ -46,7 +46,7 @@ public class ParameterCall extends WbidBasepage {
 		
 		// DutyPeriodTest.fetchApiData("ATL", "1", "FA", "7");
 		// GroundTest.fetchground("ATL", "1", "CP", "6");
-		BlockTest.fetchBlock("ATL", "1", "CP", "6");
+		BlockTest.fetchBlock("ATL", "1", "CP", "7");
 		
 		
 		///////////*Calling method to get Direct holirig CP,FO and FA*//////////
@@ -63,7 +63,7 @@ public class ParameterCall extends WbidBasepage {
 		//holirigFAResultReturned = HoliRigFA_Copy.fetchApiData("ATL", "1", "FA", "7");
 	}
 
-	@Test(priority = 3, enabled = false)
+	@Test(priority = 3, enabled = true)
 	public void h() throws JsonProcessingException, ParseException {
 		WbidBasepage.logger = extent.createTest("HoliRig Comparison").assignAuthor("VS/445");
 
