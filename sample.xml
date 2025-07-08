@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="IndividualCredParallelSuite" parallel="tests" thread-count="12">
+  <test name="ATL Test">
+    <parameter name="domicile" value="ATL"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+
+  <test name="BWI Test">
+    <parameter name="domicile" value="BWI"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+  <test name="DAL Test">
+    <parameter name="domicile" value="DAL"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+
+  <test name="DEN Test">
+    <parameter name="domicile" value="DEN"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+
+  <test name="LAX Test">
+    <parameter name="domicile" value="LAX"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+
+  <test name="LAS Test">
+    <parameter name="domicile" value="LAS"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+
+  <test name="MCO Test">
+    <parameter name="domicile" value="MCO"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+
+  <test name="MDW Test">
+    <parameter name="domicile" value="MDW"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+
+  <test name="OAK Test">
+    <parameter name="domicile" value="OAK"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+
+  <test name="PHX Test">
+    <parameter name="domicile" value="PHX"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+
+  <test name="HOU Test">
+    <parameter name="domicile" value="HOU"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+
+  <test name="SAN Test">
+    <parameter name="domicile" value="SAN"/>
+    <classes>
+      <class name="testCases.sampleParametrization"/>
+    </classes>
+  </test>
+  </suite>
