@@ -43,6 +43,7 @@ public class DutyPeriodTest extends WbidBasepage {
 	public String APIRound = "1";
 	public String APIMonth = String.valueOf(objCommon.getNextMonth());
 
+	
 	@Test(priority = 1, enabled = true)
 	public void CBW010001000001() {
 		logger = extent.createTest(" DUTY HOUR (CBW010001000001)").assignAuthor("VS/482");
