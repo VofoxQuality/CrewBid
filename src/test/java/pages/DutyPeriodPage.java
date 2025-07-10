@@ -29,7 +29,6 @@ public class DutyPeriodPage {
 		PageFactory.initElements(driver, this);/// initial page factory
 		objaction = new ActionUtilities(driver);
 	}
-
 	@FindBy(xpath = "(//td[contains(@class,'left-side-radius')])[1]")
 	public WebElement firstTrip;
 
