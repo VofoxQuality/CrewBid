@@ -1,16 +1,17 @@
 package testCases;
 
-import java.io.IOException;
-import java.text.ParseException;
+import java.util.HashMap;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.json.JsonException;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import API.BlockTest;
-import API.FetchDates;
+import API.ScratchPadBlankReservedLines;
 import pages.BidDownloadPage;
 import pages.BlkHour;
 import pages.CommonPage;
@@ -24,36 +25,63 @@ import utilities.WaitCondition;
 import utilities.WbidBasepage;
 
 public class DutyPeriodTest extends WbidBasepage {
-	WebDriver driver = returnDriver();
-	LoginPage objlogin = new LoginPage(driver);
-	WaitCondition objwait = new WaitCondition();
-	ActionUtilities objaction = new ActionUtilities(driver);
-	BidDownloadPage objdownload = new BidDownloadPage(driver);
-	CommonPage objCommon = new CommonPage(driver);
-	HoliRigATCPage objholirig = new HoliRigATCPage(driver);
-	HoliRigPage objHoli = new HoliRigPage(driver);
-	DutyPeriodPage objduty = new DutyPeriodPage(driver);
-	IndividualCredValuePage objInCred = new IndividualCredValuePage(driver);
-	BlkHour objBlk = new BlkHour(driver);
-	protected String actualtitle;
-	protected String expectedtitle;
-	public String domicile = "ATL";
+	WebDriver driver;
+	LoginPage objlogin;
+	WaitCondition objwait;
+	ActionUtilities objaction;
+	BidDownloadPage objdownload;
+	CommonPage objCommon;
+	HoliRigATCPage objholirig;
+	HoliRigPage objHoli;
+	DutyPeriodPage objduty;
+	IndividualCredValuePage objInCred;
+	BlkHour objBlk;
+
+	public String actualtitle;
+	public String expectedtitle;
+	public String domicile;
 	public String position = "CP";
+
 	public String round = "1st Round";
 	public String APIRound = "1";
-	public String APIMonth = String.valueOf(objCommon.getNextMonth());
+	public HashMap<String, String> testDataMap;
+	public String APIMonth;
 
-	
-	@Test(priority = 1, enabled = true)
+	@Parameters({ "domicile" })
+	@BeforeClass(alwaysRun = true)
+	public void setup(@Optional("ATL") String domicile) {
+		this.domicile = domicile;
+
+		this.driver = returnDriver();// ✅ always get the correct driver from ThreadLocal
+
+		this.objwait = new WaitCondition();
+		this.objaction = new ActionUtilities(driver);
+		this.objlogin = new LoginPage(driver);
+		this.objdownload = new BidDownloadPage(driver);
+		this.objCommon = new CommonPage(driver);
+		this.objHoli = new HoliRigPage(driver);
+		this.objholirig = new HoliRigATCPage(driver);
+		this.objduty = new DutyPeriodPage(driver); // Pass driver to constructor
+
+		this.objInCred = new IndividualCredValuePage(driver);
+		this.objBlk = new BlkHour(driver);
+
+		this.testDataMap = testData("qa environment");
+		this.APIMonth = String.valueOf(objCommon.getNextMonth());
+	}
+
+	@Test(priority = 1)
 	public void CBW010001000001() {
+		// ExtentTest logger = loggerthread.get();
 		logger = extent.createTest(" DUTY HOUR (CBW010001000001)").assignAuthor("VS/482");
 		logger.info("Verify user is able see the Login page ");
 		actualtitle = objlogin.pageHeading();
 		expectedtitle = "CrewbidWebApp";
-		logger.info("Captured title of the page: " + expectedtitle);
-		logger.info("Assert the title");
-		Assert.assertEquals(actualtitle, expectedtitle);
+		logger.info("Captured title: " + actualtitle);
+		Assert.assertEquals(actualtitle, expectedtitle, "Page title mismatch!");
 	}
+
+	// ✅ Add more tests here
 
 	@Test(priority = 2, enabled = true)
 	public void CBW010001000002() {
@@ -70,7 +98,7 @@ public class DutyPeriodTest extends WbidBasepage {
 	public void CBW010001000003() {
 		logger = extent.createTest("DUTY HOUR(CBW010001000003)").assignAuthor("VS/482");
 		logger.info("Verify the login (subscribed user)");
-		objCommon.clickOk();//handle subscription pop up
+		objCommon.clickOk();// handle subscription pop up
 		objwait.waitS(9000);
 		logger.info("Assert the title : \"Crewbid\" in the top left");
 		Assert.assertTrue(objdownload.fordisplaylogo(), "❌ Logo not display");
@@ -126,58 +154,83 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info("✅ Assert : All the base cities");
 	}
 
-	@Test(priority = 9, enabled = false)
+	@Test(priority = 9, enabled = true)
 	public void CBW010001000009() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000009)").assignAuthor("VS/482");
-		logger.info("Verify user can able to select any one of the below condition \n"
-				+ "Condition 01 : Download round 1 and pilot (CP and FO) with all the  domicile (4th day of all month)\n"
-				+ "Note : For Pilot ( AUS and FLL) domicile  no need to download");
-		Assert.assertTrue(objdownload.checkCondition1DownloadBid(), "❌Download button is disable");
-		logger.info("✅Assert: Download button is enabled ");
+		logger.info("Verify user can select any condition. Assert: Download button is enabled");
+		objCommon.enterempid();
+		objCommon.selectOptions(domicile, position, round);
+		Assert.assertTrue(objCommon.verifyOptionsEnabled(domicile, position, round));
+
 	}
 
-	@Test(priority = 10, enabled = false)
+	@Test(priority = 10, enabled = true)
 	public void CBW010001000010() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000010)").assignAuthor("VS/482");
-		logger.info("Verify user can able to select any one of the below condition \n"
-				+ "Condition 02 : Download round 1 and  FA with all the  domicile(2nd day of all month)");
-		Assert.assertTrue(objdownload.checkCondition2DownloadBid(), "❌Download button is disable");
+		logger.info("Verify Download button is enabled");
+		Assert.assertTrue(objInCred.downloadEnable());
 		logger.info("✅Assert: Download button is enabled ");
 	}
 
-	@Test(priority = 11, enabled = false)
+	boolean isDownloadSuccessful = false;
+
+	@Test(priority = 11, enabled = true)
 	public void CBW010001000011() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000011)").assignAuthor("VS/482");
-		logger.info("Verify user can able to select any one of the below condition \n"
-				+ "Condition 03 : Download round 2 and pilot (CP and FO) with all the  domicile (17th day of all month)\n"
-				+ "Note : For Pilot ( AUS and FLL) domicile  no need to download");
-		Assert.assertTrue(objdownload.checkCondition3DownloadBid(), "❌Download button is disable");
-		logger.info("✅Assert: Download button is enabled ");
+		logger.info("Verify the download button - Scratch pad view is visible");
+		logger.info("Click Download Bid");
+		objCommon.clickDownload();
+		logger.info("Verify if the loader appears while downloading the bid");
+		boolean isLoadingIconDisplayed = objdownload.fordisplayloadingicon();
+		if (isLoadingIconDisplayed) {
+			Assert.assertTrue(isLoadingIconDisplayed, "Loading icon not displayed");
+			isDownloadSuccessful = true;
+		} else {
+			logger.info("Download was not successful, warning popup should be visible.");
+		}
 	}
 
-	@Test(priority = 12, enabled = true)
+	@Test(priority = 12, dependsOnMethods = "CBW010001000011", alwaysRun = true)
 	public void CBW010001000012() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000012)").assignAuthor("VS/482");
-		logger.info("Verify user can able to select any one of the below condition \n"
-				+ "Condition 04 : Download round 2 and FA with all the  domicile(11th day of all month)");
-		Assert.assertTrue(objdownload.checkCondition4DownloadBid(), "❌Download button is disable");
-		logger.info("✅Assert: Download button is enabled ");
+		if (isDownloadSuccessful) {
+			logger.info("Download was successful, skipping warning popup verification.");
+		} else {
+			logger.info("Verifying Early Bid Warning Popup");
+			logger.info("Early Bid Warning popup is displayed.");
+			Assert.assertTrue(objInCred.visibleEarlyBidPopup(), "Early Bid Warning popup should be displayed.");
+			logger.info("If bid data is not available, a warning popup should appear.");
+			objInCred.clickOkEarlyBid();
+			Assert.assertTrue(objInCred.bidNotAvailableBidPopup(),
+					"Bid not available warning popup should be displayed.");
+			objInCred.clickOkbidNotAvailable();
+		}
 	}
 
-	@Test(priority = 13, enabled = true)
-	public void CBW010001000013() throws JsonProcessingException {
+	@Test(priority = 13, enabled = true, dependsOnMethods = "CBW010001000011", alwaysRun = true)
+	public void CBW010001000013() throws Exception {
 		logger = extent.createTest("DUTY HOUR (CBW010001000013)").assignAuthor("VS/482");
+		SoftAssert objsoft = new SoftAssert();
 		logger.info("Verify the new tab to close");
-		objdownload.checkDownloadBid();
-		// objwait.waitS(4000);
+		if (isDownloadSuccessful) {
+			logger.info("Download was successful, skipping cancel button verification.");
+		} else {
+			logger.info("Verifying if user can select the cancel button.");
+			objInCred.clickcancelBtn();
+			Assert.assertTrue(objwait.waitPopupToClose(driver, objInCred.cancelBtn, 20),
+					"Cancel button is not enabled.");
+		}
+		objsoft.assertTrue(isDownloadSuccessful, "Bid Download was not successful");
+		objwait.waitS(3000);
+		ScratchPadBlankReservedLines.fetchApiData(domicile, APIRound, position, APIMonth);
 		objdownload.click_cancel_sen_btn();
 		objwait.waitS(3000);
-
-		Assert.assertEquals(objdownload.checklatestnew_header(), "Latest News", "❌ Headers mismatch");
+		objsoft.assertEquals(objdownload.checklatestnew_header(), "Latest News", "❌ Headers mismatch");
 		logger.info("✅ Assert : close button");
+		objsoft.assertAll();
 	}
 
-	@Test(priority = 14, enabled = true)
+	@Test(priority = 14, enabled = true, dependsOnMethods = "CBW010001000011", alwaysRun = true)
 	public void CBW010001000014() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000014)").assignAuthor("VS/482");
 		logger.info("Assert : latest news close button\n");
@@ -188,11 +241,11 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info("✅Pop up should be closed and Cover letter should come");
 	}
 
-	@Test(priority = 15, enabled = true)
+	@Test(priority = 15, enabled = true, dependsOnMethods = "CBW010001000011", alwaysRun = true)
 	public void CBW010001000015() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000015)").assignAuthor("VS/482");
 		logger.info("Verify the download button");
-		objdownload.checklinenumber();
+		objdownload.checklinenumber(domicile, position);
 		objwait.waitS(3000);
 		objdownload.click_close_coverletter();
 		objwait.waitS(3000);
@@ -200,7 +253,7 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info("✅Assert : Cover letter close button");
 	}
 
-	@Test(priority = 16, enabled = true)
+	@Test(priority = 16, enabled = true, dependsOnMethods = "CBW010001000011", alwaysRun = true)
 	public void CBW010001000016() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000016)").assignAuthor("VS/482");
 		logger.info("Verify the user can select the Arrow button");
@@ -208,7 +261,7 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info("✅Assert : Arrow button\n" + "Button should be clickable");
 	}
 
-	@Test(priority = 17, enabled = true)
+	@Test(priority = 17, enabled = true, dependsOnMethods = "CBW010001000011", alwaysRun = true)
 	public void CBW010001000017() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000017)").assignAuthor("VS/482");
 		logger.info("Verify all the lines moved in the scractpad to bidlist");
@@ -216,7 +269,7 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info("✅ Assert : Bidlsit count should be the previous count of the scratchpad view");
 	}
 
-	@Test(priority = 18, enabled = true)
+	@Test(priority = 18, enabled = true, dependsOnMethods = "CBW010001000011", alwaysRun = true)
 	public void CBW010001000018() {
 		logger = extent.createTest("DUTY HOUR (CBW010001000018)").assignAuthor("VS/482");
 		logger.info("Verify the ellipsis icon");
@@ -224,7 +277,7 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info("✅ Assert : Ellipsis icon");
 	}
 
-	@Test(priority = 19, enabled = true)
+	@Test(priority = 19, enabled = true, dependsOnMethods = "CBW010001000011", alwaysRun = true)
 	public void CBW010001000019() {
 		logger = WbidBasepage.extent.createTest("DUTY HOUR(CBW010001000019)").assignAuthor("VS/482");
 		logger.info("Verify Start over button - scratch pad should be in default state");
@@ -234,8 +287,8 @@ public class DutyPeriodTest extends WbidBasepage {
 		logger.info("✅Scratch pad combination matches");
 	}
 
-	@Test(priority = 20, enabled = true)
-	public void CBW010001000020() throws JsonProcessingException, ParseException {
+	@Test(priority = 20, enabled = true, dependsOnMethods = "CBW010001000011", alwaysRun = true)
+	public void CBW010001000020() throws JsonException {
 		logger = WbidBasepage.extent.createTest("DUTY HOUR(CBW010001000020)").assignAuthor("VS/482");
 		logger.info(
 				"Assert: Inside the trip details , the dates are shown same as the dates of the trips and should be same as its in the wbl file");
@@ -244,60 +297,15 @@ public class DutyPeriodTest extends WbidBasepage {
 //	    Assert.assertTrue(objCommon.getAllTripDataAndCompare(FetchDates.tripData));
 	}
 
-	@Test(priority = 21, enabled = true)
-	public void CBW010001000021() throws NumberFormatException, ParseException, IOException {
+	@Test(priority = 21, enabled = true, dependsOnMethods = "CBW010001000011", alwaysRun = true)
+	public void CBW010001000021() throws NumberFormatException {
 		logger = extent.createTest(" DUTY HOUR (CBW010001000021)").assignAuthor("VS/482");
 		driver.navigate().refresh();
 		objwait.waitS(7000);
 		logger.info("Get individual cred of Each Trip from UI and compare with API Data ");
 		// API.DutyPeriodTest.fetchApiData(domicile, APIRound, position, APIMonth);
 		objduty.getCPDutyHour();
-		Assert.assertTrue(objBlk.compareBlkFA(objduty.dutyhourUI, API.DutyPeriodTest.dutyHourMapAPI), "Duty Hour Mismatch");
+		Assert.assertTrue(objBlk.compareBlkFA(objduty.dutyhourUI, API.DutyPeriodTest.dutyHourMapAPI),
+				"Duty Hour Mismatch");
 	}
-
-//	@Test(priority = 22, enabled = true)
-//	public void CBW010001000022() {
-//		logger = extent.createTest(" DUTY HOUR (CBW010001000022)").assignAuthor("VS/482");
-//	}
-//
-//	@Test(priority = 23, enabled = true)
-//	public void CBW010001000023() {
-//		logger = extent.createTest(" DUTY HOUR (CBW010001000023)").assignAuthor("VS/482");
-//	}
-//
-//	@Test(priority = 24, enabled = true)
-//	public void CBW010001000024() {
-//		logger = extent.createTest(" DUTY HOUR (CBW010001000024)").assignAuthor("VS/482");
-//	}
-//
-//	@Test(priority = 25, enabled = true)
-//	public void CBW010001000025() {
-//		logger = extent.createTest(" DUTY HOUR (CBW010001000025)").assignAuthor("VS/482");
-//	}
-//
-//	@Test(priority = 26, enabled = true)
-//	public void CBW010001000026() {
-//		logger = extent.createTest(" DUTY HOUR (CBW010001000026)").assignAuthor("VS/482");
-//	}
-//
-//	@Test(priority = 27, enabled = true)
-//	public void CBW010001000027() {
-//		logger = extent.createTest(" DUTY HOUR (CBW010001000027)").assignAuthor("VS/482");
-//	}
-//
-//	@Test(priority = 28, enabled = true)
-//	public void CBW010001000028() {
-//		logger = extent.createTest(" DUTY HOUR (CBW010001000028)").assignAuthor("VS/482");
-//	}
-//
-//	@Test(priority = 29, enabled = true)
-//	public void CBW010001000029() {
-//		logger = extent.createTest(" DUTY HOUR (CBW010001000029)").assignAuthor("VS/482");
-//	}
-//
-//	@Test(priority = 30, enabled = true)
-//	public void CBW010001000030() {
-//		logger = extent.createTest(" DUTY HOUR (CBW010001000030)").assignAuthor("VS/482");
-//	}
-
 }

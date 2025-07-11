@@ -25,7 +25,11 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
@@ -43,11 +47,12 @@ public class WbidBasepage {
 	public static String downloadPath = System.getProperty("user.dir") + ".\\File Downloads";
 	public static String url = "";
 	public String screenshotpath = null;
-	public static ExtentSparkReporter sparkall;
-	public static ExtentSparkReporter sparkskip;
-	public static ExtentSparkReporter sparkfailed;
-	public static ExtentReports extent;
+	protected static ExtentSparkReporter sparkall;
+	protected static ExtentSparkReporter sparkskip;
+	protected static ExtentSparkReporter sparkfailed;
+	protected static ExtentReports extent;
 	public static ExtentTest logger;
+
 	public WbidBasepage() {
 
 		try {
@@ -163,42 +168,42 @@ public class WbidBasepage {
 
 	/* To Browser launch */
 	public void Browserlaunch() {
-	    // Get the browser type from the properties file
-	    String browser_configfile = objproperty.getProperty("browser");    
-	    if (browser_configfile.equalsIgnoreCase("Chrome")) {
-	        // Setup WebDriverManager for Chrome
-	        WebDriverManager.chromedriver().setup();	        
-	        // Create ChromeOptions to set preferences
-	        ChromeOptions options = new ChromeOptions();	        
-	        // Create a map to hold preferences
-	        Map<String, Object> prefs = new HashMap<>();	        
-	        // Set the default download directory
-	        prefs.put("download.default_directory", downloadPath);	        
-	        // Add preferences to ChromeOptions
-	        options.setExperimentalOption("prefs", prefs);	        
-	        // Add an argument to allow remote origins
-	        options.addArguments("--remote-allow-origins=*");	        
-	        // Create the ChromeDriver instance with the configured options
-	        driver = new ChromeDriver(options);	        
-	    } else if (browser_configfile.equalsIgnoreCase("Firefox")) {
-	        // Setup WebDriverManager for Firefox and create FirefoxDriver
-	        driver = WebDriverManager.firefoxdriver().create();	        
-	    } else if (browser_configfile.equalsIgnoreCase("Edge")) {
-	        // Setup WebDriverManager for Edge and create EdgeDriver
-	        driver = WebDriverManager.edgedriver().create();	        
-	    } else {
-	        // Print an error message if no browser matches
-	        System.out.println("No option for this Browser");
-	    }
-	    
-	    // Maximize the browser window
-	    driver.manage().window().maximize();
-	    
-	    // Delete all cookies
-	    driver.manage().deleteAllCookies();
-	    
-	    // Open the specified URL
-	    driver.get(url);
+		// Get the browser type from the properties file
+		String browser_configfile = objproperty.getProperty("browser");
+		if (browser_configfile.equalsIgnoreCase("Chrome")) {
+			// Setup WebDriverManager for Chrome
+			WebDriverManager.chromedriver().setup();
+			// Create ChromeOptions to set preferences
+			ChromeOptions options = new ChromeOptions();
+			// Create a map to hold preferences
+			Map<String, Object> prefs = new HashMap<>();
+			// Set the default download directory
+			prefs.put("download.default_directory", downloadPath);
+			// Add preferences to ChromeOptions
+			options.setExperimentalOption("prefs", prefs);
+			// Add an argument to allow remote origins
+			options.addArguments("--remote-allow-origins=*");
+			// Create the ChromeDriver instance with the configured options
+			driver = new ChromeDriver(options);
+		} else if (browser_configfile.equalsIgnoreCase("Firefox")) {
+			// Setup WebDriverManager for Firefox and create FirefoxDriver
+			driver = WebDriverManager.firefoxdriver().create();
+		} else if (browser_configfile.equalsIgnoreCase("Edge")) {
+			// Setup WebDriverManager for Edge and create EdgeDriver
+			driver = WebDriverManager.edgedriver().create();
+		} else {
+			// Print an error message if no browser matches
+			System.out.println("No option for this Browser");
+		}
+
+		// Maximize the browser window
+		driver.manage().window().maximize();
+
+		// Delete all cookies
+		driver.manage().deleteAllCookies();
+
+		// Open the specified URL
+		driver.get(url);
 	}
 
 	@AfterClass
@@ -206,18 +211,39 @@ public class WbidBasepage {
 		driver.quit();
 	}
 
-	@BeforeSuite
-	public void beforeSuite() {
+//	@BeforeSuite
+//	public void beforeSuite() {
+//		extent = new ExtentReports();
+//		sparkall = new ExtentSparkReporter(System.getProperty("user.dir") + "/test-output/ExtentReport/AutomationExtentReport.html");
+//		extent.attachReporter(sparkall);
+//		extent.setSystemInfo("Host Name", "AUTOMATION TESTING");
+//		extent.setSystemInfo("Environment", "QA");
+//		extent.setSystemInfo("User Name", " LIYA ANN THOMAS, NIMISHILA BHAI N");
+//		sparkall.config().setDocumentTitle("Automation Extend Spark Report");
+//		// Name of the report
+//		sparkall.config().setReportName("WBidAPI");
+//		// Dark Theme
+//		sparkall.config().setTheme(Theme.DARK);
+//	}
+
+	@BeforeTest(alwaysRun = true)
+	@Parameters({ "domicile" })
+	public void setupReport(@Optional("Default") String domicile) {
+		// String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new
+		// Date());
+		String reportPath = System.getProperty("user.dir") + "/test-output/ExtentReport/AutomationExtentReport_"
+				+ domicile + ".html";
+
+		sparkall = new ExtentSparkReporter(reportPath);
 		extent = new ExtentReports();
-		sparkall = new ExtentSparkReporter(System.getProperty("user.dir") + "/test-output/ExtentReport/AutomationExtentReport.html");
 		extent.attachReporter(sparkall);
+
 		extent.setSystemInfo("Host Name", "AUTOMATION TESTING");
 		extent.setSystemInfo("Environment", "QA");
-		extent.setSystemInfo("User Name", " LIYA ANN THOMAS, NIMISHILA BHAI N");
-		sparkall.config().setDocumentTitle("Automation Extend Spark Report");
-		// Name of the report
-		sparkall.config().setReportName("WBidAPI");
-		// Dark Theme
+		extent.setSystemInfo("User Name", "LIYA ANN THOMAS, NIMISHILA BHAI N");
+
+		sparkall.config().setDocumentTitle("Automation Extent Spark Report");
+		sparkall.config().setReportName("WBidAPI - " + domicile);
 		sparkall.config().setTheme(Theme.DARK);
 	}
 
@@ -229,24 +255,32 @@ public class WbidBasepage {
 			e.printStackTrace();
 		}
 		if (result.getStatus() == ITestResult.FAILURE) {
-			logger.log(Status.FAIL, "<span style='color:red'>FAILED TEST CASE:  </span>" +"<span style='color:red'>"+ result.getName()+ "</span>");
-			//logger.log(Status.FAIL, "FAILURE REASON:  " + result.getThrowable());
-			logger.log(Status.FAIL,"<span style='color:red'>FAILURE REASON:  </span>"+"<span style='color:red'>" + result.getThrowable() + "</span>");
+			logger.log(Status.FAIL, "<span style='color:red'>FAILED TEST CASE:  </span>" + "<span style='color:red'>"
+					+ result.getName() + "</span>");
+			// logger.log(Status.FAIL, "FAILURE REASON: " + result.getThrowable());
+			logger.log(Status.FAIL, "<span style='color:red'>FAILURE REASON:  </span>" + "<span style='color:red'>"
+					+ result.getThrowable() + "</span>");
 			logger.addScreenCaptureFromPath(screenshotpath, "Failed Test Screenshot");
 		} else if (result.getStatus() == ITestResult.SUCCESS) {
 			logger.log(Status.PASS, "TEST CASE PASSED: " + result.getName());
-		}else if (result.getStatus() == ITestResult.SKIP) {
-		    logger.log(Status.SKIP, "TEST CASE SKIPPED: " + result.getName());
-		    logger.log(Status.SKIP, "REASON: " + result.getThrowable());
-		} 
+		} else if (result.getStatus() == ITestResult.SKIP) {
+			logger.log(Status.SKIP, "TEST CASE SKIPPED: " + result.getName());
+			logger.log(Status.SKIP, "REASON: " + result.getThrowable());
+		}
 	}
 
-
-	@AfterSuite
-	public void afterSuite() throws IOException {
-
-		extent.flush();
+	@AfterTest
+	public void flushExtent() {
+		if (extent != null) {
+			extent.flush();
+		}
 	}
+//
+//	@AfterSuite
+//	public void afterSuite() throws IOException {
+//
+//		extent.flush();
+//	}
 
 	///////////// TO get Screenshot/////////////
 	public static String getScreenshot(WebDriver driver, String screenshotName) throws IOException {

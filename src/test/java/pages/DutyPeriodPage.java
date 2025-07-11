@@ -171,8 +171,8 @@ public class DutyPeriodPage {
 	    int i = 0;
 	    for (WebElement tripElement : tripList) {
 	        try {
-	            if (i >= 5) break; // Limit to 5 trips
-	            i++;
+//	            if (i >= 5) break; // Limit to 5 trips
+//	            i++;
 
 	            // Wait and click trip
 	            objwait.waitForElementTobeVisible(driver, tripElement, 90);
