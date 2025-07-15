@@ -991,22 +991,22 @@ public class BidDownloadPage {
 	public String reserve;
 	public String blank;
 
-	public void checklinenumber() {
+	public void checklinenumber(String Domicile ,String pos) {
 		// Log selected values before proceeding
-		WbidBasepage.logger.info("Selected Position: " + selectedPosition);
-		WbidBasepage.logger.info("Selected Base: " + selectedBase);
+		WbidBasepage.logger.info("Selected Position: " + pos);
+		WbidBasepage.logger.info("Selected Base: " + Domicile);
 
 		// Ensure selectedBase and selectedPosition are initialized
-		if (selectedBase == null || selectedBase.trim().isEmpty() || selectedPosition == null
-				|| selectedPosition.trim().isEmpty()) {
+		if (Domicile == null || Domicile.trim().isEmpty() || pos == null
+				|| pos.trim().isEmpty()) {
 			System.out.println("⚠️ Error: Base or Position is empty. Please check inputs.");
 			WbidBasepage.logger.fail("Base or Position is empty.");
 			return;
 		}
 
 		// Convert to uppercase and normalize spaces
-		selectedBase = selectedBase.trim().toUpperCase();
-		selectedPosition = selectedPosition.trim().toUpperCase();
+		selectedBase = Domicile.trim().toUpperCase();
+		selectedPosition = pos.trim().toUpperCase();
 
 		// Special handling for "CP" -> "CA"
 		if (selectedPosition.equalsIgnoreCase("CP")) {
@@ -1061,10 +1061,12 @@ public class BidDownloadPage {
 		System.out.println(" Reserve value:" + reserve);
 		return reserve;
 	}
+
 	public String getBlankvalue() {
 		System.out.println(" Blank Lines:" + blank);
 		return blank;
 	}
+
 	public boolean checkLineNumberFromScratchpad() {
 		String text = objaction.gettext(scratchpadlinenumber);
 
@@ -1234,6 +1236,7 @@ public class BidDownloadPage {
 	public List<WebElement> reservelines;
 
 	public String reserveCountUI;
+
 	public boolean checkreservelines(String reserve) {
 		String reserveCountUI = String.valueOf(reservelines.size());
 		WbidBasepage.logger.info("💡Reserve lines: " + reserveCountUI);
@@ -1248,20 +1251,19 @@ public class BidDownloadPage {
 			return false;
 		}
 	}
+
 	public boolean compareReserveLine(int reserveAPI, String reserveUI) {
-	    if (String.valueOf(reserveAPI).equals(reserveUI)) {
-	        System.out.println("✅ Total Reserve Lines API: " + reserveAPI + " | UI: " + reserveUI);
-	        WbidBasepage.logger.pass("✅ Total Reserve Lines API: " + reserveAPI + " | UI: " + reserveUI);
-	        return true;
-	    } else {
-	        System.out.println("No Reserve Lines Found.");
-	        WbidBasepage.logger.fail("❌ No Reserve Lines Found. API: " + reserveAPI + " | UI: " + reserveUI);
-	        return false;
-	    }
+		if (String.valueOf(reserveAPI).equals(reserveUI)) {
+			System.out.println("✅ Total Reserve Lines API: " + reserveAPI + " | UI: " + reserveUI);
+			WbidBasepage.logger.pass("✅ Total Reserve Lines API: " + reserveAPI + " | UI: " + reserveUI);
+			return true;
+		} else {
+			System.out.println("No Reserve Lines Found.");
+			WbidBasepage.logger.fail("❌ No Reserve Lines Found. API: " + reserveAPI + " | UI: " + reserveUI);
+			return false;
+		}
 	}
 
-	
-	
 	@FindBy(xpath = "//span/small[text()=\"\"]")
 	List<WebElement> blanklines;
 

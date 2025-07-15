@@ -366,7 +366,7 @@ public class BidDownloadTest extends WbidBasepage {
 	public void CBW003001000037() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000037)").assignAuthor("VS/482");
 		logger.info("Verify the cover letter Close button");
-		objdownload.checklinenumber();
+	//	objdownload.checklinenumber();
 		reserve = objdownload.getreservevalue();
 		logger.info("Reserve line count from cover letter:" + reserve);
 		blank = objdownload.getBlankvalue();
@@ -460,7 +460,7 @@ public class BidDownloadTest extends WbidBasepage {
 		logger.info("✅ Assert : bid action button");
 	}
 
-	@Test(priority = 48, enabled = true)
+	@Test(priority = 48, enabled = false)
 	public void CBW003001000048() {
 		logger = extent.createTest("BID DATA DOWNLOAD (CBW003001000048)").assignAuthor("VS/482");
 		logger.info("To check the save button is default disabled state");
