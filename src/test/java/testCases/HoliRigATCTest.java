@@ -72,18 +72,18 @@ public class HoliRigATCTest extends WbidBasepage {
 		objCommon.clickOk();//handle subscription pop up
 		objwait.waitS(9000);
 		logger.info("Assert the title : \"Crewbid\" in the top left");
-		Assert.assertTrue(objdownload.fordisplaylogo(), "❌ Logo not display");
+		Assert.assertTrue(objdownload.fordisplaylogo(), " Logo not display");
 	}
 
 	@Test(priority = 4, enabled = true)
 	public void CBW010005000004() {
 		logger = extent.createTest("CP-HOLI RIG (CBW010005000004)").assignAuthor("VS/482");
 		logger.info("Verify the Retreive button");
-		Assert.assertTrue(objdownload.fordisplayretrivedropdown(), "❌ Retrive button not displayed");
+		Assert.assertTrue(objdownload.fordisplayretrivedropdown(), " Retrive button not displayed");
 		logger.info("Assert : Retrieve new bid data and Retrieve Historical bid data");
 		objdownload.click_retrievedownload();
 		Assert.assertTrue(objdownload.fordisplaynewbiddata(),
-				"❌ Retrieve new bid data and Retrieve Historical bid data are not displayed in dropdown");
+				" Retrieve new bid data and Retrieve Historical bid data are not displayed in dropdown");
 	}
 
 	@Test(priority = 5, enabled = true)
@@ -92,8 +92,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("verify the Retreive new bid data title");
 		objdownload.forclicknewbiddata();
 		Assert.assertEquals(objdownload.checkEmpnumpopupheader(), "Enter Employee Number",
-				"❌ Header mismatch or not displayed");
-		logger.info("✅ Assert :  title in the new popup Alert");
+				" Header mismatch or not displayed");
+		logger.info("  Assert :  title in the new popup Alert");
 	}
 
 	@Test(priority = 6, enabled = true)
@@ -102,8 +102,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("Verify the User ID ");
 		objdownload.enterempid();
 		Assert.assertEquals(objdownload.checkretrievebidpopupheader(), "Retrieve New Bid Period",
-				"❌ Popup header mismatch or popup not displayed");
-		logger.info("✅ Assert : Rediret to Retreive new bid perid popup page");
+				" Popup header mismatch or popup not displayed");
+		logger.info("  Assert : Rediret to Retreive new bid perid popup page");
 	}
 
 	@Test(priority = 7, enabled = true)
@@ -111,8 +111,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger = extent.createTest("CP-HOLI RIG (CBW010005000007)").assignAuthor("VS/482");
 		logger.info("Verify the title in the Retrive new bid period popup alert");
 		Assert.assertEquals(objdownload.checkretrievebidpopupheader(), "Retrieve New Bid Period",
-				"❌ Popup header mismatch or popup not displayed");
-		logger.info("✅ Assert :Title");
+				" Popup header mismatch or popup not displayed");
+		logger.info("  Assert :Title");
 	}
 
 	@Test(priority = 8, enabled = true)
@@ -121,8 +121,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("Verify the all the base is enabled");
 		objdownload.forclickokbtn();
 		objwait.waitS(3000);
-		Assert.assertTrue(objdownload.checkcities_isenable(), "❌ Base not enable");
-		logger.info("✅ Assert : All the base cities");
+		Assert.assertTrue(objdownload.checkcities_isenable(), " Base not enable");
+		logger.info("  Assert : All the base cities");
 	}
 
 	@Test(priority = 9, enabled = true)
@@ -131,8 +131,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("Verify user can able to select any one of the below condition \n"
 				+ "Condition 01 : Download round 1 and pilot (CP and FO) with all the  domicile (4th day of all month)\n"
 				+ "Note : For Pilot ( AUS and FLL) domicile  no need to download");
-		Assert.assertTrue(objdownload.checkCondition1DownloadBid(), "❌Download button is disable");
-		logger.info("✅Assert: Download button is enabled ");
+		Assert.assertTrue(objdownload.checkCondition1DownloadBid(), "â�ŒDownload button is disable");
+		logger.info(" Assert: Download button is enabled ");
 	}
 
 	@Test(priority = 10, enabled = true)
@@ -140,8 +140,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger = extent.createTest("HOLI RIG(CBW010005000010)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
 				+ "Condition 02 : Download round 1 and  FA with all the  domicile(2nd day of all month)");
-		Assert.assertTrue(objdownload.checkCondition2DownloadBid(), "❌Download button is disable");
-		logger.info("✅Assert: Download button is enabled ");
+		Assert.assertTrue(objdownload.checkCondition2DownloadBid(), "â�ŒDownload button is disable");
+		logger.info(" Assert: Download button is enabled ");
 	}
 
 	@Test(priority = 11, enabled = true)
@@ -150,8 +150,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("Verify user can able to select any one of the below condition \n"
 				+ "Condition 03 : Download round 2 and pilot (CP and FO) with all the  domicile (17th day of all month)\n"
 				+ "Note : For Pilot ( AUS and FLL) domicile  no need to download");
-		Assert.assertTrue(objdownload.checkCondition3DownloadBid(), "❌Download button is disable");
-		logger.info("✅Assert: Download button is enabled ");
+		Assert.assertTrue(objdownload.checkCondition3DownloadBid(), "â�ŒDownload button is disable");
+		logger.info(" Assert: Download button is enabled ");
 	}
 
 	@Test(priority = 12, enabled = true)
@@ -159,8 +159,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger = extent.createTest("HOLI RIG(CBW010005000012)").assignAuthor("VS/482");
 		logger.info("Verify user can able to select any one of the below condition \n"
 				+ "Condition 04 : Download round 2 and FA with all the  domicile(11th day of all month)");
-		Assert.assertTrue(objdownload.checkCondition4DownloadBid(), "❌Download button is disable");
-		logger.info("✅Assert: Download button is enabled ");
+		Assert.assertTrue(objdownload.checkCondition4DownloadBid(), "â�ŒDownload button is disable");
+		logger.info(" Assert: Download button is enabled ");
 	}
 
 	@Test(priority = 13, enabled = true)
@@ -172,8 +172,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		objdownload.click_cancel_sen_btn();
 		objwait.waitS(3000);
 		
-		Assert.assertEquals(objdownload.checklatestnew_header(), "Latest News", "❌ Headers mismatch");
-		logger.info("✅ Assert : close button");
+		Assert.assertEquals(objdownload.checklatestnew_header(), "Latest News", " Headers mismatch");
+		logger.info("  Assert : close button");
 	}
 
 	@Test(priority = 14, enabled = true)
@@ -183,44 +183,44 @@ public class HoliRigATCTest extends WbidBasepage {
 		objwait.waitS(3000);
 		objdownload.click_news_closebtn();
 		objwait.waitS(3000);
-		Assert.assertEquals(objdownload.checkcoverletter_head(), "Cover Letter", "❌ Headers mismatch");
-		logger.info("✅Pop up should be closed and Cover letter should come");
+		Assert.assertEquals(objdownload.checkcoverletter_head(), "Cover Letter", " Headers mismatch");
+		logger.info(" Pop up should be closed and Cover letter should come");
 	}
 
 	@Test(priority = 15, enabled = true)
 	public void CBW010005000015() {
 		logger = extent.createTest("HOLI RIG(CBW010005000015)").assignAuthor("VS/482");
 		logger.info("Verify the download button");
-		objdownload.checklinenumber();
+		objdownload.checklinenumber(domicile, position);
 		objwait.waitS(3000);
 		objdownload.click_close_coverletter();
 		objwait.waitS(3000);
-		Assert.assertTrue(objdownload.isvisible_scrachpad_head(), "❌ Close button functionality not working");
-		logger.info("✅Assert : Cover letter close button");
+		Assert.assertTrue(objdownload.isvisible_scrachpad_head(), " Close button functionality not working");
+		logger.info("Assert : Cover letter close button");
 	}
 
 	@Test(priority = 16, enabled = true)
 	public void CBW010005000016() {
 		logger = extent.createTest("HOLI RIG(CBW010005000016)").assignAuthor("VS/482");
 		logger.info("Verify the user can select the Arrow button");
-		Assert.assertTrue(objdownload.verifymovearrowclickable(), "❌ Icon not clickable");
-		logger.info("✅Assert : Arrow button\n" + "Button should be clickable");
+		Assert.assertTrue(objdownload.verifymovearrowclickable(), " Icon not clickable");
+		logger.info(" Assert : Arrow button\n" + "Button should be clickable");
 	}
 
 	@Test(priority = 17, enabled = true)
 	public void CBW010005000017() {
 		logger = extent.createTest("HOLI RIG(CBW010005000017)").assignAuthor("VS/482");
 		logger.info("Verify all the lines moved in the scractpad to bidlist");
-		Assert.assertTrue(objdownload.checklinemovestobid(), "❌ Bid Count not changed");
-		logger.info("✅ Assert : Bidlsit count should be the previous count of the scratchpad view");
+		Assert.assertTrue(objdownload.checklinemovestobid(), " Bid Count not changed");
+		logger.info("  Assert : Bidlsit count should be the previous count of the scratchpad view");
 	}
 
 	@Test(priority = 18, enabled = true)
 	public void CBW010005000018() {
 		logger = extent.createTest("HOLI RIG(CBW010005000018)").assignAuthor("VS/482");
 		logger.info("Verify the ellipsis icon");
-		Assert.assertTrue(objdownload.forvisibleellipisicon(), "❌ Ellipis icon not displayed");
-		logger.info("✅ Assert : Ellipsis icon");
+		Assert.assertTrue(objdownload.forvisibleellipisicon(), " Ellipis icon not displayed");
+		logger.info("  Assert : Ellipsis icon");
 	}
 
 	@Test(priority = 19, enabled = true)
@@ -229,8 +229,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger.info("Verify Start over button - scratch pad should be in default state");
 		objdownload.startOver();
 		objwait.waitS(4000);
-		Assert.assertTrue(objdownload.checkLineNumberFromScratchpad(), "❌ Scratch pad combination not matches");
-		logger.info("✅Scratch pad combination matches");
+		Assert.assertTrue(objdownload.checkLineNumberFromScratchpad(), " Scratch pad combination not matches");
+		logger.info(" Scratch pad combination matches");
 	}
 
 	@Test(priority = 20, enabled = true)
@@ -248,8 +248,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger = WbidBasepage.extent.createTest("CP-HOLI RIG (CBW010005000021)").assignAuthor("VS/482");
 		logger.info("User can able to select the HoliRig  parameter from line parameter ");
 		objholirig.selectHoliRig();
-		Assert.assertTrue(objholirig.fordisplayholirig(), "❌ Holi rig not displayed");
-		logger.info("✅ Assert : HoliRig parameter along with the value displayed in the line paramter of each line");
+		Assert.assertTrue(objholirig.fordisplayholirig(), " Holi rig not displayed");
+		logger.info("  Assert : HoliRig parameter along with the value displayed in the line paramter of each line");
 	}
 
 	@Test(priority = 22, enabled = true)
@@ -257,8 +257,8 @@ public class HoliRigATCTest extends WbidBasepage {
 		logger = WbidBasepage.extent.createTest("CP-HOLI RIG (CBW010005000022)").assignAuthor("VS/482");
 		logger.info(
 				"check after selecting HoliRig parameter, when clicking the line parameter area and looking HoliRig parameter, the HoliRig parameter is showed as selected by blue tick mark");
-		Assert.assertTrue(objholirig.forClickHoliRig(), "❌ Not displayed blue tick ");
-		logger.info("✅ Assert : blue tick on the HoliRig parameter");
+		Assert.assertTrue(objholirig.forClickHoliRig(), " Not displayed blue tick ");
+		logger.info("  Assert : blue tick on the HoliRig parameter");
 	}
 	
 	@Test(priority = 23, enabled = true)
@@ -269,7 +269,7 @@ public class HoliRigATCTest extends WbidBasepage {
 		objHoli.getHoliRigVal();
 		Assert.assertTrue(objHoli.isHoliRigDataMatching(JavaDirectHolirig.result));
 		logger.info(
-				"✅ Assert : the  Holirig parameter shows correct value  for CP and FO bids after calculation  and same from the WBP file ");
+				"  Assert : the  Holirig parameter shows correct value  for CP and FO bids after calculation  and same from the WBP file ");
 	}
  
 	@Test(priority = 24, enabled = true)

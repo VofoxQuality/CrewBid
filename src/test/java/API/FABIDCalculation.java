@@ -62,7 +62,7 @@ public class FABIDCalculation {
 		WbidBasepage.logger = WbidBasepage.extent.createTest("Bid Download API").assignAuthor("VS/445");
 
 		WbidBasepage.logger.info("Cred Values in an array");
-		RestAssured.baseURI = "https://www.auth.wbidmax.com/WBidCoreService/api";
+		RestAssured.baseURI = "https://www.auth.wbidmax.com/WBidCoreService/api";//00
 		String endpoint = "/user/GetSWAAndWBidAuthenticationDetails/";
 		
 		/*String requestBody1 = "{\n" + "    \"Base\": null,\n" + "    \"BidRound\": 0,\n"
